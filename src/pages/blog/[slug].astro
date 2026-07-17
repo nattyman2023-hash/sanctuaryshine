@@ -1,0 +1,109 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { SITE } from '../../data/site';
+import { blogPosts } from '../../data/blogPosts';
+
+export async function getStaticPaths() {
+  return blogPosts.map(post => ({
+    params: { slug: post.slug },
+    props: { post }
+  }));
+}
+
+const { post } = Astro.props;
+
+const articleSchema = {
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": post.metaTitle,
+  "description": post.metaDescription,
+  "image": `${SITE.url}${post.image}`,
+  "datePublished": post.date,
+  "dateModified": post.date,
+  "author": {
+    "@type": "Organization",
+    "name": SITE.name
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": SITE.name,
+    "logo": {
+      "@type": "ImageObject",
+      "url": `${SITE.url}/images/logo/logo.png`
+    }
+  },
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": `${SITE.url}/blog/${post.slug}`
+  }
+};
+
+const breadcrumbSchema = {
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    { "@type": "ListItem", "position": 1, "name": "Home", "item": SITE.url },
+    { "@type": "ListItem", "position": 2, "name": "Blog", "item": `${SITE.url}/blog` },
+    { "@type": "ListItem", "position": 3, "name": post.title, "item": `${SITE.url}/blog/${post.slug}` }
+  ]
+};
+---
+
+<BaseLayout
+  title={post.metaTitle}
+  description={post.metaDescription}
+  schema={[articleSchema, breadcrumbSchema]}
+>
+  <article class="py-16 md:py-20">
+    <div class="max-w-[800px] mx-auto px-4 md:px-6">
+      <!-- Breadcrumb -->
+      <div class="flex items-center gap-3 text-sm text-[#3C494C] mb-6">
+        <a href="/" class="hover:text-[#00C2D1]">Home</a>
+        <span>/</span>
+        <a href="/blog" class="hover:text-[#00C2D1]">Blog</a>
+        <span>/</span>
+        <span class="text-[#00C2D1] font-medium truncate">{post.title}</span>
+      </div>
+
+      <!-- Header -->
+      <div class="mb-8">
+        <div class="flex flex-wrap gap-2 mb-4">
+          {post.tags.map(tag => (
+            <span class="text-xs bg-[#D9FBFF] text-[#008C99] px-2 py-1 rounded-full font-medium">{tag}</span>
+          ))}
+        </div>
+        <h1 class="font-heading text-3xl md:text-4xl font-bold text-[#0B0B0B] mb-4">{post.title}</h1>
+        <div class="flex items-center gap-4 text-sm text-[#3C494C]">
+          <span>{post.date}</span>
+          <span>•</span>
+          <span>{post.readTime}</span>
+        </div>
+      </div>
+
+      <!-- Featured Image -->
+      <div class="rounded-2xl overflow-hidden mb-8 shadow-lg">
+        <img src={post.image} alt={post.title} class="w-full h-auto" loading="lazy" width="800" height="450" />
+      </div>
+
+      <!-- Content -->
+      <div class="prose prose-lg max-w-none text-[#3C494C] [&_a]:text-[#00C2D1] [&_a]:font-medium [&_a:hover]:underline [&_h2]:font-heading [&_h2]:font-bold [&_h2]:text-2xl [&_h2]:text-[#0B0B0B] [&_h2]:mt-8 [&_h2]:mb-4 [&_h3]:font-heading [&_h3]:font-semibold [&_h3]:text-xl [&_h3]:text-[#0B0B0B] [&_h3]:mt-6 [&_h3]:mb-3 [&_p]:leading-relaxed [&_p]:mb-4 [&_ul]:list-disc [&_ul]:pl-6 [&_ul]:space-y-2 [&_li]:text-[#3C494C] [&_table]:w-full [&_table]:border [&_table]:border-gray-200 [&_th]:bg-[#F8FAFB] [&_th]:p-3 [&_th]:text-left [&_th]:font-semibold [&_td]:p-3 [&_td]:border-t [&_td]:border-gray-100" set:html={post.content} />
+
+      <!-- CTA -->
+      <div class="mt-12 bg-gradient-to-r from-[#00C2D1] to-[#008C99] rounded-2xl p-8 text-center text-white">
+        <h2 class="font-heading text-2xl font-bold mb-3">Ready for a Cleaner Home or Business?</h2>
+        <p class="text-sm opacity-90 mb-6">Get your free, no-obligation quote today. We'll respond within 2 hours.</p>
+        <a href="/get-a-quote" class="inline-block bg-[#FFD200] text-[#0B0B0B] px-6 py-3 rounded-xl font-bold hover:bg-[#D6A900] transition-all">
+          Get a Free Quote
+        </a>
+      </div>
+
+      <!-- Back to Blog -->
+      <div class="mt-8 text-center">
+        <a href="/blog" class="inline-flex items-center gap-2 text-[#00C2D1] font-medium hover:underline">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
+          Back to Blog
+        </a>
+      </div>
+    </div>
+  </article>
+</BaseLayout>

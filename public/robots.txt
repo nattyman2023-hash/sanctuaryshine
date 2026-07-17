@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://sanctuaryshine.co.uk/sitemap-index.xml

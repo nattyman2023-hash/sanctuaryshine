@@ -1,0 +1,45 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { locations } from '../data/locations';
+---
+
+<BaseLayout
+  title="Areas We Cover"
+  description="Sanctuary Shine provides professional cleaning services across all ten boroughs of Greater Manchester. Find cleaners near you."
+>
+  <section class="bg-gradient-to-br from-white via-[#D9FBFF]/30 to-white py-16 md:py-20">
+    <div class="max-w-[1200px] mx-auto px-4 md:px-6 text-center">
+      <h1 class="font-heading text-4xl md:text-5xl font-bold text-[#0B0B0B] mb-4">Areas We Cover</h1>
+      <p class="text-lg md:text-xl text-[#3C494C] max-w-2xl mx-auto">Professional cleaning services across all ten boroughs of Greater Manchester. Find your local cleaners below.</p>
+    </div>
+  </section>
+
+  <section class="py-16 md:py-20">
+    <div class="max-w-[1200px] mx-auto px-4 md:px-6">
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {locations.map(loc => (
+          <a href={`/areas/${loc.urlSlug}`} class="group bg-white rounded-xl p-6 border border-gray-100 hover:border-[#00C2D1]/30 hover:shadow-lg transition-all">
+            <div class="flex items-center gap-4 mb-4">
+              <div class="w-12 h-12 rounded-full bg-[#D9FBFF] flex items-center justify-center text-[#00C2D1] group-hover:bg-[#00C2D1] group-hover:text-white transition-all">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+              </div>
+              <div>
+                <h2 class="font-heading font-semibold text-lg group-hover:text-[#00C2D1] transition-colors">Cleaners in {loc.name}</h2>
+                <p class="text-sm text-[#3C494C]">{loc.businessCount}+ customers</p>
+              </div>
+            </div>
+            <p class="text-sm text-[#3C494C] mb-3 line-clamp-2">{loc.description}</p>
+            <div class="flex flex-wrap gap-1.5">
+              {loc.areas.slice(0, 4).map(area => (
+                <span class="text-xs bg-[#F8FAFB] px-2 py-1 rounded-full text-[#3C494C]">{area}</span>
+              ))}
+              {loc.areas.length > 4 && (
+                <span class="text-xs bg-[#F8FAFB] px-2 py-1 rounded-full text-[#00C2D1]">+{loc.areas.length - 4} more</span>
+              )}
+            </div>
+          </a>
+        ))}
+      </div>
+    </div>
+  </section>
+</BaseLayout>

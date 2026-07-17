@@ -1,0 +1,228 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { locations } from '../../data/locations';
+import { services } from '../../data/services';
+import { SITE } from '../../data/site';
+
+export async function getStaticPaths() {
+  return locations.map(loc => ({
+    params: { slug: loc.urlSlug },
+    props: { location: loc }
+  }));
+}
+
+const { location: loc } = Astro.props;
+
+const locationSchema = {
+  "@context": "https://schema.org",
+  "@type": "LocalBusiness",
+  "name": `Sanctuary Shine - Cleaners in ${loc.name}`,
+  "description": loc.description,
+  "url": `${SITE.url}/areas/${loc.urlSlug}`,
+  "telephone": SITE.phone,
+  "areaServed": [
+    ...loc.areas.map(area => ({
+      "@type": "City",
+      "name": area
+    }))
+  ]
+};
+
+const faqSchema = {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": `Are there reliable cleaners in ${loc.name}?`,
+      "acceptedAnswer": { "@type": "Answer", "text": `Yes, Sanctuary Shine provides professional cleaning services in ${loc.name} and surrounding areas. Our team is DBS checked, fully insured, and uses eco-friendly products.` }
+    },
+    {
+      "@type": "Question",
+      "name": `What cleaning services do you offer in ${loc.name}?`,
+      "acceptedAnswer": { "@type": "Answer", "text": `We offer domestic cleaning, commercial cleaning, deep cleaning, end of tenancy cleaning, Airbnb cleaning, and office cleaning in ${loc.name} and across Greater Manchester.` }
+    },
+    {
+      "@type": "Question",
+      "name": `How much does cleaning cost in ${loc.name}?`,
+      "acceptedAnswer": { "@type": "Answer", "text": `Our prices start from £12 per hour for commercial cleaning and £25 per hour for domestic cleaning. We provide free, no-obligation quotes within 2 hours.` }
+    }
+  ]
+};
+---
+
+<BaseLayout
+  title={`Cleaners in ${loc.name} | Professional Cleaning Services in ${loc.name}`}
+  description={loc.description}
+  schema={[locationSchema, faqSchema]}
+>
+  <!-- Hero -->
+  <section class="bg-gradient-to-br from-white via-[#D9FBFF]/30 to-white py-16 md:py-20">
+    <div class="max-w-[1200px] mx-auto px-4 md:px-6">
+      <div class="flex items-center gap-3 text-sm text-[#3C494C] mb-4">
+        <a href="/" class="hover:text-[#00C2D1]">Home</a>
+        <span>/</span>
+        <a href="/areas" class="hover:text-[#00C2D1]">Areas</a>
+        <span>/</span>
+        <span class="text-[#00C2D1] font-medium">{loc.name}</span>
+      </div>
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-10 items-center">
+        <div>
+          <div class="inline-flex items-center gap-2 bg-[#D9FBFF] text-[#008C99] px-3 py-1.5 rounded-full text-xs font-semibold uppercase tracking-wider mb-5">
+            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+            Local {loc.name} Cleaning Team
+          </div>
+          <h1 class="font-heading text-4xl md:text-5xl font-bold text-[#0B0B0B] mb-5 leading-tight">
+            Professional Cleaners in {loc.name}
+          </h1>
+          <p class="text-lg text-[#3C494C] mb-6 leading-relaxed">{loc.intro}</p>
+          <div class="flex flex-wrap gap-4">
+            <a href="/get-a-quote" class="bg-[#FFD200] text-[#0B0B0B] px-6 py-3 rounded-xl font-semibold hover:bg-[#D6A900] transition-all hover:scale-105 shadow-md">
+              Get a Free Quote
+            </a>
+            <a href={`tel:${SITE.phoneLink}`} class="bg-[#00C2D1] text-white px-6 py-3 rounded-xl font-semibold hover:bg-[#008C99] transition-all hover:scale-105 shadow-md">
+              Call {SITE.phone}
+            </a>
+          </div>
+        </div>
+        <div class="bg-white rounded-2xl p-6 border border-gray-100 shadow-sm">
+          <h3 class="font-heading font-semibold text-xl mb-4">Areas We Serve in {loc.name}</h3>
+          <div class="grid grid-cols-2 gap-2 mb-6">
+            {loc.areas.map(area => (
+              <div class="flex items-center gap-2 text-sm">
+                <svg class="w-4 h-4 text-[#00C2D1] shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+                <span>{area}</span>
+              </div>
+            ))}
+          </div>
+          <div class="bg-[#F8FAFB] rounded-xl p-4">
+            <p class="text-sm font-semibold mb-1">Postcodes covered:</p>
+            <p class="text-sm text-[#3C494C]">{loc.postcodes}</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Services for this area -->
+  <section class="py-16 md:py-20">
+    <div class="max-w-[1200px] mx-auto px-4 md:px-6">
+      <h2 class="font-heading text-3xl font-bold text-[#0B0B0B] mb-4">Our Cleaning Services in {loc.name}</h2>
+      <p class="text-lg text-[#3C494C] mb-8 max-w-2xl">From domestic cleaning to commercial cleaning, we offer a full range of services tailored to {loc.name} homes and businesses.</p>
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {services.map(service => (
+          <a href={`/services/${service.slug}`} class="group bg-white rounded-xl p-6 border border-gray-100 hover:border-[#00C2D1]/30 hover:shadow-lg transition-all">
+            <span class="material-symbols-outlined text-2xl text-[#00C2D1] mb-3 block">{service.icon}</span>
+            <h3 class="font-heading font-semibold text-lg mb-2 group-hover:text-[#00C2D1] transition-colors">{service.title} in {loc.name}</h3>
+            <p class="text-sm text-[#3C494C] mb-3">{service.tagline}</p>
+            <span class="text-sm font-semibold text-[#00C2D1]">From {service.priceFrom}</span>
+          </a>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- Why choose us for this area -->
+  <section class="py-16 md:py-20 bg-white">
+    <div class="max-w-[1200px] mx-auto px-4 md:px-6">
+      <div class="text-center mb-12">
+        <h2 class="font-heading text-3xl md:text-4xl font-bold text-[#0B0B0B] mb-4">Why Choose Sanctuary Shine in {loc.name}?</h2>
+      </div>
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div class="text-center p-6">
+          <div class="w-16 h-16 rounded-full bg-[#D9FBFF] flex items-center justify-center text-[#00C2D1] mx-auto mb-4">
+            <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+          </div>
+          <h3 class="font-semibold text-lg mb-2">Local Team</h3>
+          <p class="text-sm text-[#3C494C]">We know {loc.name} inside out. Quick response times and local knowledge.</p>
+        </div>
+        <div class="text-center p-6">
+          <div class="w-16 h-16 rounded-full bg-[#D9FBFF] flex items-center justify-center text-[#00C2D1] mx-auto mb-4">
+            <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
+          </div>
+          <h3 class="font-semibold text-lg mb-2">Fully Insured</h3>
+          <p class="text-sm text-[#3C494C]">£10m public liability insurance and DBS-checked staff.</p>
+        </div>
+        <div class="text-center p-6">
+          <div class="w-16 h-16 rounded-full bg-[#D9FBFF] flex items-center justify-center text-[#00C2D1] mx-auto mb-4">
+            <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+          </div>
+          <h3 class="font-semibold text-lg mb-2">Flexible Hours</h3>
+          <p class="text-sm text-[#3C494C]">One-off, weekly, or bespoke schedules to suit your life.</p>
+        </div>
+        <div class="text-center p-6">
+          <div class="w-16 h-16 rounded-full bg-[#D9FBFF] flex items-center justify-center text-[#00C2D1] mx-auto mb-4">
+            <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+          </div>
+          <h3 class="font-semibold text-lg mb-2">Satisfaction Guaranteed</h3>
+          <p class="text-sm text-[#3C494C]">{loc.businessCount}+ satisfied customers in {loc.name}</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Specialities -->
+  <section class="py-16 md:py-20">
+    <div class="max-w-[1200px] mx-auto px-4 md:px-6">
+      <h2 class="font-heading text-3xl font-bold text-[#0B0B0B] mb-8 text-center">Our Specialities in {loc.name}</h2>
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        {loc.specialities.map(spec => (
+          <div class="flex items-center gap-3 bg-white rounded-xl p-4 border border-gray-100">
+            <div class="w-10 h-10 rounded-full bg-[#FFD200] flex items-center justify-center text-[#0B0B0B] shrink-0">
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+            </div>
+            <span class="text-sm font-medium">{spec}</span>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ -->
+  <section class="py-16 md:py-20 bg-white">
+    <div class="max-w-[800px] mx-auto px-4 md:px-6">
+      <h2 class="font-heading text-3xl font-bold text-[#0B0B0B] mb-8 text-center">Frequently Asked Questions About Cleaning in {loc.name}</h2>
+      <div class="space-y-4">
+        <details class="group bg-[#F8FAFB] rounded-xl p-5 cursor-pointer">
+          <summary class="flex items-center justify-between font-semibold">
+            Are there reliable cleaners in {loc.name}?
+            <svg class="w-5 h-5 group-open:rotate-180 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+          </summary>
+          <p class="mt-3 text-sm text-[#3C494C]">Absolutely. Sanctuary Shine provides professional, DBS-checked, and fully insured cleaning services across {loc.name}. We have {loc.businessCount}+ satisfied customers in the area.</p>
+        </details>
+        <details class="group bg-[#F8FAFB] rounded-xl p-5 cursor-pointer">
+          <summary class="flex items-center justify-between font-semibold">
+            What areas of {loc.name} do you cover?
+            <svg class="w-5 h-5 group-open:rotate-180 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+          </summary>
+          <p class="mt-3 text-sm text-[#3C494C]">We cover all parts of {loc.name} including {loc.areas.slice(0, 5).join(', ')} and more. Postcodes covered: {loc.postcodes}.</p>
+        </details>
+        <details class="group bg-[#F8FAFB] rounded-xl p-5 cursor-pointer">
+          <summary class="flex items-center justify-between font-semibold">
+            How much does cleaning cost in {loc.name}?
+            <svg class="w-5 h-5 group-open:rotate-180 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+          </summary>
+          <p class="mt-3 text-sm text-[#3C494C]">Our prices are competitive and transparent. Domestic cleaning starts from £25 per hour, commercial from £12 per hour. Get a free quote and we'll confirm within 2 hours.</p>
+        </details>
+        <details class="group bg-[#F8FAFB] rounded-xl p-5 cursor-pointer">
+          <summary class="flex items-center justify-between font-semibold">
+            How do I book cleaners in {loc.name}?
+            <svg class="w-5 h-5 group-open:rotate-180 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+          </summary>
+          <p class="mt-3 text-sm text-[#3C494C]">You can book online through our quote form, call us at {SITE.phone}, or email {SITE.email}. We'll confirm your booking within 2 hours.</p>
+        </details>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section class="py-16 md:py-20 bg-gradient-to-r from-[#00C2D1] to-[#008C99]">
+    <div class="max-w-[800px] mx-auto px-4 md:px-6 text-center text-white">
+      <h2 class="font-heading text-3xl md:text-4xl font-bold mb-4">Looking for Cleaners in {loc.name}?</h2>
+      <p class="text-lg opacity-90 mb-8">Get your free, no-obligation quote today. We'll respond within 2 hours.</p>
+      <a href="/get-a-quote" class="inline-block bg-[#FFD200] text-[#0B0B0B] px-8 py-4 rounded-xl font-bold text-lg hover:bg-[#D6A900] transition-all hover:scale-105 shadow-lg">
+        Get a Free Quote
+      </a>
+    </div>
+  </section>
+</BaseLayout>

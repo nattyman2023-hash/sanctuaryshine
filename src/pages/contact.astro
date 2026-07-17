@@ -1,0 +1,119 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { SITE } from '../data/site';
+---
+
+<BaseLayout
+  title="Contact Us"
+  description="Get in touch with Sanctuary Shine. Call us, email us, or fill in our contact form. We're based in Salford and serve all of Greater Manchester."
+>
+  <section class="bg-gradient-to-br from-white via-[#D9FBFF]/30 to-white py-16 md:py-20">
+    <div class="max-w-[1200px] mx-auto px-4 md:px-6 text-center">
+      <h1 class="font-heading text-4xl md:text-5xl font-bold text-[#0B0B0B] mb-4">Contact Us</h1>
+      <p class="text-lg md:text-xl text-[#3C494C] max-w-2xl mx-auto">We'd love to hear from you. Get in touch for a free quote or to ask us anything.</p>
+    </div>
+  </section>
+
+  <section class="py-16 md:py-20">
+    <div class="max-w-[1200px] mx-auto px-4 md:px-6">
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <!-- Contact Info -->
+        <div class="space-y-6">
+          <div class="bg-white rounded-xl p-6 border border-gray-100 shadow-sm">
+            <div class="w-12 h-12 rounded-full bg-[#D9FBFF] flex items-center justify-center text-[#00C2D1] mb-4">
+              <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"/></svg>
+            </div>
+            <h3 class="font-semibold text-lg mb-2">Phone</h3>
+            <a href={`tel:${SITE.phoneLink}`} class="text-[#00C2D1] font-semibold hover:underline">{SITE.phone}</a>
+            <p class="text-sm text-[#3C494C] mt-1">Mon-Fri: 8am-6pm, Sat: 9am-4pm</p>
+          </div>
+          <div class="bg-white rounded-xl p-6 border border-gray-100 shadow-sm">
+            <div class="w-12 h-12 rounded-full bg-[#D9FBFF] flex items-center justify-center text-[#00C2D1] mb-4">
+              <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
+            </div>
+            <h3 class="font-semibold text-lg mb-2">Email</h3>
+            <a href={`mailto:${SITE.email}`} class="text-[#00C2D1] font-semibold hover:underline">{SITE.email}</a>
+            <p class="text-sm text-[#3C494C] mt-1">We aim to respond within 2 hours</p>
+          </div>
+          <div class="bg-white rounded-xl p-6 border border-gray-100 shadow-sm">
+            <div class="w-12 h-12 rounded-full bg-[#D9FBFF] flex items-center justify-center text-[#00C2D1] mb-4">
+              <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+            </div>
+            <h3 class="font-semibold text-lg mb-2">Address</h3>
+            <p class="text-sm text-[#3C494C]">{SITE.address.street}<br />{SITE.address.city}, {SITE.address.postcode}</p>
+          </div>
+        </div>
+
+        <!-- Contact Form -->
+        <div class="lg:col-span-2 bg-white rounded-2xl p-8 border border-gray-100 shadow-sm">
+          <h2 class="font-heading text-2xl font-bold text-[#0B0B0B] mb-6">Send Us a Message</h2>
+          <form id="contact-form-page" class="space-y-4" action="#" method="POST">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <label class="block text-sm font-medium text-[#0B0B0B] mb-1">Full Name *</label>
+                <input type="text" name="name" required class="w-full px-4 py-3 rounded-lg border border-gray-200 focus:border-[#00C2D1] focus:ring-2 focus:ring-[#00C2D1]/20 outline-none transition-all" placeholder="Your name" />
+              </div>
+              <div>
+                <label class="block text-sm font-medium text-[#0B0B0B] mb-1">Email Address *</label>
+                <input type="email" name="email" required class="w-full px-4 py-3 rounded-lg border border-gray-200 focus:border-[#00C2D1] focus:ring-2 focus:ring-[#00C2D1]/20 outline-none transition-all" placeholder="your@email.com" />
+              </div>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <label class="block text-sm font-medium text-[#0B0B0B] mb-1">Phone Number</label>
+                <input type="tel" name="phone" class="w-full px-4 py-3 rounded-lg border border-gray-200 focus:border-[#00C2D1] focus:ring-2 focus:ring-[#00C2D1]/20 outline-none transition-all" placeholder="07123 456789" />
+              </div>
+              <div>
+                <label class="block text-sm font-medium text-[#0B0B0B] mb-1">Postcode</label>
+                <input type="text" name="postcode" class="w-full px-4 py-3 rounded-lg border border-gray-200 focus:border-[#00C2D1] focus:ring-2 focus:ring-[#00C2D1]/20 outline-none transition-all" placeholder="M50 2QH" />
+              </div>
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-[#0B0B0B] mb-1">Subject</label>
+              <select name="subject" class="w-full px-4 py-3 rounded-lg border border-gray-200 focus:border-[#00C2D1] focus:ring-2 focus:ring-[#00C2D1]/20 outline-none transition-all bg-white">
+                <option value="">Please select...</option>
+                <option value="general">General Enquiry</option>
+                <option value="quote">Request a Quote</option>
+                <option value="booking">Book a Clean</option>
+                <option value="feedback">Feedback</option>
+              </select>
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-[#0B0B0B] mb-1">Message *</label>
+              <textarea name="message" required rows="5" class="w-full px-4 py-3 rounded-lg border border-gray-200 focus:border-[#00C2D1] focus:ring-2 focus:ring-[#00C2D1]/20 outline-none transition-all" placeholder="Tell us how we can help..."></textarea>
+            </div>
+            <button type="submit" class="w-full bg-[#FFD200] text-[#0B0B0B] py-4 rounded-xl font-bold text-lg hover:bg-[#D6A900] transition-all shadow-md">
+              Send Message
+            </button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </section>
+</BaseLayout>
+
+<script>
+  const form = document.getElementById('contact-form-page');
+  if (form) {
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const btn = form.querySelector('button[type="submit"]');
+      const originalText = btn.textContent;
+      btn.disabled = true;
+      btn.textContent = 'Sending...';
+      btn.classList.add('opacity-70');
+      await new Promise(resolve => setTimeout(resolve, 1500));
+      btn.textContent = '✓ Message Sent!';
+      btn.classList.remove('bg-[#FFD200]', 'hover:bg-[#D6A900]');
+      btn.classList.add('bg-green-500', 'text-white');
+      form.reset();
+      setTimeout(() => {
+        btn.textContent = originalText;
+        btn.classList.remove('bg-green-500', 'text-white');
+        btn.classList.add('bg-[#FFD200]', 'hover:bg-[#D6A900]');
+        btn.disabled = false;
+        btn.classList.remove('opacity-70');
+      }, 3000);
+    });
+  }
+</script>

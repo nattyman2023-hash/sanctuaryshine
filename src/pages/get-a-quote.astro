@@ -1,0 +1,120 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { SITE } from '../data/site';
+import { serviceCategories } from '../data/services';
+---
+
+<BaseLayout
+  title="Get a Free Quote"
+  description="Get a free, no-obligation quote for professional cleaning services in Salford and Greater Manchester. We'll respond within 2 hours."
+>
+  <section class="bg-gradient-to-br from-white via-[#D9FBFF]/30 to-white py-16 md:py-20">
+    <div class="max-w-[1200px] mx-auto px-4 md:px-6 text-center">
+      <h1 class="font-heading text-4xl md:text-5xl font-bold text-[#0B0B0B] mb-4">Get a Free Quote</h1>
+      <p class="text-lg md:text-xl text-[#3C494C] max-w-2xl mx-auto">Fill in the form below and we'll provide a transparent, no-obligation quote within 2 hours.</p>
+    </div>
+  </section>
+
+  <section class="py-16 md:py-20">
+    <div class="max-w-[800px] mx-auto px-4 md:px-6">
+      <div class="bg-white rounded-2xl p-8 border border-gray-100 shadow-sm">
+        <form id="quote-form" class="space-y-5" action="#" method="POST">
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+            <div>
+              <label class="block text-sm font-medium text-[#0B0B0B] mb-1">Full Name *</label>
+              <input type="text" name="name" required class="w-full px-4 py-3 rounded-lg border border-gray-200 focus:border-[#00C2D1] focus:ring-2 focus:ring-[#00C2D1]/20 outline-none transition-all" placeholder="Your name" />
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-[#0B0B0B] mb-1">Email Address *</label>
+              <input type="email" name="email" required class="w-full px-4 py-3 rounded-lg border border-gray-200 focus:border-[#00C2D1] focus:ring-2 focus:ring-[#00C2D1]/20 outline-none transition-all" placeholder="your@email.com" />
+            </div>
+          </div>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+            <div>
+              <label class="block text-sm font-medium text-[#0B0B0B] mb-1">Phone Number *</label>
+              <input type="tel" name="phone" required class="w-full px-4 py-3 rounded-lg border border-gray-200 focus:border-[#00C2D1] focus:ring-2 focus:ring-[#00C2D1]/20 outline-none transition-all" placeholder="07123 456789" />
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-[#0B0B0B] mb-1">Postcode *</label>
+              <input type="text" name="postcode" required class="w-full px-4 py-3 rounded-lg border border-gray-200 focus:border-[#00C2D1] focus:ring-2 focus:ring-[#00C2D1]/20 outline-none transition-all" placeholder="M50 2QH" />
+            </div>
+          </div>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+            <div>
+              <label class="block text-sm font-medium text-[#0B0B0B] mb-1">Cleaning Type *</label>
+              <select name="cleaningType" required class="w-full px-4 py-3 rounded-lg border border-gray-200 focus:border-[#00C2D1] focus:ring-2 focus:ring-[#00C2D1]/20 outline-none transition-all bg-white">
+                <option value="">Please select...</option>
+                {serviceCategories.map(cat => (
+                  <option value={cat.slug}>{cat.title}</option>
+                ))}
+              </select>
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-[#0B0B0B] mb-1">Property Type *</label>
+              <select name="propertyType" required class="w-full px-4 py-3 rounded-lg border border-gray-200 focus:border-[#00C2D1] focus:ring-2 focus:ring-[#00C2D1]/20 outline-none transition-all bg-white">
+                <option value="">Please select...</option>
+                <option value="house">House</option>
+                <option value="flat">Flat / Apartment</option>
+                <option value="office">Office</option>
+                <option value="retail">Retail Unit</option>
+                <option value="airbnb">Airbnb / Holiday Let</option>
+                <option value="other">Other</option>
+              </select>
+            </div>
+          </div>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+            <div>
+              <label class="block text-sm font-medium text-[#0B0B0B] mb-1">Number of Bedrooms / Offices</label>
+              <select name="size" class="w-full px-4 py-3 rounded-lg border border-gray-200 focus:border-[#00C2D1] focus:ring-2 focus:ring-[#00C2D1]/20 outline-none transition-all bg-white">
+                <option value="">Please select...</option>
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+                <option value="4">4</option>
+                <option value="5">5+</option>
+              </select>
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-[#0B0B0B] mb-1">Preferred Date</label>
+              <input type="date" name="preferredDate" class="w-full px-4 py-3 rounded-lg border border-gray-200 focus:border-[#00C2D1] focus:ring-2 focus:ring-[#00C2D1]/20 outline-none transition-all" />
+            </div>
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-[#0B0B0B] mb-1">Additional Details</label>
+            <textarea name="message" rows="4" class="w-full px-4 py-3 rounded-lg border border-gray-200 focus:border-[#00C2D1] focus:ring-2 focus:ring-[#00C2D1]/20 outline-none transition-all" placeholder="Tell us about any specific requirements, access instructions, or questions..."></textarea>
+          </div>
+          <button type="submit" class="w-full bg-[#FFD200] text-[#0B0B0B] py-4 rounded-xl font-bold text-lg hover:bg-[#D6A900] transition-all shadow-md">
+            Request My Free Quote
+          </button>
+          <p class="text-xs text-[#3C494C] text-center">By submitting, you agree to our <a href="/privacy-policy" class="text-[#00C2D1] hover:underline">Privacy Policy</a>.</p>
+        </form>
+      </div>
+    </div>
+  </section>
+</BaseLayout>
+
+<script>
+  const quoteForm = document.getElementById('quote-form');
+  if (quoteForm) {
+    quoteForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const btn = quoteForm.querySelector('button[type="submit"]');
+      const originalText = btn.textContent;
+      btn.disabled = true;
+      btn.textContent = 'Sending Request...';
+      btn.classList.add('opacity-70');
+      await new Promise(resolve => setTimeout(resolve, 1500));
+      btn.textContent = '✓ Quote Requested! We\'ll be in touch soon.';
+      btn.classList.remove('bg-[#FFD200]', 'hover:bg-[#D6A900]');
+      btn.classList.add('bg-green-500', 'text-white');
+      quoteForm.reset();
+      setTimeout(() => {
+        btn.textContent = originalText;
+        btn.classList.remove('bg-green-500', 'text-white');
+        btn.classList.add('bg-[#FFD200]', 'hover:bg-[#D6A900]');
+        btn.disabled = false;
+        btn.classList.remove('opacity-70');
+      }, 4000);
+    });
+  }
+</script>

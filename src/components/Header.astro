@@ -1,0 +1,165 @@
+---
+import { SITE } from '../data/site';
+import { serviceCategories } from '../data/services';
+import { locations } from '../data/locations';
+---
+
+<header class="bg-white/90 backdrop-blur-md sticky top-0 z-50 shadow-sm transition-all duration-300" id="site-header">
+  <nav class="max-w-[1200px] mx-auto px-4 md:px-6 h-20 flex items-center justify-between">
+    <!-- Logo -->
+    <a href="/" class="flex items-center gap-2 no-underline">
+      <img src="/images/logo/logo.png" alt="Sanctuary Shine - Professional Cleaning Services" class="h-10 md:h-12 w-auto" width="160" height="48" />
+    </a>
+
+    <!-- Desktop Navigation -->
+    <div class="hidden lg:flex items-center gap-6">
+      <a href="/" class="text-sm font-medium text-[#3C494C] hover:text-[#00C2D1] transition-colors">Home</a>
+      
+      <!-- Services Dropdown -->
+      <div class="relative group">
+        <a href="/services" class="text-sm font-medium text-[#3C494C] hover:text-[#00C2D1] transition-colors flex items-center gap-1">
+          Services
+          <svg class="w-3 h-3 mt-0.5 group-hover:rotate-180 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+        </a>
+        <div class="absolute top-full left-0 mt-2 w-56 bg-white rounded-xl shadow-lg border border-gray-100 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
+          <div class="py-2">
+            {serviceCategories.map(service => (
+              <a href={`/services/${service.slug}`} class="block px-4 py-2.5 text-sm text-[#3C494C] hover:text-[#00C2D1] hover:bg-[#D9FBFF] transition-colors">
+                {service.title}
+              </a>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      <!-- Areas Dropdown -->
+      <div class="relative group">
+        <a href="/areas" class="text-sm font-medium text-[#3C494C] hover:text-[#00C2D1] transition-colors flex items-center gap-1">
+          Areas We Cover
+          <svg class="w-3 h-3 mt-0.5 group-hover:rotate-180 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+        </a>
+        <div class="absolute top-full left-0 mt-2 w-64 bg-white rounded-xl shadow-lg border border-gray-100 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50 max-h-80 overflow-y-auto">
+          <div class="py-2">
+            {locations.map(loc => (
+              <a href={`/areas/${loc.urlSlug}`} class="block px-4 py-2.5 text-sm text-[#3C494C] hover:text-[#00C2D1] hover:bg-[#D9FBFF] transition-colors">
+                Cleaners in {loc.name}
+              </a>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      <a href="/about" class="text-sm font-medium text-[#3C494C] hover:text-[#00C2D1] transition-colors">About Us</a>
+      <a href="/blog" class="text-sm font-medium text-[#3C494C] hover:text-[#00C2D1] transition-colors">Blog</a>
+      <a href="/contact" class="text-sm font-medium text-[#3C494C] hover:text-[#00C2D1] transition-colors">Contact</a>
+
+      <a href="/get-a-quote" class="bg-[#FFD200] text-[#0B0B0B] px-6 py-2.5 rounded-lg font-semibold text-sm hover:bg-[#D6A900] transition-all hover:scale-105 shadow-sm">
+        Get a Free Quote
+      </a>
+    </div>
+
+    <!-- Mobile Menu Button -->
+    <button id="mobile-menu-btn" class="lg:hidden text-[#0B0B0B] p-2" aria-label="Toggle menu">
+      <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path id="menu-icon-open" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
+        <path id="menu-icon-close" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" class="hidden"/>
+      </svg>
+    </button>
+  </nav>
+
+  <!-- Mobile Menu -->
+  <div id="mobile-menu" class="lg:hidden hidden bg-white border-t border-gray-100 shadow-lg">
+    <div class="px-4 py-4 space-y-1 max-h-[80vh] overflow-y-auto">
+      <a href="/" class="block py-3 text-sm font-medium text-[#0B0B0B] border-b border-gray-50">Home</a>
+      
+      <div class="py-2">
+        <button class="mobile-submenu-toggle flex items-center justify-between w-full py-3 text-sm font-medium text-[#0B0B0B]" data-target="mobile-services">
+          Services
+          <svg class="w-3 h-3 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+        </button>
+        <div id="mobile-services" class="hidden pl-4 space-y-1 pb-2">
+          {serviceCategories.map(service => (
+            <a href={`/services/${service.slug}`} class="block py-2 text-sm text-[#3C494C] hover:text-[#00C2D1]">{service.title}</a>
+          ))}
+        </div>
+      </div>
+
+      <div class="py-2">
+        <button class="mobile-submenu-toggle flex items-center justify-between w-full py-3 text-sm font-medium text-[#0B0B0B]" data-target="mobile-areas">
+          Areas We Cover
+          <svg class="w-3 h-3 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+        </button>
+        <div id="mobile-areas" class="hidden pl-4 space-y-1 pb-2">
+          {locations.map(loc => (
+            <a href={`/areas/${loc.urlSlug}`} class="block py-2 text-sm text-[#3C494C] hover:text-[#00C2D1]">Cleaners in {loc.name}</a>
+          ))}
+        </div>
+      </div>
+
+      <a href="/about" class="block py-3 text-sm font-medium text-[#0B0B0B] border-b border-gray-50">About Us</a>
+      <a href="/blog" class="block py-3 text-sm font-medium text-[#0B0B0B] border-b border-gray-50">Blog</a>
+      <a href="/contact" class="block py-3 text-sm font-medium text-[#0B0B0B] border-b border-gray-50">Contact</a>
+      
+      <div class="pt-4 space-y-3">
+        <a href="/get-a-quote" class="block w-full text-center bg-[#FFD200] text-[#0B0B0B] px-6 py-3 rounded-lg font-semibold text-sm hover:bg-[#D6A900] transition-colors">
+          Get a Free Quote
+        </a>
+        <a href={`tel:${SITE.phoneLink}`} class="block w-full text-center bg-[#00C2D1] text-white px-6 py-3 rounded-lg font-semibold text-sm hover:bg-[#008C99] transition-colors">
+          Call {SITE.phone}
+        </a>
+      </div>
+    </div>
+  </div>
+</header>
+
+<script>
+  // Mobile menu toggle
+  const menuBtn = document.getElementById('mobile-menu-btn');
+  const mobileMenu = document.getElementById('mobile-menu');
+  const iconOpen = document.getElementById('menu-icon-open');
+  const iconClose = document.getElementById('menu-icon-close');
+
+  if (menuBtn && mobileMenu) {
+    menuBtn.addEventListener('click', () => {
+      mobileMenu.classList.toggle('hidden');
+      iconOpen?.classList.toggle('hidden');
+      iconClose?.classList.toggle('hidden');
+    });
+  }
+
+  // Mobile submenu toggles
+  document.querySelectorAll('.mobile-submenu-toggle').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const targetId = btn.getAttribute('data-target');
+      const target = document.getElementById(targetId);
+      if (target) {
+        target.classList.toggle('hidden');
+        const arrow = btn.querySelector('svg');
+        if (arrow) {
+          arrow.classList.toggle('rotate-180');
+        }
+      }
+    });
+  });
+
+  // Close mobile menu on link click
+  mobileMenu?.querySelectorAll('a').forEach(link => {
+    link.addEventListener('click', () => {
+      mobileMenu.classList.add('hidden');
+      iconOpen?.classList.remove('hidden');
+      iconClose?.classList.add('hidden');
+    });
+  });
+
+  // Header shadow on scroll
+  const header = document.getElementById('site-header');
+  window.addEventListener('scroll', () => {
+    if (window.scrollY > 20) {
+      header?.classList.add('shadow-md');
+      header?.classList.remove('shadow-sm');
+    } else {
+      header?.classList.add('shadow-sm');
+      header?.classList.remove('shadow-md');
+    }
+  });
+</script>

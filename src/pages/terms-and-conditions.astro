@@ -1,0 +1,61 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { SITE } from '../data/site';
+---
+
+<BaseLayout
+  title="Terms and Conditions"
+  description="Sanctuary Shine Terms and Conditions. Please read these terms carefully before using our services."
+  noIndex={true}
+>
+  <section class="py-16 md:py-20">
+    <div class="max-w-[800px] mx-auto px-4 md:px-6">
+      <h1 class="font-heading text-4xl font-bold text-[#0B0B0B] mb-8">Terms and Conditions</h1>
+      <div class="prose prose-gray max-w-none space-y-6 text-[#3C494C]">
+        <p><strong>Last updated:</strong> January 2024</p>
+
+        <h2 class="font-heading text-2xl font-semibold text-[#0B0B0B] mt-8">1. Introduction</h2>
+        <p>These Terms and Conditions govern your use of Sanctuary Shine's cleaning services and website. By booking our services, you agree to these terms.</p>
+
+        <h2 class="font-heading text-2xl font-semibold text-[#0B0B0B] mt-8">2. Services</h2>
+        <p>Sanctuary Shine provides professional domestic and commercial cleaning services. We reserve the right to refuse service to any customer.</p>
+
+        <h2 class="font-heading text-2xl font-semibold text-[#0B0B0B] mt-8">3. Bookings and Cancellations</h2>
+        <ul class="list-disc pl-6 space-y-2">
+          <li>All bookings must be confirmed via email or phone.</li>
+          <li>Cancellations must be made at least 24 hours before the scheduled service.</li>
+          <li>Late cancellations may incur a charge of 50% of the service fee.</li>
+          <li>We reserve the right to cancel or reschedule services due to unforeseen circumstances.</li>
+        </ul>
+
+        <h2 class="font-heading text-2xl font-semibold text-[#0B0B0B] mt-8">4. Pricing and Payment</h2>
+        <ul class="list-disc pl-6 space-y-2">
+          <li>Prices are quoted per service and may vary based on property size and requirements.</li>
+          <li>Payment is due upon completion of the service unless otherwise agreed.</li>
+          <li>We accept bank transfer, cash, and card payments.</li>
+        </ul>
+
+        <h2 class="font-heading text-2xl font-semibold text-[#0B0B0B] mt-8">5. Satisfaction Guarantee</h2>
+        <p>If you are not satisfied with any aspect of our cleaning service, please contact us within 24 hours. We will re-clean the affected areas at no additional cost.</p>
+
+        <h2 class="font-heading text-2xl font-semibold text-[#0B0B0B] mt-8">6. Liability</h2>
+        <p>Sanctuary Shine holds public liability insurance up to £10 million. While we take every care with your property, we recommend that customers have their own contents insurance for valuable items.</p>
+
+        <h2 class="font-heading text-2xl font-semibold text-[#0B0B0B] mt-8">7. Customer Responsibilities</h2>
+        <ul class="list-disc pl-6 space-y-2">
+          <li>Ensure safe access to the property on the scheduled date.</li>
+          <li>Secure any valuable or fragile items before our arrival.</li>
+          <li>Provide clear instructions for any specific requirements.</li>
+          <li>Ensure pets are secured during the cleaning service.</li>
+        </ul>
+
+        <h2 class="font-heading text-2xl font-semibold text-[#0B0B0B] mt-8">8. Contact</h2>
+        <p>For any questions about these terms, please contact us:</p>
+        <p>
+          Email: <a href={`mailto:${SITE.email}`} class="text-[#00C2D1] hover:underline">{SITE.email}</a><br />
+          Phone: <a href={`tel:${SITE.phoneLink}`} class="text-[#00C2D1] hover:underline">{SITE.phone}</a>
+        </p>
+      </div>
+    </div>
+  </section>
+</BaseLayout>

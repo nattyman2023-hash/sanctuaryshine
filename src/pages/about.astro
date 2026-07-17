@@ -1,0 +1,107 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { SITE } from '../data/site';
+import { services } from '../data/services';
+---
+
+<BaseLayout
+  title="About Us"
+  description="Learn about Sanctuary Shine — Salford and Greater Manchester's trusted cleaning company. Professional, local, and fully insured."
+>
+  <!-- Hero -->
+  <section class="bg-gradient-to-br from-white via-[#D9FBFF]/30 to-white py-16 md:py-20">
+    <div class="max-w-[1200px] mx-auto px-4 md:px-6 text-center">
+      <h1 class="font-heading text-4xl md:text-5xl font-bold text-[#0B0B0B] mb-4">About Sanctuary Shine</h1>
+      <p class="text-lg md:text-xl text-[#3C494C] max-w-2xl mx-auto">Your local Greater Manchester cleaning team, dedicated to turning every home and business into a spotless sanctuary.</p>
+    </div>
+  </section>
+
+  <!-- Our Story -->
+  <section class="py-16 md:py-20">
+    <div class="max-w-[1200px] mx-auto px-4 md:px-6">
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+        <div>
+          <h2 class="font-heading text-3xl md:text-4xl font-bold text-[#0B0B0B] mb-6">Our Story</h2>
+          <p class="text-[#3C494C] mb-4 leading-relaxed">
+            Sanctuary Shine was founded in {SITE.foundedYear} with a simple mission: to provide reliable, professional cleaning services that give people back their most valuable resource — time.
+          </p>
+          <p class="text-[#3C494C] mb-4 leading-relaxed">
+            Based in Salford Quays, we started by cleaning homes for busy professionals in MediaCityUK and quickly grew through word of mouth. Today, we serve hundreds of homes and businesses across all ten boroughs of Greater Manchester.
+          </p>
+          <p class="text-[#3C494C] mb-4 leading-relaxed">
+            What sets us apart is our commitment to quality, consistency, and trust. Every cleaner is DBS checked, fully trained, and insured. We use eco-friendly products because we care about your home and the environment.
+          </p>
+          <p class="text-[#3C494C] leading-relaxed">
+            We're not a franchise or a call centre. We're a local team that takes pride in making Greater Manchester homes and businesses shine.
+          </p>
+        </div>
+        <div class="relative rounded-2xl overflow-hidden shadow-xl">
+          <img src="/images/cleaning-service.jpg" alt="Professional cleaning service by Sanctuary Shine in Greater Manchester" class="w-full h-full object-cover absolute inset-0" loading="lazy" />
+          <div class="bg-gradient-to-br from-[#00C2D1]/95 to-[#008C99]/95 p-8 text-white relative z-10">
+            <div class="grid grid-cols-2 gap-6 text-center">
+              <div>
+                <div class="text-4xl font-heading font-bold mb-1">500+</div>
+                <p class="text-sm opacity-90">Happy Customers</p>
+              </div>
+              <div>
+                <div class="text-4xl font-heading font-bold mb-1">10</div>
+                <p class="text-sm opacity-90">GM Boroughs Covered</p>
+              </div>
+              <div>
+                <div class="text-4xl font-heading font-bold mb-1">4.9★</div>
+                <p class="text-sm opacity-90">Average Rating</p>
+              </div>
+              <div>
+                <div class="text-4xl font-heading font-bold mb-1">100%</div>
+                <p class="text-sm opacity-90">DBS Checked Staff</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Values -->
+  <section class="py-16 md:py-20 bg-white">
+    <div class="max-w-[1200px] mx-auto px-4 md:px-6">
+      <div class="text-center mb-12">
+        <h2 class="font-heading text-3xl md:text-4xl font-bold text-[#0B0B0B] mb-4">Our Values</h2>
+      </div>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div class="text-center p-6">
+          <div class="w-16 h-16 rounded-full bg-[#D9FBFF] flex items-center justify-center text-[#00C2D1] mx-auto mb-4">
+            <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
+          </div>
+          <h3 class="font-heading font-semibold text-xl mb-2">Trust & Safety</h3>
+          <p class="text-sm text-[#3C494C]">Every team member is DBS checked, fully insured, and trained to the highest standards. Your peace of mind is our priority.</p>
+        </div>
+        <div class="text-center p-6">
+          <div class="w-16 h-16 rounded-full bg-[#D9FBFF] flex items-center justify-center text-[#00C2D1] mx-auto mb-4">
+            <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+          </div>
+          <h3 class="font-heading font-semibold text-xl mb-2">Eco-Friendly</h3>
+          <p class="text-sm text-[#3C494C]">We use biodegradable, non-toxic cleaning products that are safe for your family, pets, and the planet. Clean doesn't have to mean chemicals.</p>
+        </div>
+        <div class="text-center p-6">
+          <div class="w-16 h-16 rounded-full bg-[#D9FBFF] flex items-center justify-center text-[#00C2D1] mx-auto mb-4">
+            <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
+          </div>
+          <h3 class="font-heading font-semibold text-xl mb-2">Local & Community</h3>
+          <p class="text-sm text-[#3C494C]">We're proud to be based in Salford and serve Greater Manchester. We support local businesses and employ local people.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section class="py-16 md:py-20 bg-gradient-to-r from-[#00C2D1] to-[#008C99]">
+    <div class="max-w-[800px] mx-auto px-4 md:px-6 text-center text-white">
+      <h2 class="font-heading text-3xl md:text-4xl font-bold mb-4">Ready to Experience the Sanctuary Shine Difference?</h2>
+      <p class="text-lg opacity-90 mb-8">Get your free, no-obligation quote today.</p>
+      <a href="/get-a-quote" class="inline-block bg-[#FFD200] text-[#0B0B0B] px-8 py-4 rounded-xl font-bold text-lg hover:bg-[#D6A900] transition-all hover:scale-105 shadow-lg">
+        Get a Free Quote
+      </a>
+    </div>
+  </section>
+</BaseLayout>

@@ -1,0 +1,66 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { services } from '../data/services';
+---
+
+<BaseLayout
+  title="Our Cleaning Services"
+  description="Sanctuary Shine offers professional domestic, commercial, deep, end-of-tenancy, Airbnb and office cleaning across Salford and Greater Manchester."
+>
+  <section class="bg-gradient-to-br from-white via-[#D9FBFF]/30 to-white py-16 md:py-20">
+    <div class="max-w-[1200px] mx-auto px-4 md:px-6 text-center">
+      <h1 class="font-heading text-4xl md:text-5xl font-bold text-[#0B0B0B] mb-4">Our Cleaning Services</h1>
+      <p class="text-lg md:text-xl text-[#3C494C] max-w-2xl mx-auto">Professional cleaning tailored to your needs — for homes, businesses, and rental properties across Greater Manchester.</p>
+    </div>
+  </section>
+
+  <section class="py-16 md:py-20">
+    <div class="max-w-[1200px] mx-auto px-4 md:px-6">
+      <div class="space-y-8">
+        {services.map((service, index) => (
+          <div class={`bg-white rounded-2xl border border-gray-100 overflow-hidden shadow-sm hover:shadow-md transition-all ${index % 2 === 1 ? 'md:flex-row-reverse' : ''} flex flex-col md:flex-row`}>
+            <div class="md:w-2/5 relative overflow-hidden">
+              <img 
+                src={index === 0 ? "/images/clean-home.jpg" : index === 1 ? "/images/office-cleaning.jpg" : index === 2 ? "/images/deep-cleaning.jpg" : index === 3 ? "/images/hero-kitchen.jpg" : index === 4 ? "/images/modern-living-room.jpg" : "/images/office-cleaning.jpg"} 
+                alt={`${service.title} service provided by Sanctuary Shine in Greater Manchester`}
+                class="w-full h-full object-cover absolute inset-0"
+                loading="lazy"
+              />
+              <div class="bg-gradient-to-br from-[#00C2D1]/90 to-[#008C99]/90 p-8 text-white flex flex-col justify-center h-full relative z-10">
+                <span class="material-symbols-outlined text-4xl mb-4">{service.icon}</span>
+                <h2 class="font-heading text-2xl font-bold mb-2">{service.title}</h2>
+                <p class="text-sm opacity-90 mb-4">{service.tagline}</p>
+                <p class="text-sm font-semibold">From {service.priceFrom}</p>
+              </div>
+            </div>
+            <div class="md:w-3/5 p-8">
+              <p class="text-[#3C494C] mb-6">{service.description}</p>
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-6">
+                {service.features.slice(0, 6).map(feature => (
+                  <div class="flex items-center gap-2 text-sm">
+                    <svg class="w-4 h-4 text-[#00C2D1] shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+                    <span>{feature}</span>
+                  </div>
+                ))}
+              </div>
+              <a href={`/services/${service.slug}`} class="inline-flex items-center gap-2 bg-[#FFD200] text-[#0B0B0B] px-6 py-3 rounded-lg font-semibold text-sm hover:bg-[#D6A900] transition-all">
+                View Full Details
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+              </a>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <section class="py-16 md:py-20 bg-gradient-to-r from-[#00C2D1] to-[#008C99]">
+    <div class="max-w-[800px] mx-auto px-4 md:px-6 text-center text-white">
+      <h2 class="font-heading text-3xl md:text-4xl font-bold mb-4">Not Sure Which Service You Need?</h2>
+      <p class="text-lg opacity-90 mb-8">Contact us and we'll help you find the perfect cleaning solution.</p>
+      <a href="/get-a-quote" class="inline-block bg-[#FFD200] text-[#0B0B0B] px-8 py-4 rounded-xl font-bold text-lg hover:bg-[#D6A900] transition-all hover:scale-105 shadow-lg">
+        Get a Free Quote
+      </a>
+    </div>
+  </section>
+</BaseLayout>

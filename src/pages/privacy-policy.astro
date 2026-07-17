@@ -1,0 +1,71 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { SITE } from '../data/site';
+---
+
+<BaseLayout
+  title="Privacy Policy"
+  description="Sanctuary Shine Privacy Policy. Learn how we collect, use, and protect your personal information."
+  noIndex={true}
+>
+  <section class="py-16 md:py-20">
+    <div class="max-w-[800px] mx-auto px-4 md:px-6">
+      <h1 class="font-heading text-4xl font-bold text-[#0B0B0B] mb-8">Privacy Policy</h1>
+      <div class="prose prose-gray max-w-none space-y-6 text-[#3C494C]">
+        <p><strong>Last updated:</strong> January 2024</p>
+
+        <h2 class="font-heading text-2xl font-semibold text-[#0B0B0B] mt-8">1. Introduction</h2>
+        <p>Sanctuary Shine ("we", "our", "us") is committed to protecting your privacy. This Privacy Policy explains how we collect, use, disclose, and safeguard your information when you visit our website or use our services.</p>
+
+        <h2 class="font-heading text-2xl font-semibold text-[#0B0B0B] mt-8">2. Information We Collect</h2>
+        <p>We may collect the following types of information:</p>
+        <ul class="list-disc pl-6 space-y-2">
+          <li><strong>Personal Identification Information:</strong> Name, email address, phone number, postal address, and postcode.</li>
+          <li><strong>Service Information:</strong> Details about your cleaning requirements, property type, and scheduling preferences.</li>
+          <li><strong>Technical Data:</strong> IP address, browser type, device information, and usage data collected through cookies.</li>
+        </ul>
+
+        <h2 class="font-heading text-2xl font-semibold text-[#0B0B0B] mt-8">3. How We Use Your Information</h2>
+        <p>We use the information we collect for the following purposes:</p>
+        <ul class="list-disc pl-6 space-y-2">
+          <li>To provide and manage our cleaning services</li>
+          <li>To respond to your enquiries and provide quotes</li>
+          <li>To process bookings and payments</li>
+          <li>To communicate with you about your account or services</li>
+          <li>To improve our website and services</li>
+          <li>To comply with legal obligations</li>
+        </ul>
+
+        <h2 class="font-heading text-2xl font-semibold text-[#0B0B0B] mt-8">4. Legal Basis for Processing</h2>
+        <p>We process your personal data based on the following legal grounds:</p>
+        <ul class="list-disc pl-6 space-y-2">
+          <li><strong>Consent:</strong> Where you have given us explicit consent to process your data.</li>
+          <li><strong>Contract:</strong> Where processing is necessary for the performance of a contract with you.</li>
+          <li><strong>Legitimate Interests:</strong> Where processing is necessary for our legitimate business interests.</li>
+        </ul>
+
+        <h2 class="font-heading text-2xl font-semibold text-[#0B0B0B] mt-8">5. Data Retention</h2>
+        <p>We retain your personal data only for as long as necessary to fulfil the purposes for which it was collected, including for legal, accounting, or reporting requirements.</p>
+
+        <h2 class="font-heading text-2xl font-semibold text-[#0B0B0B] mt-8">6. Your Rights</h2>
+        <p>Under UK data protection law, you have the following rights:</p>
+        <ul class="list-disc pl-6 space-y-2">
+          <li>The right to access your personal data</li>
+          <li>The right to rectification of inaccurate data</li>
+          <li>The right to erasure ("right to be forgotten")</li>
+          <li>The right to restrict processing</li>
+          <li>The right to data portability</li>
+          <li>The right to object to processing</li>
+        </ul>
+
+        <h2 class="font-heading text-2xl font-semibold text-[#0B0B0B] mt-8">7. Contact Us</h2>
+        <p>If you have any questions about this Privacy Policy, please contact us:</p>
+        <p>
+          Email: <a href={`mailto:${SITE.email}`} class="text-[#00C2D1] hover:underline">{SITE.email}</a><br />
+          Phone: <a href={`tel:${SITE.phoneLink}`} class="text-[#00C2D1] hover:underline">{SITE.phone}</a><br />
+          Address: {SITE.address.street}, {SITE.address.city}, {SITE.address.postcode}
+        </p>
+      </div>
+    </div>
+  </section>
+</BaseLayout>

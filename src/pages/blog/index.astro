@@ -1,0 +1,44 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { SITE } from '../../data/site';
+import { blogPosts } from '../../data/blogPosts';
+---
+
+<BaseLayout
+  title="Cleaning Blog | Sanctuary Shine"
+  description="Expert cleaning tips, guides, and advice for homes and businesses in Salford, Manchester, and Greater Manchester."
+>
+  <section class="bg-gradient-to-br from-white via-[#D9FBFF]/30 to-white py-16 md:py-20">
+    <div class="max-w-[1200px] mx-auto px-4 md:px-6 text-center">
+      <h1 class="font-heading text-4xl md:text-5xl font-bold text-[#0B0B0B] mb-4">Sanctuary Shine Blog</h1>
+      <p class="text-lg md:text-xl text-[#3C494C] max-w-2xl mx-auto">Expert cleaning tips, local guides, and advice for homes and businesses across Greater Manchester.</p>
+    </div>
+  </section>
+
+  <section class="py-16 md:py-20">
+    <div class="max-w-[1200px] mx-auto px-4 md:px-6">
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        {blogPosts.map(post => (
+          <a href={`/blog/${post.slug}`} class="group bg-white rounded-xl overflow-hidden border border-gray-100 hover:shadow-lg transition-all">
+            <div class="aspect-[16/9] overflow-hidden">
+              <img src={post.image} alt={post.title} class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" loading="lazy" />
+            </div>
+            <div class="p-5">
+              <div class="flex flex-wrap gap-2 mb-3">
+                {post.tags.map(tag => (
+                  <span class="text-xs bg-[#D9FBFF] text-[#008C99] px-2 py-1 rounded-full font-medium">{tag}</span>
+                ))}
+              </div>
+              <h2 class="font-heading font-semibold text-lg mb-2 group-hover:text-[#00C2D1] transition-colors">{post.title}</h2>
+              <p class="text-sm text-[#3C494C] mb-3">{post.excerpt}</p>
+              <div class="flex items-center justify-between text-xs text-[#3C494C]">
+                <span>{post.date}</span>
+                <span>{post.readTime}</span>
+              </div>
+            </div>
+          </a>
+        ))}
+      </div>
+    </div>
+  </section>
+</BaseLayout>

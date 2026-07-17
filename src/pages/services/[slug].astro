@@ -1,0 +1,190 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { services } from '../../data/services';
+import { SITE } from '../../data/site';
+
+export async function getStaticPaths() {
+  return services.map(service => ({
+    params: { slug: service.slug },
+    props: { service }
+  }));
+}
+
+const { service } = Astro.props;
+
+const serviceSchema = {
+  "@context": "https://schema.org",
+  "@type": "Service",
+  "name": `${service.title} | ${SITE.name}`,
+  "description": service.description,
+  "provider": {
+    "@type": "LocalBusiness",
+    "name": SITE.name,
+    "url": SITE.url
+  },
+  "areaServed": {
+    "@type": "City",
+    "name": "Greater Manchester"
+  }
+};
+---
+
+<BaseLayout
+  title={`${service.title} in Salford and Greater Manchester`}
+  description={service.description}
+  schema={serviceSchema}
+>
+  <!-- Hero -->
+  <section class="bg-gradient-to-br from-white via-[#D9FBFF]/30 to-white py-16 md:py-20">
+    <div class="max-w-[1200px] mx-auto px-4 md:px-6">
+      <div class="flex items-center gap-3 text-sm text-[#3C494C] mb-4">
+        <a href="/" class="hover:text-[#00C2D1]">Home</a>
+        <span>/</span>
+        <a href="/services" class="hover:text-[#00C2D1]">Services</a>
+        <span>/</span>
+        <span class="text-[#00C2D1] font-medium">{service.title}</span>
+      </div>
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-10 items-center">
+        <div>
+          <div class="w-16 h-16 rounded-xl bg-[#00C2D1] flex items-center justify-center text-white mb-6">
+            <span class="material-symbols-outlined text-3xl">{service.icon}</span>
+          </div>
+          <h1 class="font-heading text-4xl md:text-5xl font-bold text-[#0B0B0B] mb-4">{service.title} in Salford & Greater Manchester</h1>
+          <p class="text-lg text-[#3C494C] mb-4">{service.tagline}</p>
+          <p class="text-[#3C494C] mb-6">{service.description}</p>
+          <div class="flex flex-wrap gap-4">
+            <a href="/get-a-quote" class="bg-[#FFD200] text-[#0B0B0B] px-6 py-3 rounded-xl font-semibold hover:bg-[#D6A900] transition-all hover:scale-105 shadow-md">
+              Get a Free Quote
+            </a>
+            <a href={`tel:${SITE.phoneLink}`} class="bg-[#00C2D1] text-white px-6 py-3 rounded-xl font-semibold hover:bg-[#008C99] transition-all hover:scale-105 shadow-md">
+              Call {SITE.phone}
+            </a>
+          </div>
+        </div>
+        <div class="bg-gradient-to-br from-[#00C2D1] to-[#008C99] rounded-2xl p-6 text-white">
+          <p class="text-sm opacity-80 mb-2">Starting from</p>
+          <p class="text-3xl font-heading font-bold mb-4">{service.priceFrom}</p>
+          <p class="text-sm opacity-90 mb-4">{service.suitableFor}</p>
+          <div class="space-y-2">
+            {service.benefits.map(benefit => (
+              <div class="flex items-center gap-2 text-sm">
+                <svg class="w-4 h-4 text-[#FFD200] shrink-0" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+                <span>{benefit}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- What's Included -->
+  <section class="py-16 md:py-20">
+    <div class="max-w-[1200px] mx-auto px-4 md:px-6">
+      <h2 class="font-heading text-3xl font-bold text-[#0B0B0B] mb-8">What's Included in Our {service.title} Service</h2>
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        {service.features.map(feature => (
+          <div class="flex items-center gap-3 bg-white rounded-xl p-4 border border-gray-100">
+            <div class="w-10 h-10 rounded-full bg-[#D9FBFF] flex items-center justify-center text-[#00C2D1] shrink-0">
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+            </div>
+            <span class="text-sm font-medium">{feature}</span>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- Why Choose Us -->
+  <section class="py-16 md:py-20 bg-white">
+    <div class="max-w-[1200px] mx-auto px-4 md:px-6">
+      <h2 class="font-heading text-3xl font-bold text-[#0B0B0B] mb-8">Why Choose Sanctuary Shine for {service.title}?</h2>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div class="flex gap-4 p-4">
+          <div class="w-12 h-12 rounded-full bg-[#D9FBFF] flex items-center justify-center text-[#00C2D1] shrink-0">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
+          </div>
+          <div>
+            <h3 class="font-semibold text-lg mb-1">Fully Insured & DBS Checked</h3>
+            <p class="text-sm text-[#3C494C]">All our staff are vetted, trained, and covered by £10m public liability insurance.</p>
+          </div>
+        </div>
+        <div class="flex gap-4 p-4">
+          <div class="w-12 h-12 rounded-full bg-[#D9FBFF] flex items-center justify-center text-[#00C2D1] shrink-0">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+          </div>
+          <div>
+            <h3 class="font-semibold text-lg mb-1">Eco-Friendly Products</h3>
+            <p class="text-sm text-[#3C494C]">We use biodegradable, non-toxic cleaning products safe for your family and pets.</p>
+          </div>
+        </div>
+        <div class="flex gap-4 p-4">
+          <div class="w-12 h-12 rounded-full bg-[#D9FBFF] flex items-center justify-center text-[#00C2D1] shrink-0">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+          </div>
+          <div>
+            <h3 class="font-semibold text-lg mb-1">Flexible Scheduling</h3>
+            <p class="text-sm text-[#3C494C]">One-off, weekly, fortnightly, or bespoke schedules. No long-term contracts.</p>
+          </div>
+        </div>
+        <div class="flex gap-4 p-4">
+          <div class="w-12 h-12 rounded-full bg-[#D9FBFF] flex items-center justify-center text-[#00C2D1] shrink-0">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+          </div>
+          <div>
+            <h3 class="font-semibold text-lg mb-1">Local Greater Manchester Team</h3>
+            <p class="text-sm text-[#3C494C]">Based in Salford, serving all ten boroughs. Local people, local service.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ -->
+  <section class="py-16 md:py-20">
+    <div class="max-w-[800px] mx-auto px-4 md:px-6">
+      <h2 class="font-heading text-3xl font-bold text-[#0B0B0B] mb-8 text-center">Frequently Asked Questions</h2>
+      <div class="space-y-4">
+        <details class="group bg-white rounded-xl p-5 cursor-pointer border border-gray-100">
+          <summary class="flex items-center justify-between font-semibold">
+            How much does {service.title.toLowerCase()} cost?
+            <svg class="w-5 h-5 group-open:rotate-180 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+          </summary>
+          <p class="mt-3 text-sm text-[#3C494C]">Our {service.title.toLowerCase()} service starts from {service.priceFrom}. The final price depends on the size of your property and the specific requirements. We provide a free, no-obligation quote within 2 hours.</p>
+        </details>
+        <details class="group bg-white rounded-xl p-5 cursor-pointer border border-gray-100">
+          <summary class="flex items-center justify-between font-semibold">
+            Do I need to be home during the cleaning?
+            <svg class="w-5 h-5 group-open:rotate-180 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+          </summary>
+          <p class="mt-3 text-sm text-[#3C494C]">Not at all. Many of our customers provide us with a key or access code, and we clean while they're at work. All our staff are DBS checked and fully insured for your peace of mind.</p>
+        </details>
+        <details class="group bg-white rounded-xl p-5 cursor-pointer border border-gray-100">
+          <summary class="flex items-center justify-between font-semibold">
+            What areas do you cover for {service.title.toLowerCase()}?
+            <svg class="w-5 h-5 group-open:rotate-180 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+          </summary>
+          <p class="mt-3 text-sm text-[#3C494C]">We cover all ten boroughs of Greater Manchester: Salford, Manchester, Bolton, Bury, Oldham, Rochdale, Stockport, Tameside, Trafford, and Wigan, plus Manchester City Centre.</p>
+        </details>
+        <details class="group bg-white rounded-xl p-5 cursor-pointer border border-gray-100">
+          <summary class="flex items-center justify-between font-semibold">
+            What if I'm not satisfied with the clean?
+            <svg class="w-5 h-5 group-open:rotate-180 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+          </summary>
+          <p class="mt-3 text-sm text-[#3C494C]">Your satisfaction is guaranteed. If you're not happy with any aspect of our cleaning, let us know within 24 hours and we'll re-clean the affected areas for free.</p>
+        </details>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section class="py-16 md:py-20 bg-gradient-to-r from-[#00C2D1] to-[#008C99]">
+    <div class="max-w-[800px] mx-auto px-4 md:px-6 text-center text-white">
+      <h2 class="font-heading text-3xl md:text-4xl font-bold mb-4">Book Your {service.title} Today</h2>
+      <p class="text-lg opacity-90 mb-8">Get your free, no-obligation quote. We'll respond within 2 hours.</p>
+      <a href="/get-a-quote" class="inline-block bg-[#FFD200] text-[#0B0B0B] px-8 py-4 rounded-xl font-bold text-lg hover:bg-[#D6A900] transition-all hover:scale-105 shadow-lg">
+        Get a Free Quote
+      </a>
+    </div>
+  </section>
+</BaseLayout>
