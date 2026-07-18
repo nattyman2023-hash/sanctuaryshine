@@ -213,7 +213,7 @@ At Sanctuary Shine, we offer both <a href="/services/domestic-cleaning">domestic
 
 We've built our reputation on trust, quality, and local knowledge. Here's why Manchester residents and businesses choose us:
 
-- **500+ satisfied customers** across Greater Manchester
+- **200+ satisfied customers** across Greater Manchester
 - **4.9/5 average rating** from verified reviews
 - **Local team** based in Salford, serving all of Manchester
 - **Fully insured** with £10 million public liability cover

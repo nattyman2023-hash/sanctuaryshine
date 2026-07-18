@@ -12,7 +12,8 @@
 
 window.CHATBOT_CONFIG = {
   // Get your free API key at https://openrouter.ai
-  apiKey: "YOUR_OPENROUTER_API_KEY_HERE",
+  // API key now stored securely in .env - chatbot uses /api/chatbot-proxy endpoint
+  apiEndpoint: "/api/chatbot-proxy",
   
   // Free model from OpenRouter (alternatives: "mistralai/mistral-7b-instruct:free", "google/gemma-2-9b-it:free")
   model: "meta-llama/llama-3.2-3b-instruct:free",
@@ -27,7 +28,7 @@ ABOUT SANCTUARY SHINE:
 - We are a professional domestic and commercial cleaning company based in Salford, Greater Manchester
 - We serve all 10 boroughs of Greater Manchester: Salford, Manchester, Bolton, Bury, Oldham, Rochdale, Stockport, Tameside, Trafford, and Wigan
 - Phone: 0161 123 4567
-- Email: hello@sanctuaryshine.co.uk
+- Email: contact@sanctuaryshine.co.uk
 - Address: The Alexandra, MediaCityUK, Salford Quays, M50 2QH
 - Business hours: Mon-Fri 8am-6pm, Sat 9am-4pm, Sun closed
 
@@ -45,7 +46,7 @@ KEY FEATURES:
 - Flexible scheduling (one-off or regular)
 - No long-term contracts
 - Satisfaction guaranteed (free re-clean if not happy)
-- 500+ satisfied customers, 4.9/5 rating
+- Growing list of satisfied customers, 4.9/5 rating
 
 YOUR ROLE:
 - Answer questions about our services, pricing, and areas we cover
@@ -63,7 +64,7 @@ Always end conversations by offering to help with anything else or suggesting th
   enquiryEndpoint: "/send.php",
   
   // Owner email for enquiries
-  ownerEmail: "hello@sanctuaryshine.co.uk",
+  ownerEmail: "contact@sanctuaryshine.co.uk",
   
   // Welcome message
   welcomeMessage: "Hi there! 👋 I'm Shine, your Sanctuary Shine cleaning assistant. How can I help you today? Whether you need domestic cleaning, commercial cleaning, or just have a question, I'm here to help!",

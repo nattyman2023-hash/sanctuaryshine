@@ -191,20 +191,13 @@
     }
 
     async function callAI(userMessage) {
-      if (!config.apiKey || config.apiKey === 'YOUR_OPENROUTER_API_KEY_HERE') {
-        return "I'd love to help! However, I need an OpenRouter API key to be configured. Please call us at 0161 123 4567 or visit our Get a Quote page, and our team will be happy to assist you!";
-      }
-
       conversationHistory.push({ role: 'user', content: userMessage });
 
       try {
-        const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
+        const response = await fetch(config.apiEndpoint || '/api/chatbot-proxy', {
           method: 'POST',
           headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${config.apiKey}`,
-            'HTTP-Referer': window.location.origin,
-            'X-Title': 'Sanctuary Shine Chatbot'
+            'Content-Type': 'application/json'
           },
           body: JSON.stringify({
             model: config.model || 'meta-llama/llama-3.2-3b-instruct:free',
@@ -219,11 +212,11 @@
 
         if (!response.ok) throw new Error('API request failed');
         const data = await response.json();
-        const aiMessage = data.choices[0]?.message?.content || "I'm sorry, I couldn't process that. Please try again or call us at 0161 123 4567.";
+        const aiMessage = data.choices?.[0]?.message?.content || data.reply || "I'm sorry, I couldn't process that. Please try again or call us at 0161 123 4567.";
         conversationHistory.push({ role: 'assistant', content: aiMessage });
         return aiMessage;
       } catch (error) {
-        return "I'm having trouble connecting right now. Please call us at 0161 123 4567 or email hello@sanctuaryshine.co.uk and we'll be happy to help!";
+        return "I'm having trouble connecting right now. Please call us at 0161 123 4567 or email contact@sanctuaryshine.co.uk and we'll be happy to help!";
       }
     }
 

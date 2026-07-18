@@ -8,7 +8,7 @@ export const locations = [
     description: 'Sanctuary Shine provides professional cleaning services across Salford, from Salford Quays to the city centre. Whether you need domestic cleaners for your home or commercial cleaners for your business, our local team knows Salford inside out.',
     intro: 'Looking for reliable cleaners in Salford? Sanctuary Shine is your local cleaning team, serving homes and businesses across the M3, M5, M6, M7 and M50 postcode areas. From flat cleaning in the city centre to office cleaning at MediaCityUK, we deliver professional, trustworthy cleaning that you can count on.',
     areas: ['Salford Quays', 'MediaCityUK', 'Ordsall', 'Weaste', 'Pendleton', 'Broughton', 'Irlam', 'Eccles', 'Swinton', 'Walkden'],
-    businessCount: '800+',
+    businessCount: '50+',
     population: '270,000',
     specialities: ['Domestic cleaning in Salford', 'Commercial cleaning in Salford', 'End of tenancy cleaning in Salford', 'Deep cleaning in Salford', 'Airbnb cleaning in Salford', 'Office cleaning in Salford'],
     keywords: ['cleaners in Salford', 'domestic cleaners Salford', 'commercial cleaners Salford', 'deep cleaning Salford', 'end of tenancy cleaning Salford', 'house cleaners Salford', 'office cleaners Salford', 'cleaning services Salford']
@@ -22,7 +22,7 @@ export const locations = [
     description: 'Sanctuary Shine offers comprehensive cleaning services throughout Manchester. Our team covers domestic, commercial, deep, end of tenancy, and office cleaning across all Manchester postcodes.',
     intro: 'Searching for professional cleaners in Manchester? Sanctuary Shine provides top-quality cleaning services across the city. Whether you need regular domestic cleaning for your home, commercial cleaning for your business, or a thorough end of tenancy clean, our Manchester team is ready to help.',
     areas: ['Manchester City Centre', 'Northern Quarter', 'Ancoats', 'Spinningfields', 'Deansgate', 'Castlefield', 'Hulme', 'Moss Side', 'Withington', 'Didsbury', 'Chorlton', 'Fallowfield', 'Rusholme', 'Levenshulme', 'Burnage'],
-    businessCount: '2,000+',
+    businessCount: '50+',
     population: '550,000',
     specialities: ['Domestic cleaning in Manchester', 'Commercial cleaning in Manchester', 'End of tenancy cleaning in Manchester', 'Deep cleaning in Manchester', 'Airbnb cleaning in Manchester', 'Office cleaning in Manchester'],
     keywords: ['cleaners in Manchester', 'domestic cleaners Manchester', 'commercial cleaners Manchester', 'deep cleaning Manchester', 'end of tenancy cleaning Manchester', 'house cleaners Manchester', 'office cleaners Manchester', 'cleaning services Manchester']
@@ -36,7 +36,7 @@ export const locations = [
     description: 'Sanctuary Shine specialises in cleaning services across Manchester City Centre, covering apartments, offices, and commercial spaces in the heart of the city.',
     intro: 'Need cleaners in Manchester City Centre? Sanctuary Shine covers the M1, M2, M3 and M4 postcodes with professional cleaning for apartments, offices, and businesses. From studio flats in the Northern Quarter to corporate offices in Spinningfields, we keep the city centre sparkling.',
     areas: ['Northern Quarter', 'Spinningfields', 'Deansgate', 'Castlefield', 'Ancoats', 'Piccadilly', 'St Peter\'s Square', 'Oxford Road'],
-    businessCount: '1,200+',
+    businessCount: '50+',
     population: '100,000',
     specialities: ['Apartment cleaning Manchester City Centre', 'Office cleaning Manchester City Centre', 'Commercial cleaning Manchester City Centre', 'End of tenancy cleaning Manchester City Centre'],
     keywords: ['cleaners in Manchester City Centre', 'domestic cleaners Manchester City Centre', 'apartment cleaning Manchester City Centre', 'end of tenancy cleaning Manchester City Centre', 'office cleaners Manchester City Centre']
@@ -50,7 +50,7 @@ export const locations = [
     description: 'Sanctuary Shine provides professional cleaning services across Bolton. Our local team covers domestic, commercial, deep cleaning, and end of tenancy services throughout the BL postcode area.',
     intro: 'Looking for trusted cleaners in Bolton? Sanctuary Shine serves homes and businesses across Bolton and the surrounding areas. Whether you need regular house cleaning, a one-off deep clean, or professional office cleaning, our Bolton team delivers reliable service every time.',
     areas: ['Bolton Town Centre', 'Horwich', 'Farnworth', 'Kearsley', 'Little Lever', 'Westhoughton', 'Blackrod', 'Turton', 'Bromley Cross', 'Halliwell'],
-    businessCount: '600+',
+    businessCount: '50+',
     population: '260,000',
     specialities: ['Domestic cleaning in Bolton', 'Commercial cleaning in Bolton', 'Deep cleaning in Bolton', 'End of tenancy cleaning Bolton', 'House cleaners Bolton'],
     keywords: ['cleaners in Bolton', 'domestic cleaners Bolton', 'commercial cleaners Bolton', 'deep cleaning Bolton', 'end of tenancy cleaning Bolton', 'house cleaners Bolton']
@@ -64,7 +64,7 @@ export const locations = [
     description: 'Sanctuary Shine offers professional cleaning services in Bury. We cover domestic, commercial, and deep cleaning for homes and businesses across the Bury area.',
     intro: 'Searching for reliable cleaners in Bury? Sanctuary Shine provides professional cleaning services to homes and businesses across Bury, Ramsbottom, Prestwich, and surrounding areas. Our friendly team delivers consistent, high-quality cleaning you can trust.',
     areas: ['Bury Town Centre', 'Ramsbottom', 'Prestwich', 'Whitefield', 'Radcliffe', 'Tottington', 'Greenmount', 'Unsworth', 'Elton', 'Walmersley'],
-    businessCount: '400+',
+    businessCount: '50+',
     population: '190,000',
     specialities: ['Domestic cleaning in Bury', 'Commercial cleaning in Bury', 'Deep cleaning in Bury', 'End of tenancy cleaning Bury', 'House cleaners Bury'],
     keywords: ['cleaners in Bury', 'domestic cleaners Bury', 'commercial cleaners Bury', 'deep cleaning Bury', 'end of tenancy cleaning Bury', 'house cleaners Bury']
@@ -78,7 +78,7 @@ export const locations = [
     description: 'Sanctuary Shine provides comprehensive cleaning services across Oldham. Our team covers domestic, commercial, deep cleaning, and end of tenancy services throughout the Oldham area.',
     intro: 'Need professional cleaners in Oldham? Sanctuary Shine serves homes and businesses across Oldham, Royton, Chadderton, and surrounding areas. From regular house cleaning to commercial office cleaning, our Oldham team delivers spotless results every time.',
     areas: ['Oldham Town Centre', 'Royton', 'Chadderton', 'Failsworth', 'Shaw', 'Crompton', 'Lees', 'Saddleworth', 'Greenfield', 'Hollinwood'],
-    businessCount: '500+',
+    businessCount: '50+',
     population: '235,000',
     specialities: ['Domestic cleaning in Oldham', 'Commercial cleaning in Oldham', 'Deep cleaning in Oldham', 'End of tenancy cleaning Oldham', 'House cleaners Oldham'],
     keywords: ['cleaners in Oldham', 'domestic cleaners Oldham', 'commercial cleaners Oldham', 'deep cleaning Oldham', 'end of tenancy cleaning Oldham', 'house cleaners Oldham']
@@ -92,7 +92,7 @@ export const locations = [
     description: 'Sanctuary Shine delivers professional cleaning services across Rochdale. We cover domestic, commercial, deep, and end of tenancy cleaning throughout the Rochdale borough.',
     intro: 'Looking for cleaners in Rochdale? Sanctuary Shine provides professional cleaning services to homes and businesses across Rochdale, Middleton, Heywood, and surrounding areas. Our experienced team delivers thorough, reliable cleaning at competitive prices.',
     areas: ['Rochdale Town Centre', 'Middleton', 'Heywood', 'Milnrow', 'Littleborough', 'Wardle', 'Castleton', 'Norden', 'Bamford', 'Whitworth'],
-    businessCount: '350+',
+    businessCount: '50+',
     population: '220,000',
     specialities: ['Domestic cleaning in Rochdale', 'Commercial cleaning in Rochdale', 'Deep cleaning in Rochdale', 'End of tenancy cleaning Rochdale', 'House cleaners Rochdale'],
     keywords: ['cleaners in Rochdale', 'domestic cleaners Rochdale', 'commercial cleaners Rochdale', 'deep cleaning Rochdale', 'end of tenancy cleaning Rochdale', 'house cleaners Rochdale']
@@ -106,7 +106,7 @@ export const locations = [
     description: 'Sanctuary Shine offers professional cleaning services throughout Stockport. Our team covers domestic, commercial, deep cleaning, and end of tenancy services across the Stockport area.',
     intro: 'Searching for reliable cleaners in Stockport? Sanctuary Shine serves homes and businesses across Stockport, Cheadle, Bramhall, and surrounding areas. Whether you need weekly domestic cleaning or a commercial office clean, our Stockport team is here to help.',
     areas: ['Stockport Town Centre', 'Cheadle', 'Cheadle Hulme', 'Bramhall', 'Hazel Grove', 'Edgeley', 'Heaton Chapel', 'Heaton Mersey', 'Marple', 'Romiley'],
-    businessCount: '700+',
+    businessCount: '50+',
     population: '295,000',
     specialities: ['Domestic cleaning in Stockport', 'Commercial cleaning in Stockport', 'Deep cleaning in Stockport', 'End of tenancy cleaning Stockport', 'House cleaners Stockport'],
     keywords: ['cleaners in Stockport', 'domestic cleaners Stockport', 'commercial cleaners Stockport', 'deep cleaning Stockport', 'end of tenancy cleaning Stockport', 'house cleaners Stockport']
@@ -120,7 +120,7 @@ export const locations = [
     description: 'Sanctuary Shine provides professional cleaning services across Tameside. We cover domestic, commercial, deep cleaning, and end of tenancy services throughout the Tameside borough.',
     intro: 'Need cleaners in Tameside? Sanctuary Shine cleans homes and businesses across Ashton-under-Lyne, Denton, Hyde, Stalybridge, and the wider Tameside area. Our local team delivers professional cleaning that makes a real difference.',
     areas: ['Ashton-under-Lyne', 'Denton', 'Hyde', 'Stalybridge', 'Mossley', 'Droylsden', 'Audenshaw', 'Dukinfield', 'Hattersley', 'Broadbottom'],
-    businessCount: '400+',
+    businessCount: '50+',
     population: '225,000',
     specialities: ['Domestic cleaning in Tameside', 'Commercial cleaning in Tameside', 'Deep cleaning in Tameside', 'End of tenancy cleaning Tameside', 'House cleaners Tameside'],
     keywords: ['cleaners in Tameside', 'domestic cleaners Tameside', 'commercial cleaners Tameside', 'deep cleaning Tameside', 'end of tenancy cleaning Tameside', 'house cleaners Tameside']
@@ -134,7 +134,7 @@ export const locations = [
     description: 'Sanctuary Shine offers professional cleaning services across Trafford. We cover domestic, commercial, deep cleaning, and end of tenancy services throughout the Trafford borough.',
     intro: 'Looking for trusted cleaners in Trafford? Sanctuary Shine provides professional cleaning for homes and businesses across Altrincham, Sale, Stretford, Urmston, and the wider Trafford area. Our team delivers premium cleaning tailored to your needs.',
     areas: ['Altrincham', 'Sale', 'Stretford', 'Urmston', 'Bowdon', 'Hale', 'Timperley', 'Partington', 'Old Trafford', 'Flixton'],
-    businessCount: '650+',
+    businessCount: '50+',
     population: '235,000',
     specialities: ['Domestic cleaning in Trafford', 'Commercial cleaning in Trafford', 'Deep cleaning in Trafford', 'End of tenancy cleaning Trafford', 'House cleaners Trafford'],
     keywords: ['cleaners in Trafford', 'domestic cleaners Trafford', 'commercial cleaners Trafford', 'deep cleaning Trafford', 'end of tenancy cleaning Trafford', 'house cleaners Trafford']
@@ -148,7 +148,7 @@ export const locations = [
     description: 'Sanctuary Shine provides professional cleaning services across Wigan. We cover domestic, commercial, deep cleaning, and end of tenancy services throughout the Wigan borough.',
     intro: 'Searching for reliable cleaners in Wigan? Sanctuary Shine serves homes and businesses across Wigan, Leigh, Hindley, Atherton, and surrounding areas. Whether you need regular domestic cleaning, a deep clean, or professional office cleaning, our team delivers.',
     areas: ['Wigan Town Centre', 'Leigh', 'Hindley', 'Atherton', 'Aspull', 'Standish', 'Shevington', 'Orrell', 'Pemberton', 'Lowton'],
-    businessCount: '450+',
+    businessCount: '50+',
     population: '325,000',
     specialities: ['Domestic cleaning in Wigan', 'Commercial cleaning in Wigan', 'Deep cleaning in Wigan', 'End of tenancy cleaning Wigan', 'House cleaners Wigan'],
     keywords: ['cleaners in Wigan', 'domestic cleaners Wigan', 'commercial cleaners Wigan', 'deep cleaning Wigan', 'end of tenancy cleaning Wigan', 'house cleaners Wigan']
@@ -162,7 +162,7 @@ export const locations = [
     description: 'Sanctuary Shine provides professional cleaning services across all Greater Manchester boroughs. From domestic to commercial cleaning, we cover the entire region with the same high standards.',
     intro: 'Looking for cleaners across Greater Manchester? Sanctuary Shine covers all ten boroughs of Greater Manchester: Bolton, Bury, Manchester, Oldham, Rochdale, Salford, Stockport, Tameside, Trafford, and Wigan. Wherever you are in Greater Manchester, we bring the same professional cleaning service to your door.',
     areas: ['Manchester', 'Salford', 'Bolton', 'Bury', 'Oldham', 'Rochdale', 'Stockport', 'Tameside', 'Trafford', 'Wigan'],
-    businessCount: '5,000+',
+    businessCount: '200+',
     population: '2,800,000',
     specialities: ['Domestic cleaning Greater Manchester', 'Commercial cleaning Greater Manchester', 'Deep cleaning Greater Manchester', 'End of tenancy cleaning Greater Manchester', 'Office cleaning Greater Manchester', 'Airbnb cleaning Greater Manchester'],
     keywords: ['cleaners in Greater Manchester', 'domestic cleaners Greater Manchester', 'commercial cleaners Greater Manchester', 'deep cleaning Greater Manchester', 'end of tenancy cleaning Greater Manchester', 'house cleaners Greater Manchester']

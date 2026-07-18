@@ -3,7 +3,7 @@ export const SITE = {
   tagline: 'Professional Domestic & Commercial Cleaning in Salford and Greater Manchester',
   description: 'Sanctuary Shine provides professional home cleaning, office cleaning, deep cleaning, end-of-tenancy and Airbnb cleaning services across Salford, Manchester and all Greater Manchester boroughs.',
   url: 'https://sanctuaryshine.co.uk',
-  email: 'hello@sanctuaryshine.co.uk',
+  email: 'contact@sanctuaryshine.co.uk',
   phone: '0161 123 4567',
   phoneLink: '01611234567',
   address: {
