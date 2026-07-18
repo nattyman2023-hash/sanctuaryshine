@@ -1,6 +1,6 @@
 import * as ftp from "basic-ftp";
-import { readFileSync, existsSync } from "fs";
-import { join, resolve } from "path";
+import { readFileSync, existsSync, readdirSync, statSync } from "fs";
+import { join, resolve, relative, dirname } from "path";
 import { execSync } from "child_process";
 
 // Load .env file manually (no dotenv dependency)
@@ -21,6 +21,19 @@ function loadEnv() {
   return env;
 }
 
+function walkFiles(dir, base = dir, files = []) {
+  for (const entry of readdirSync(dir)) {
+    const full = join(dir, entry);
+    const st = statSync(full);
+    if (st.isDirectory()) {
+      walkFiles(full, base, files);
+    } else {
+      files.push(relative(base, full).replace(/\\/g, "/"));
+    }
+  }
+  return files;
+}
+
 const env = loadEnv();
 
 const config = {
@@ -30,6 +43,41 @@ const config = {
   port: parseInt(env.FTP_PORT || "21"),
   remotePath: env.FTP_PATH || "/public_html"
 };
+
+async function uploadWithRetry(client, localPath, remotePath, retries = 3) {
+  let lastError;
+  for (let attempt = 1; attempt <= retries; attempt++) {
+    try {
+      // Ensure remote directory exists
+      const remoteDir = dirname(remotePath).replace(/\\/g, "/");
+      if (remoteDir && remoteDir !== "." && remoteDir !== "/") {
+        await client.ensureDir(remoteDir);
+        // ensureDir changes cwd — go back to root of remote path
+        await client.cd(config.remotePath);
+      }
+      await client.uploadFrom(localPath, remotePath);
+      return;
+    } catch (err) {
+      lastError = err;
+      console.log(`  ⚠️  Retry ${attempt}/${retries} for ${remotePath}: ${err.message}`);
+      // Reconnect if connection dropped
+      try {
+        await client.ensureDir(config.remotePath);
+      } catch {
+        await client.access({
+          host: config.host,
+          user: config.user,
+          password: config.password,
+          port: config.port,
+          secure: false
+        });
+        await client.ensureDir(config.remotePath);
+      }
+      await new Promise(r => setTimeout(r, 500 * attempt));
+    }
+  }
+  throw lastError;
+}
 
 async function deploy() {
   console.log("🚀 Starting deployment to Hostinger...\n");
@@ -46,9 +94,8 @@ async function deploy() {
 
   // Step 2: Connect to FTP
   console.log("🔌 Step 2: Connecting to FTP server...");
-  const client = new ftp.Client(30000); // 30 second timeout
-  
-  client.ftp.verbose = true;
+  const client = new ftp.Client(60000);
+  client.ftp.verbose = false;
 
   try {
     await client.access({
@@ -60,46 +107,106 @@ async function deploy() {
     });
     console.log("✅ Connected to FTP server!\n");
 
-    // Step 3: Upload dist/ folder
-    console.log("📤 Step 3: Uploading files to public_html...");
     const localDistPath = resolve(process.cwd(), "dist");
-    
     if (!existsSync(localDistPath)) {
       console.error("❌ dist/ folder not found. Build may have failed.");
       process.exit(1);
     }
 
-    // Ensure we're in the right directory
     await client.ensureDir(config.remotePath);
-    
-    // Upload all files from dist/
-    console.log(`Uploading from: ${localDistPath}`);
-    console.log(`Uploading to: ${config.remotePath}`);
-    
-    await client.uploadFromDir(localDistPath, config.remotePath);
-    console.log("✅ All files uploaded!\n");
 
-    // Step 4: Upload additional files (send.php, chatbot-config.js, .env for chatbot proxy)
-    console.log("📋 Step 4: Uploading additional files...");
-    
+    // Step 3: Upload critical files first (index.html etc.) so site never stays 403
+    console.log("📤 Step 3: Uploading critical files first...");
+    const critical = ["index.html", "favicon.ico", "favicon.svg", "robots.txt", "chatbot-config.js", "send.php"];
+    for (const file of critical) {
+      const localPath = join(localDistPath, file);
+      if (existsSync(localPath)) {
+        await uploadWithRetry(client, localPath, `${config.remotePath}/${file}`);
+        console.log(`  ✅ ${file}`);
+      }
+    }
+
+    // Step 4: Upload remaining dist files one-by-one with retries
+    console.log("\n📤 Step 4: Uploading remaining dist files...");
+    const allFiles = walkFiles(localDistPath);
+    // Put index.html first, then other html, then assets
+    allFiles.sort((a, b) => {
+      if (a === "index.html") return -1;
+      if (b === "index.html") return 1;
+      if (a.endsWith(".html") && !b.endsWith(".html")) return -1;
+      if (!a.endsWith(".html") && b.endsWith(".html")) return 1;
+      return a.localeCompare(b);
+    });
+
+    let uploaded = 0;
+    let failed = [];
+    for (const rel of allFiles) {
+      if (critical.includes(rel)) {
+        uploaded++;
+        continue; // already uploaded
+      }
+      const localPath = join(localDistPath, rel);
+      const remotePath = `${config.remotePath}/${rel}`;
+      try {
+        await uploadWithRetry(client, localPath, remotePath);
+        uploaded++;
+        if (uploaded % 10 === 0) console.log(`  ... ${uploaded}/${allFiles.length} files`);
+      } catch (err) {
+        console.log(`  ❌ Failed: ${rel} — ${err.message}`);
+        failed.push(rel);
+      }
+    }
+    console.log(`✅ Uploaded ${uploaded}/${allFiles.length} files`);
+
+    // Retry any failures once more
+    if (failed.length > 0) {
+      console.log(`\n🔁 Retrying ${failed.length} failed files...`);
+      const stillFailed = [];
+      for (const rel of failed) {
+        try {
+          await uploadWithRetry(client, join(localDistPath, rel), `${config.remotePath}/${rel}`, 5);
+          console.log(`  ✅ ${rel}`);
+        } catch (err) {
+          console.log(`  ❌ Still failed: ${rel}`);
+          stillFailed.push(rel);
+        }
+      }
+      failed = stillFailed;
+    }
+
+    // Step 5: Upload additional root files
+    console.log("\n📋 Step 5: Uploading additional files...");
     const additionalFiles = [
       { local: "public/send.php", remote: "send.php" },
       { local: "public/chatbot-config.js", remote: "chatbot-config.js" },
       { local: ".env", remote: ".env" }
     ];
-
     for (const file of additionalFiles) {
       const localPath = resolve(process.cwd(), file.local);
       if (existsSync(localPath)) {
-        await client.uploadFrom(localPath, `${config.remotePath}/${file.remote}`);
+        await uploadWithRetry(client, localPath, `${config.remotePath}/${file.remote}`);
         console.log(`  ✅ ${file.remote}`);
       }
     }
 
+    // Verify index.html exists remotely
+    console.log("\n🔍 Verifying remote index.html...");
+    const list = await client.list(config.remotePath);
+    const hasIndex = list.some(f => f.name === "index.html");
+    if (!hasIndex) {
+      console.error("❌ index.html missing on server after upload!");
+      process.exit(1);
+    }
+    console.log("✅ index.html confirmed on server");
 
-    console.log("\n🎉 Deployment complete!");
-    console.log(`🌐 Your site should now be live at your domain.`);
-    
+    if (failed.length > 0) {
+      console.log(`\n⚠️  Deployment finished with ${failed.length} failed non-critical files:`);
+      failed.forEach(f => console.log(`   - ${f}`));
+    } else {
+      console.log("\n🎉 Deployment complete!");
+    }
+    console.log("🌐 https://sanctuaryshine.co.uk");
+
   } catch (error) {
     console.error("❌ Deployment failed:", error.message);
     process.exit(1);
