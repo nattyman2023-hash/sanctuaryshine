@@ -87,15 +87,18 @@ npm run build
 2. Update the `site` URL in `astro.config.mjs` if your domain is different
 3. Rebuild and re-upload if you change the domain
 
-### Step 4: Configure Contact Form
-The site includes a PHP form handler at `/send.php`. To make it work:
+### Step 4: Configure forms, email, and CRM
+The public forms post to `/send.php`. Each request is saved to the private CRM data file before email delivery is attempted, so enquiries are not lost when a mail provider is unavailable.
 
-1. **Update the email address** in `public/send.php`:
-   ```php
-   $to_email = "your-email@domain.com"; // Change this
-   ```
-2. Upload `send.php` to your Hostinger server
-3. Update the form `action` attributes in the Astro pages to point to `/send.php`
+1. Copy `public/crm-config.example.php` to `public/crm-config.php` on the server.
+2. Set `crm_email` to the business email used to access the CRM, choose a strong private `crm_password`, and set the correct `admin_email`.
+3. Set `transactional_from_email` to an existing verified mailbox/address for quote, contact, admin, and customer confirmation emails.
+4. To use Emailit, add a current API key to `emailit_api_key`. The handler uses Emailit's v2 endpoint. If no key is configured, it falls back to Hostinger's PHP mail transport.
+5. Upload the built files, including `send.php`, `crm-api.php`, `crm-config.php`, and the generated `/crm/` page.
+
+Open `/crm` to manage bookings, quotes, and enquiries. The dashboard supports search, filters, status updates, internal notes, and CSV export.
+
+Emailit API keys and CRM passwords must stay in `crm-config.php` or server environment variables; do not commit them to source control.
 
 **Alternative form backends:**
 - **Formspree:** Replace form action with `https://formspree.io/f/YOUR_FORM_ID`

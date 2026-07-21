@@ -8,13 +8,18 @@ export interface Props {
   ogImage?: string;
   noIndex?: boolean;
   schema?: object;
+  manifest?: string;
 }
 
-const { title, description, canonical, ogImage, noIndex, schema } = Astro.props;
+const { title, description, canonical, ogImage, noIndex, schema, manifest } = Astro.props;
 const fullTitle = `${title} | ${SITE.name}`;
 const metaDescription = description || SITE.description;
 const canonicalUrl = canonical || `${SITE.url}${Astro.url.pathname}`;
-const ogImageUrl = ogImage || `${SITE.url}/images/og-default.jpg`;
+// Use a real, locally hosted image by default so every page has a valid
+// social/featured image, including pages without a visible hero image.
+const ogImageUrl = ogImage
+  ? (ogImage.startsWith('http') ? ogImage : `${SITE.url}${ogImage.startsWith('/') ? '' : '/'}${ogImage}`)
+  : `${SITE.url}/images/hero-living-room.jpg`;
 ---
 
 <!-- Primary Meta Tags -->
@@ -92,4 +97,4 @@ const ogImageUrl = ogImage || `${SITE.url}/images/og-default.jpg`;
 <!-- Favicon -->
 <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
 <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
-<link rel="manifest" href="/site.webmanifest" />
+<link rel="manifest" href={manifest || '/site.webmanifest'} />

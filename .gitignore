@@ -17,6 +17,10 @@ pnpm-debug.log*
 .env
 .env.production
 
+# Private runtime CRM data and credentials
+public/crm-config.php
+public/crm-data/
+
 # macOS-specific files
 .DS_Store
 

@@ -1,6 +1,7 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import { SITE } from '../data/site';
+import { serviceCategories } from '../data/services';
 ---
 
 <BaseLayout
@@ -47,7 +48,9 @@ import { SITE } from '../data/site';
         <!-- Contact Form -->
         <div class="lg:col-span-2 bg-white rounded-2xl p-8 border border-gray-100 shadow-sm">
           <h2 class="font-heading text-2xl font-bold text-[#0B0B0B] mb-6">Send Us a Message</h2>
-          <form id="contact-form-page" class="space-y-4" action="#" method="POST">
+          <form id="contact-form-page" class="space-y-4" action="/send.php" method="POST">
+            <input type="hidden" name="form_type" value="contact" />
+            <input type="text" name="website" tabindex="-1" autocomplete="off" aria-hidden="true" class="hidden" />
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
                 <label class="block text-sm font-medium text-[#0B0B0B] mb-1">Full Name *</label>
@@ -60,23 +63,45 @@ import { SITE } from '../data/site';
             </div>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <label class="block text-sm font-medium text-[#0B0B0B] mb-1">Phone Number</label>
-                <input type="tel" name="phone" class="w-full px-4 py-3 rounded-lg border border-gray-200 focus:border-[#00C2D1] focus:ring-2 focus:ring-[#00C2D1]/20 outline-none transition-all" placeholder="07123 456789" />
+                <label class="block text-sm font-medium text-[#0B0B0B] mb-1">Phone Number *</label>
+                <input type="tel" name="phone" required class="w-full px-4 py-3 rounded-lg border border-gray-200 focus:border-[#00C2D1] focus:ring-2 focus:ring-[#00C2D1]/20 outline-none transition-all" placeholder="07123 456789" />
               </div>
               <div>
-                <label class="block text-sm font-medium text-[#0B0B0B] mb-1">Postcode</label>
-                <input type="text" name="postcode" class="w-full px-4 py-3 rounded-lg border border-gray-200 focus:border-[#00C2D1] focus:ring-2 focus:ring-[#00C2D1]/20 outline-none transition-all" placeholder="M50 2QH" />
+                <label class="block text-sm font-medium text-[#0B0B0B] mb-1">Postcode *</label>
+                <input type="text" name="postcode" required class="w-full px-4 py-3 rounded-lg border border-gray-200 focus:border-[#00C2D1] focus:ring-2 focus:ring-[#00C2D1]/20 outline-none transition-all" placeholder="M50 2QH" />
               </div>
             </div>
             <div>
-              <label class="block text-sm font-medium text-[#0B0B0B] mb-1">Subject</label>
-              <select name="subject" class="w-full px-4 py-3 rounded-lg border border-gray-200 focus:border-[#00C2D1] focus:ring-2 focus:ring-[#00C2D1]/20 outline-none transition-all bg-white">
+              <label class="block text-sm font-medium text-[#0B0B0B] mb-1">Subject *</label>
+              <select name="subject" required class="w-full px-4 py-3 rounded-lg border border-gray-200 focus:border-[#00C2D1] focus:ring-2 focus:ring-[#00C2D1]/20 outline-none transition-all bg-white">
                 <option value="">Please select...</option>
                 <option value="general">General Enquiry</option>
                 <option value="quote">Request a Quote</option>
                 <option value="booking">Book a Clean</option>
                 <option value="feedback">Feedback</option>
               </select>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <label class="block text-sm font-medium text-[#0B0B0B] mb-1">Cleaning Service *</label>
+                <select name="cleaningType" required class="w-full px-4 py-3 rounded-lg border border-gray-200 focus:border-[#00C2D1] focus:ring-2 focus:ring-[#00C2D1]/20 outline-none transition-all bg-white">
+                  <option value="">Please select...</option>
+                  <option value="general">General enquiry</option>
+                  {serviceCategories.map(cat => <option value={cat.slug}>{cat.title}</option>)}
+                </select>
+              </div>
+              <div>
+                <label class="block text-sm font-medium text-[#0B0B0B] mb-1">Property Type *</label>
+                <select name="propertyType" required class="w-full px-4 py-3 rounded-lg border border-gray-200 focus:border-[#00C2D1] focus:ring-2 focus:ring-[#00C2D1]/20 outline-none transition-all bg-white">
+                  <option value="">Please select...</option>
+                  <option value="house">House</option>
+                  <option value="flat">Flat / Apartment</option>
+                  <option value="office">Office</option>
+                  <option value="retail">Retail Unit</option>
+                  <option value="airbnb">Airbnb / Holiday Let</option>
+                  <option value="other">Other / Not sure</option>
+                </select>
+              </div>
             </div>
             <div>
               <label class="block text-sm font-medium text-[#0B0B0B] mb-1">Message *</label>
@@ -102,6 +127,31 @@ import { SITE } from '../data/site';
       btn.disabled = true;
       btn.textContent = 'Sending...';
       btn.classList.add('opacity-70');
+      try {
+        const response = await fetch('/send.php', {
+          method: 'POST',
+          body: new FormData(form),
+          headers: { Accept: 'application/json' }
+        });
+        const result = await response.json();
+        if (!response.ok || result.status !== 'success') throw new Error(result.message || 'Unable to send your message.');
+        btn.textContent = 'Message sent — thank you.';
+        btn.classList.remove('bg-[#FFD200]', 'hover:bg-[#D6A900]');
+        btn.classList.add('bg-green-500', 'text-white');
+        form.reset();
+      } catch (error) {
+        btn.textContent = error instanceof Error ? error.message : 'Unable to send. Please call us.';
+        btn.classList.remove('bg-[#FFD200]', 'hover:bg-[#D6A900]');
+        btn.classList.add('bg-red-500', 'text-white');
+      }
+      setTimeout(() => {
+        btn.textContent = originalText;
+        btn.classList.remove('bg-green-500', 'bg-red-500', 'text-white');
+        btn.classList.add('bg-[#FFD200]', 'hover:bg-[#D6A900]');
+        btn.disabled = false;
+        btn.classList.remove('opacity-70');
+      }, 5000);
+      return;
       await new Promise(resolve => setTimeout(resolve, 1500));
       btn.textContent = '✓ Message Sent!';
       btn.classList.remove('bg-[#FFD200]', 'hover:bg-[#D6A900]');

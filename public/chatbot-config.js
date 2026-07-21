@@ -1,22 +1,16 @@
 /**
  * Sanctuary Shine Chatbot Configuration
  * 
- * HOW TO SET UP:
- * 1. Get a free API key from https://openrouter.ai
- * 2. Replace the apiKey value below with your key
- * 3. The chatbot will automatically work on all pages
- * 
- * The chatbot uses OpenRouter's free tier which provides access to
- * free AI models like Llama 3.2, Mistral, and others.
+ * The chatbot uses DeepSeek through the server-side PHP proxy. The API key
+ * must never be placed in this browser-visible file.
  */
 
 window.CHATBOT_CONFIG = {
-  // Get your free API key at https://openrouter.ai
-  // API key now stored securely in .env - chatbot uses /api/chatbot-proxy endpoint
-  apiEndpoint: "/api/chatbot-proxy",
+  // The DeepSeek API key is stored securely on the server.
+  apiEndpoint: "/api/chatbot-proxy.php",
   
-  // Free model from OpenRouter (alternatives: "mistralai/mistral-7b-instruct:free", "google/gemma-2-9b-it:free")
-  model: "meta-llama/llama-3.2-3b-instruct:free",
+  // Current DeepSeek chat model (the proxy also enforces this model server-side)
+  model: "deepseek-v4-flash",
   
   // Auto-activate after this many milliseconds (3 seconds)
   autoActivateDelay: 3000,
@@ -29,7 +23,7 @@ ABOUT SANCTUARY SHINE:
 - We serve all 10 boroughs of Greater Manchester: Salford, Manchester, Bolton, Bury, Oldham, Rochdale, Stockport, Tameside, Trafford, and Wigan
 - Phone: 0161 123 4567
 - Email: contact@sanctuaryshine.co.uk
-- Address: The Alexandra, MediaCityUK, Salford Quays, M50 2QH
+- Address: 13 Moorsholme Ave, Manchester, M40 9BW
 - Business hours: Mon-Fri 8am-6pm, Sat 9am-4pm, Sun closed
 
 OUR SERVICES:
@@ -65,6 +59,10 @@ Always end conversations by offering to help with anything else or suggesting th
   
   // Owner email for enquiries
   ownerEmail: "contact@sanctuaryshine.co.uk",
+
+  // Direct WhatsApp contact (international format, without the leading +)
+  whatsappNumber: "447852736886",
+  whatsappMessage: "Hello Sanctuary Shine, I would like to ask about your cleaning services.",
   
   // Welcome message
   welcomeMessage: "Hi there! 👋 I'm Shine, your Sanctuary Shine cleaning assistant. How can I help you today? Whether you need domestic cleaning, commercial cleaning, or just have a question, I'm here to help!",

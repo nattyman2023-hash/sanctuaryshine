@@ -7,9 +7,9 @@ export const SITE = {
   phone: '0161 123 4567',
   phoneLink: '01611234567',
   address: {
-    street: 'The Alexandra, MediaCityUK',
-    city: 'Salford Quays',
-    postcode: 'M50 2QH',
+    street: '13 Moorsholme Ave',
+    city: 'Manchester',
+    postcode: 'M40 9BW',
     region: 'Greater Manchester'
   },
   social: {

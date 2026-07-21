@@ -18,7 +18,9 @@ import { serviceCategories } from '../data/services';
   <section class="py-16 md:py-20">
     <div class="max-w-[800px] mx-auto px-4 md:px-6">
       <div class="bg-white rounded-2xl p-8 border border-gray-100 shadow-sm">
-        <form id="quote-form" class="space-y-5" action="#" method="POST">
+        <form id="quote-form" class="space-y-5" action="/send.php" method="POST">
+          <input type="hidden" name="form_type" value="quote" />
+          <input type="text" name="website" tabindex="-1" autocomplete="off" aria-hidden="true" class="hidden" />
           <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
             <div>
               <label class="block text-sm font-medium text-[#0B0B0B] mb-1">Full Name *</label>
@@ -103,6 +105,31 @@ import { serviceCategories } from '../data/services';
       btn.disabled = true;
       btn.textContent = 'Sending Request...';
       btn.classList.add('opacity-70');
+      try {
+        const response = await fetch('/send.php', {
+          method: 'POST',
+          body: new FormData(quoteForm),
+          headers: { Accept: 'application/json' }
+        });
+        const result = await response.json();
+        if (!response.ok || result.status !== 'success') throw new Error(result.message || 'Unable to send your request.');
+        btn.textContent = 'Quote requested — we\'ll be in touch soon.';
+        btn.classList.remove('bg-[#FFD200]', 'hover:bg-[#D6A900]');
+        btn.classList.add('bg-green-500', 'text-white');
+        quoteForm.reset();
+      } catch (error) {
+        btn.textContent = error instanceof Error ? error.message : 'Unable to send. Please call us.';
+        btn.classList.remove('bg-[#FFD200]', 'hover:bg-[#D6A900]');
+        btn.classList.add('bg-red-500', 'text-white');
+      }
+      setTimeout(() => {
+        btn.textContent = originalText;
+        btn.classList.remove('bg-green-500', 'bg-red-500', 'text-white');
+        btn.classList.add('bg-[#FFD200]', 'hover:bg-[#D6A900]');
+        btn.disabled = false;
+        btn.classList.remove('opacity-70');
+      }, 5000);
+      return;
       await new Promise(resolve => setTimeout(resolve, 1500));
       btn.textContent = '✓ Quote Requested! We\'ll be in touch soon.';
       btn.classList.remove('bg-[#FFD200]', 'hover:bg-[#D6A900]');

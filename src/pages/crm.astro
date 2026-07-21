@@ -1,0 +1,598 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { SITE } from '../data/site';
+---
+
+<BaseLayout
+  title="CRM"
+  description="Private Sanctuary Shine customer relationship dashboard."
+  noIndex={true}
+  manifest="/crm-manifest.webmanifest"
+  themeColor="#00C2D1"
+  hideChrome={true}
+>
+  <section class="min-h-[calc(100vh-5rem)] bg-[#F3F7F8] py-10 md:py-14">
+    <div class="max-w-[1200px] mx-auto px-4 md:px-6">
+      <button id="crm-install-button" type="button" class="hidden max-w-md mx-auto mb-4 items-center justify-center gap-2 w-full bg-[#0B0B0B] text-white py-3 rounded-lg font-bold hover:bg-[#3C494C] transition-colors">
+        <span class="material-symbols-outlined text-lg">install_mobile</span>
+        Install app on this phone
+      </button>
+
+      <div id="crm-login-panel" class="max-w-md mx-auto bg-white rounded-2xl border border-gray-100 shadow-sm p-8">
+        <div class="w-12 h-12 rounded-xl bg-[#D9FBFF] text-[#008C99] flex items-center justify-center mb-5">
+          <span class="material-symbols-outlined">business_center</span>
+        </div>
+        <p class="text-xs uppercase tracking-[0.2em] font-semibold text-[#008C99] mb-2">Sanctuary Shine</p>
+        <h1 class="font-heading text-3xl font-bold text-[#0B0B0B] mb-3">CRM dashboard</h1>
+        <p class="text-sm text-[#3C494C] mb-6">Sign in to view bookings, quote requests and website enquiries.</p>
+        <form id="crm-login-form" class="space-y-4">
+          <label class="block text-sm font-medium text-[#0B0B0B]" for="crm-email">Business email</label>
+          <input id="crm-email" name="email" type="email" value={SITE.email} autocomplete="username" required class="w-full px-4 py-3 rounded-lg border border-gray-200 focus:border-[#00C2D1] focus:ring-2 focus:ring-[#00C2D1]/20 outline-none" />
+          <label class="block text-sm font-medium text-[#0B0B0B]" for="crm-password">CRM password</label>
+          <input id="crm-password" name="password" type="password" autocomplete="current-password" required class="w-full px-4 py-3 rounded-lg border border-gray-200 focus:border-[#00C2D1] focus:ring-2 focus:ring-[#00C2D1]/20 outline-none" />
+          <button type="submit" class="w-full bg-[#FFD200] text-[#0B0B0B] py-3 rounded-lg font-bold hover:bg-[#D6A900] transition-colors">Sign in</button>
+          <p id="crm-login-message" class="text-sm text-red-600 min-h-5" role="alert"></p>
+        </form>
+        <p class="text-sm text-center mt-2"><button type="button" id="crm-forgot-link" class="text-[#008C99] font-semibold hover:underline">Forgot password?</button></p>
+      </div>
+
+      <div id="crm-forgot-panel" class="hidden max-w-md mx-auto bg-white rounded-2xl border border-gray-100 shadow-sm p-8">
+        <h1 class="font-heading text-2xl font-bold text-[#0B0B0B] mb-3">Reset your password</h1>
+        <p class="text-sm text-[#3C494C] mb-6">Enter your CRM email address and we'll send you a link to set a new password.</p>
+        <form id="crm-forgot-form" class="space-y-4">
+          <label class="block text-sm font-medium text-[#0B0B0B]" for="crm-forgot-email">Business email</label>
+          <input id="crm-forgot-email" type="email" autocomplete="username" required class="w-full px-4 py-3 rounded-lg border border-gray-200 focus:border-[#00C2D1] focus:ring-2 focus:ring-[#00C2D1]/20 outline-none" />
+          <button type="submit" class="w-full bg-[#FFD200] text-[#0B0B0B] py-3 rounded-lg font-bold hover:bg-[#D6A900] transition-colors">Send reset link</button>
+          <p id="crm-forgot-message" class="text-sm min-h-5" role="alert"></p>
+        </form>
+        <p class="text-sm text-center mt-2"><button type="button" id="crm-forgot-back" class="text-[#008C99] font-semibold hover:underline">Back to sign in</button></p>
+      </div>
+
+      <div id="crm-reset-panel" class="hidden max-w-md mx-auto bg-white rounded-2xl border border-gray-100 shadow-sm p-8">
+        <h1 class="font-heading text-2xl font-bold text-[#0B0B0B] mb-3">Set a new password</h1>
+        <p class="text-sm text-[#3C494C] mb-6">Choose a new password for your CRM account. It must be at least 10 characters.</p>
+        <form id="crm-reset-form" class="space-y-4">
+          <div><label for="crm-reset-new-password" class="block text-sm font-medium text-[#0B0B0B] mb-1">New password</label><div class="flex gap-2"><input id="crm-reset-new-password" type="password" minlength="10" required class="min-w-0 flex-1 px-4 py-3 rounded-lg border border-gray-200 focus:border-[#00C2D1] focus:ring-2 focus:ring-[#00C2D1]/20 outline-none" /><button type="button" data-password-toggle="crm-reset-new-password" class="px-3 rounded-lg border border-gray-200 text-xs font-semibold">Show</button></div></div>
+          <div><label for="crm-reset-confirm-password" class="block text-sm font-medium text-[#0B0B0B] mb-1">Confirm new password</label><input id="crm-reset-confirm-password" type="password" minlength="10" required class="w-full px-4 py-3 rounded-lg border border-gray-200 focus:border-[#00C2D1] focus:ring-2 focus:ring-[#00C2D1]/20 outline-none" /></div>
+          <button type="submit" class="w-full bg-[#FFD200] text-[#0B0B0B] py-3 rounded-lg font-bold hover:bg-[#D6A900] transition-colors">Set new password</button>
+          <p id="crm-reset-message" class="text-sm min-h-5" role="alert"></p>
+        </form>
+      </div>
+
+      <div id="crm-dashboard" class="hidden">
+        <div class="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-8">
+          <div>
+            <p class="text-xs uppercase tracking-[0.2em] font-semibold text-[#008C99] mb-2">Private workspace</p>
+            <h1 class="font-heading text-3xl md:text-4xl font-bold text-[#0B0B0B]">Bookings & enquiries</h1>
+            <p class="text-[#3C494C] mt-2">Keep every request in one place and move it through your pipeline.</p>
+            <p id="crm-logged-in-badge" class="hidden items-center gap-2 mt-3 text-sm font-semibold text-[#0B7A3C]">
+              <span class="w-2 h-2 rounded-full bg-[#0B7A3C]"></span>
+              <span>Logged in as <span id="crm-logged-in-name"></span></span>
+            </p>
+          </div>
+          <div class="flex gap-3">
+            <button id="crm-account-toggle" type="button" class="px-4 py-2.5 rounded-lg border border-gray-200 bg-white text-sm font-semibold hover:border-[#00C2D1] transition-colors">Account & access</button>
+            <button id="crm-export" type="button" class="px-4 py-2.5 rounded-lg border border-gray-200 bg-white text-sm font-semibold hover:border-[#00C2D1] transition-colors">Export CSV</button>
+            <button id="crm-logout" type="button" class="px-4 py-2.5 rounded-lg bg-[#0B0B0B] text-white text-sm font-semibold hover:bg-[#3C494C] transition-colors">Sign out</button>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+          <div class="bg-white rounded-xl border border-gray-100 p-5 shadow-sm"><p class="text-xs uppercase tracking-wider text-[#6C797C]">All leads</p><p id="stat-total" class="font-heading text-3xl font-bold mt-2">0</p></div>
+          <div class="bg-white rounded-xl border border-gray-100 p-5 shadow-sm"><p class="text-xs uppercase tracking-wider text-[#6C797C]">New</p><p id="stat-new" class="font-heading text-3xl font-bold mt-2 text-[#008C99]">0</p></div>
+          <div class="bg-white rounded-xl border border-gray-100 p-5 shadow-sm"><p class="text-xs uppercase tracking-wider text-[#6C797C]">Bookings</p><p id="stat-bookings" class="font-heading text-3xl font-bold mt-2">0</p></div>
+          <div class="bg-white rounded-xl border border-gray-100 p-5 shadow-sm"><p class="text-xs uppercase tracking-wider text-[#6C797C]">Quote requests</p><p id="stat-quotes" class="font-heading text-3xl font-bold mt-2">0</p></div>
+        </div>
+
+        <div id="crm-account-panel" class="hidden mt-6 grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
+            <p class="text-xs uppercase tracking-wider text-[#008C99] font-semibold">My account</p>
+            <h2 id="crm-current-user" class="font-heading text-2xl font-bold mt-2"></h2>
+            <p class="text-sm text-[#6C797C] mt-1">Stored passwords are never displayed. You can change yours here.</p>
+            <form id="crm-password-form" class="space-y-3 mt-5">
+              <div><label for="crm-current-password" class="block text-xs uppercase tracking-wider text-[#6C797C] mb-1">Current password</label><div class="flex gap-2"><input id="crm-current-password" type="password" required class="min-w-0 flex-1 px-3 py-2.5 rounded-lg border border-gray-200 text-sm" /><button type="button" data-password-toggle="crm-current-password" class="px-3 rounded-lg border border-gray-200 text-xs font-semibold">Show</button></div></div>
+              <div><label for="crm-new-password" class="block text-xs uppercase tracking-wider text-[#6C797C] mb-1">New password</label><div class="flex gap-2"><input id="crm-new-password" type="password" minlength="10" required class="min-w-0 flex-1 px-3 py-2.5 rounded-lg border border-gray-200 text-sm" /><button type="button" data-password-toggle="crm-new-password" class="px-3 rounded-lg border border-gray-200 text-xs font-semibold">Show</button></div></div>
+              <div><label for="crm-confirm-password" class="block text-xs uppercase tracking-wider text-[#6C797C] mb-1">Confirm new password</label><input id="crm-confirm-password" type="password" minlength="10" required class="w-full px-3 py-2.5 rounded-lg border border-gray-200 text-sm" /></div>
+              <button type="submit" class="px-4 py-2.5 rounded-lg bg-[#00C2D1] text-white text-sm font-bold hover:bg-[#008C99]">Change password</button>
+              <p id="crm-password-message" class="text-sm min-h-5" role="alert"></p>
+            </form>
+          </div>
+
+          <div id="crm-user-management" class="hidden bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
+            <p class="text-xs uppercase tracking-wider text-[#008C99] font-semibold">Administrator access</p>
+            <h2 class="font-heading text-2xl font-bold mt-2">CRM users</h2>
+            <p class="text-sm text-[#6C797C] mt-1">Add team members and choose exactly what each account can access.</p>
+            <form id="crm-create-user-form" class="space-y-3 mt-5">
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-3"><input id="crm-new-user-name" type="text" placeholder="Full name" required class="px-3 py-2.5 rounded-lg border border-gray-200 text-sm" /><input id="crm-new-user-email" type="email" placeholder="Email address" required class="px-3 py-2.5 rounded-lg border border-gray-200 text-sm" /></div>
+              <div class="flex gap-2"><input id="crm-new-user-password" type="password" minlength="10" placeholder="Temporary password (10+ characters)" required class="min-w-0 flex-1 px-3 py-2.5 rounded-lg border border-gray-200 text-sm" /><button type="button" data-password-toggle="crm-new-user-password" class="px-3 rounded-lg border border-gray-200 text-xs font-semibold">Show</button></div>
+              <div class="grid grid-cols-2 gap-2 text-sm">
+                <label class="flex items-center gap-2"><input type="checkbox" data-create-feature="view_leads" checked /> View leads</label>
+                <label class="flex items-center gap-2"><input type="checkbox" data-create-feature="edit_leads" /> Edit leads</label>
+                <label class="flex items-center gap-2"><input type="checkbox" data-create-feature="export_leads" /> Export CSV</label>
+                <label class="flex items-center gap-2"><input type="checkbox" data-create-feature="manage_users" /> Manage users</label>
+              </div>
+              <button type="submit" class="px-4 py-2.5 rounded-lg bg-[#FFD200] text-[#0B0B0B] text-sm font-bold hover:bg-[#D6A900]">Add user</button>
+              <p id="crm-user-message" class="text-sm min-h-5" role="alert"></p>
+            </form>
+            <div id="crm-users-list" class="space-y-3 mt-6"></div>
+          </div>
+        </div>
+
+        <div class="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
+          <div class="p-5 border-b border-gray-100 flex flex-col lg:flex-row gap-3 lg:items-center lg:justify-between">
+            <h2 class="font-heading text-xl font-bold">Lead pipeline</h2>
+            <div class="flex flex-col sm:flex-row gap-3">
+              <input id="crm-search" type="search" placeholder="Search name, email or postcode" class="px-3 py-2 rounded-lg border border-gray-200 text-sm focus:border-[#00C2D1] outline-none" />
+              <select id="crm-type" class="px-3 py-2 rounded-lg border border-gray-200 text-sm focus:border-[#00C2D1] outline-none bg-white">
+                <option value="all">All types</option>
+                <option value="booking">Bookings</option>
+                <option value="quote">Quotes</option>
+                <option value="inquiry">Enquiries</option>
+              </select>
+              <select id="crm-status" class="px-3 py-2 rounded-lg border border-gray-200 text-sm focus:border-[#00C2D1] outline-none bg-white">
+                <option value="all">All statuses</option>
+                <option value="new">New</option>
+                <option value="contacted">Contacted</option>
+                <option value="quoted">Quoted</option>
+                <option value="booked">Booked</option>
+                <option value="completed">Completed</option>
+                <option value="closed">Closed</option>
+              </select>
+            </div>
+          </div>
+
+          <div id="crm-error" class="hidden m-5 p-4 rounded-lg bg-red-50 text-red-700 text-sm" role="alert"></div>
+          <div class="overflow-x-auto">
+            <table class="w-full text-left text-sm">
+              <thead class="bg-[#F8FAFB] text-xs uppercase tracking-wider text-[#6C797C]">
+                <tr><th class="px-5 py-4">Customer</th><th class="px-5 py-4">Type</th><th class="px-5 py-4">Preferred date</th><th class="px-5 py-4">Status</th><th class="px-5 py-4">Received</th><th class="px-5 py-4"><span class="sr-only">Open</span></th></tr>
+              </thead>
+              <tbody id="crm-leads-body" class="divide-y divide-gray-100"></tbody>
+            </table>
+          </div>
+          <div id="crm-empty" class="hidden p-12 text-center text-[#6C797C]">No leads match these filters.</div>
+        </div>
+
+        <div id="crm-detail" class="hidden mt-6 bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
+          <div class="flex items-start justify-between gap-4 mb-5">
+            <div><p class="text-xs uppercase tracking-wider text-[#6C797C]">Lead details</p><h2 id="crm-detail-name" class="font-heading text-2xl font-bold mt-1"></h2><p id="crm-detail-contact" class="text-sm text-[#3C494C] mt-1"></p></div>
+            <button id="crm-detail-close" type="button" class="text-sm text-[#6C797C] hover:text-[#0B0B0B]">Close</button>
+          </div>
+          <div id="crm-detail-summary" class="grid grid-cols-1 md:grid-cols-3 gap-3 text-sm mb-5"></div>
+          <form id="crm-update-form" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <input id="crm-detail-id" type="hidden" />
+            <div><label for="crm-detail-name-input" class="block text-xs uppercase tracking-wider text-[#6C797C] mb-1">Full name</label><input id="crm-detail-name-input" type="text" required class="w-full px-3 py-2.5 rounded-lg border border-gray-200 text-sm" /></div>
+            <div><label for="crm-detail-email" class="block text-xs uppercase tracking-wider text-[#6C797C] mb-1">Email</label><input id="crm-detail-email" type="email" required class="w-full px-3 py-2.5 rounded-lg border border-gray-200 text-sm" /></div>
+            <div><label for="crm-detail-phone" class="block text-xs uppercase tracking-wider text-[#6C797C] mb-1">Phone</label><input id="crm-detail-phone" type="tel" class="w-full px-3 py-2.5 rounded-lg border border-gray-200 text-sm" /></div>
+            <div><label for="crm-detail-postcode" class="block text-xs uppercase tracking-wider text-[#6C797C] mb-1">Postcode</label><input id="crm-detail-postcode" type="text" class="w-full px-3 py-2.5 rounded-lg border border-gray-200 text-sm" /></div>
+            <div><label for="crm-detail-subject" class="block text-xs uppercase tracking-wider text-[#6C797C] mb-1">Subject</label><input id="crm-detail-subject" type="text" class="w-full px-3 py-2.5 rounded-lg border border-gray-200 text-sm" /></div>
+            <div><label for="crm-detail-cleaning-type" class="block text-xs uppercase tracking-wider text-[#6C797C] mb-1">Cleaning service</label><input id="crm-detail-cleaning-type" type="text" class="w-full px-3 py-2.5 rounded-lg border border-gray-200 text-sm" /></div>
+            <div><label for="crm-detail-property-type" class="block text-xs uppercase tracking-wider text-[#6C797C] mb-1">Property type</label><input id="crm-detail-property-type" type="text" class="w-full px-3 py-2.5 rounded-lg border border-gray-200 text-sm" /></div>
+            <div><label for="crm-detail-size" class="block text-xs uppercase tracking-wider text-[#6C797C] mb-1">Size</label><input id="crm-detail-size" type="text" class="w-full px-3 py-2.5 rounded-lg border border-gray-200 text-sm" /></div>
+            <div><label for="crm-detail-preferred-date" class="block text-xs uppercase tracking-wider text-[#6C797C] mb-1">Preferred date</label><input id="crm-detail-preferred-date" type="date" class="w-full px-3 py-2.5 rounded-lg border border-gray-200 text-sm" /></div>
+            <div><label for="crm-detail-status" class="block text-xs uppercase tracking-wider text-[#6C797C] mb-1">Status</label><select id="crm-detail-status" class="w-full px-3 py-2.5 rounded-lg border border-gray-200 bg-white text-sm"><option value="new">New</option><option value="contacted">Contacted</option><option value="quoted">Quoted</option><option value="booked">Booked</option><option value="completed">Completed</option><option value="closed">Closed</option></select></div>
+            <div><label for="crm-detail-notes" class="block text-xs uppercase tracking-wider text-[#6C797C] mb-1">Internal notes</label><input id="crm-detail-notes" type="text" class="w-full px-3 py-2.5 rounded-lg border border-gray-200 text-sm" placeholder="Follow-up, price, cleaner assigned..." /></div>
+            <div class="md:col-span-2"><label for="crm-detail-message-input" class="block text-xs uppercase tracking-wider text-[#6C797C] mb-1">Customer message</label><textarea id="crm-detail-message-input" rows="4" class="w-full px-3 py-2.5 rounded-lg border border-gray-200 text-sm"></textarea></div>
+            <button type="submit" class="md:col-span-2 px-5 py-2.5 rounded-lg bg-[#00C2D1] text-white text-sm font-bold hover:bg-[#008C99] transition-colors">Save changes</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </section>
+</BaseLayout>
+
+<script>
+  const api = '/crm-api.php';
+  const loginPanel = document.getElementById('crm-login-panel');
+  const dashboard = document.getElementById('crm-dashboard');
+  const loginForm = document.getElementById('crm-login-form');
+  const loginMessage = document.getElementById('crm-login-message');
+  const forgotPanel = document.getElementById('crm-forgot-panel');
+  const forgotForm = document.getElementById('crm-forgot-form');
+  const resetPanel = document.getElementById('crm-reset-panel');
+  const resetForm = document.getElementById('crm-reset-form');
+  const leadsBody = document.getElementById('crm-leads-body');
+  const emptyState = document.getElementById('crm-empty');
+  const errorBox = document.getElementById('crm-error');
+  const detail = document.getElementById('crm-detail');
+  const accountToggle = document.getElementById('crm-account-toggle');
+  const accountPanel = document.getElementById('crm-account-panel');
+  const userManagement = document.getElementById('crm-user-management');
+  const usersList = document.getElementById('crm-users-list');
+  let leads = [];
+  let selectedLead = null;
+  let currentUser = null;
+
+  const escapeHtml = (value) => String(value ?? '').replace(/[&<>'"]/g, (character) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' }[character]));
+  const label = (value) => String(value || '').replace(/(^|_)([a-z])/g, (_, prefix, character) => `${prefix ? ' ' : ''}${character.toUpperCase()}`);
+  const formatDate = (value) => value ? new Intl.DateTimeFormat('en-GB', { dateStyle: 'medium' }).format(new Date(value)) : '—';
+  const formatDateTime = (value) => value ? new Intl.DateTimeFormat('en-GB', { dateStyle: 'medium', timeStyle: 'short' }).format(new Date(value)) : '—';
+
+  const featureLabels = { view_leads: 'View leads', edit_leads: 'Edit leads', export_leads: 'Export CSV', manage_users: 'Manage users' };
+
+  async function request(action, options = {}) {
+    const response = await fetch(`${api}?action=${encodeURIComponent(action)}`, options);
+    const contentType = response.headers.get('content-type') || '';
+    const result = contentType.includes('application/json') ? await response.json() : await response.text();
+    if (!response.ok) throw new Error(result?.message || 'The CRM request failed.');
+    return result;
+  }
+
+  function showError(message) {
+    errorBox.textContent = message;
+    errorBox.classList.remove('hidden');
+  }
+
+  function hasFeature(feature) {
+    return Boolean(currentUser && Array.isArray(currentUser.features) && currentUser.features.includes(feature));
+  }
+
+  function renderUsers(users) {
+    usersList.innerHTML = users.map((user) => `
+      <div class="rounded-xl border border-gray-100 bg-[#F8FAFB] p-4" data-crm-user-id="${escapeHtml(user.id)}">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-2">
+          <input data-user-name type="text" value="${escapeHtml(user.name)}" class="px-3 py-2 rounded-lg border border-gray-200 text-sm" />
+          <input data-user-email type="email" value="${escapeHtml(user.email)}" class="px-3 py-2 rounded-lg border border-gray-200 text-sm" />
+        </div>
+        <div class="flex items-center gap-3 mt-3 text-sm"><label class="flex items-center gap-2"><input data-user-active type="checkbox" ${user.active ? 'checked' : ''} ${currentUser && currentUser.id === user.id ? 'disabled' : ''} /> Active</label><span class="text-[#6C797C]">${escapeHtml(label(user.role))}</span></div>
+        <div class="grid grid-cols-2 gap-2 mt-3 text-sm">${Object.entries(featureLabels).map(([feature, featureLabel]) => `<label class="flex items-center gap-2"><input type="checkbox" data-user-feature="${feature}" ${user.features.includes(feature) ? 'checked' : ''} /> ${featureLabel}</label>`).join('')}</div>
+        <div class="flex flex-col sm:flex-row gap-2 mt-3"><input data-user-password type="password" placeholder="New password (leave blank to keep)" class="min-w-0 flex-1 px-3 py-2 rounded-lg border border-gray-200 text-sm" /><button type="button" data-user-save class="px-4 py-2 rounded-lg bg-[#00C2D1] text-white text-sm font-bold hover:bg-[#008C99]">Save user</button><button type="button" data-user-delete class="px-4 py-2 rounded-lg border border-red-200 text-red-600 text-sm font-semibold hover:bg-red-50">Remove</button></div>
+      </div>`).join('');
+  }
+
+  async function loadUsers() {
+    const result = await request('users');
+    renderUsers(Array.isArray(result.users) ? result.users : []);
+  }
+
+  async function loadAccount() {
+    const result = await request('me');
+    currentUser = result.user;
+    document.getElementById('crm-current-user').textContent = `${currentUser.name} · ${currentUser.email}`;
+    document.getElementById('crm-logged-in-name').textContent = currentUser.name;
+    const loggedInBadge = document.getElementById('crm-logged-in-badge');
+    loggedInBadge.classList.remove('hidden');
+    loggedInBadge.classList.add('flex');
+    document.getElementById('crm-export').classList.toggle('hidden', !hasFeature('export_leads'));
+    userManagement.classList.toggle('hidden', !hasFeature('manage_users'));
+    document.getElementById('crm-update-form').classList.toggle('hidden', !hasFeature('edit_leads'));
+    if (hasFeature('manage_users')) await loadUsers();
+  }
+
+  function renderStats() {
+    document.getElementById('stat-total').textContent = leads.length;
+    document.getElementById('stat-new').textContent = leads.filter((lead) => lead.status === 'new').length;
+    document.getElementById('stat-bookings').textContent = leads.filter((lead) => lead.type === 'booking').length;
+    document.getElementById('stat-quotes').textContent = leads.filter((lead) => lead.type === 'quote').length;
+  }
+
+  function filteredLeads() {
+    const search = document.getElementById('crm-search').value.trim().toLowerCase();
+    const type = document.getElementById('crm-type').value;
+    const status = document.getElementById('crm-status').value;
+    return leads.filter((lead) => {
+      const searchable = [lead.name, lead.email, lead.phone, lead.postcode, lead.message].join(' ').toLowerCase();
+      return (!search || searchable.includes(search)) && (type === 'all' || lead.type === type) && (status === 'all' || lead.status === status);
+    });
+  }
+
+  function renderLeads() {
+    const visibleLeads = filteredLeads();
+    leadsBody.innerHTML = visibleLeads.map((lead) => `
+      <tr class="hover:bg-[#F8FAFB] cursor-pointer" data-lead-id="${escapeHtml(lead.id)}">
+        <td class="px-5 py-4"><p class="font-semibold text-[#0B0B0B]">${escapeHtml(lead.name)}</p><p class="text-xs text-[#6C797C]">${escapeHtml(lead.email)}</p></td>
+        <td class="px-5 py-4"><span class="inline-flex px-2.5 py-1 rounded-full bg-[#D9FBFF] text-[#008C99] text-xs font-semibold">${escapeHtml(label(lead.type))}</span></td>
+        <td class="px-5 py-4 text-[#3C494C]">${escapeHtml(formatDate(lead.preferred_date))}</td>
+        <td class="px-5 py-4"><span class="text-xs font-semibold">${escapeHtml(label(lead.status))}</span></td>
+        <td class="px-5 py-4 text-[#6C797C] whitespace-nowrap">${escapeHtml(formatDate(lead.created_at))}</td>
+        <td class="px-5 py-4 text-right text-[#008C99]">View</td>
+      </tr>`).join('');
+    emptyState.classList.toggle('hidden', visibleLeads.length !== 0);
+  }
+
+  function openDetail(lead) {
+    selectedLead = lead;
+    document.getElementById('crm-detail-name').textContent = lead.name || 'Unnamed lead';
+    document.getElementById('crm-detail-contact').innerHTML = `${escapeHtml(lead.email)}${lead.phone ? ` · ${escapeHtml(lead.phone)}` : ''} · Received ${escapeHtml(formatDateTime(lead.created_at))}`;
+    document.getElementById('crm-detail-summary').innerHTML = [
+      ['Type', label(lead.type)], ['Postcode', lead.postcode || '—'], ['Preferred date', formatDate(lead.preferred_date)],
+      ['Cleaning type', label(lead.cleaning_type) || '—'], ['Property', label(lead.property_type) || '—'], ['Email delivery', label(lead.email_status) || '—']
+    ].map(([heading, value]) => `<div class="border border-gray-100 rounded-lg p-3"><p class="text-xs text-[#6C797C]">${escapeHtml(heading)}</p><p class="font-semibold mt-1">${escapeHtml(value)}</p></div>`).join('');
+    document.getElementById('crm-detail-id').value = lead.id;
+    document.getElementById('crm-detail-name-input').value = lead.name || '';
+    document.getElementById('crm-detail-email').value = lead.email || '';
+    document.getElementById('crm-detail-phone').value = lead.phone || '';
+    document.getElementById('crm-detail-postcode').value = lead.postcode || '';
+    document.getElementById('crm-detail-subject').value = lead.subject || '';
+    document.getElementById('crm-detail-cleaning-type').value = lead.cleaning_type || '';
+    document.getElementById('crm-detail-property-type').value = lead.property_type || '';
+    document.getElementById('crm-detail-size').value = lead.size || '';
+    document.getElementById('crm-detail-preferred-date').value = lead.preferred_date || '';
+    document.getElementById('crm-detail-status').value = lead.status || 'new';
+    document.getElementById('crm-detail-notes').value = lead.notes || '';
+    document.getElementById('crm-detail-message-input').value = lead.message || '';
+    detail.classList.remove('hidden');
+    detail.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+
+  async function loadLeads() {
+    const result = await request('list');
+    leads = Array.isArray(result.leads) ? result.leads : [];
+    errorBox.classList.add('hidden');
+    renderStats();
+    renderLeads();
+  }
+
+  async function showDashboard() {
+    loginPanel.classList.add('hidden');
+    dashboard.classList.remove('hidden');
+    try { await loadLeads(); } catch (error) { showError(error.message); }
+    try { await loadAccount(); } catch (error) { showError(error.message); }
+  }
+
+  loginForm.addEventListener('submit', async (event) => {
+    event.preventDefault();
+    loginMessage.textContent = '';
+    const button = loginForm.querySelector('button');
+    button.disabled = true;
+    try {
+      const result = await request('login', { method: 'POST', body: new FormData(loginForm) });
+      currentUser = result.user;
+      loginForm.reset();
+      await showDashboard();
+    } catch (error) {
+      loginMessage.textContent = error.message;
+    } finally { button.disabled = false; }
+  });
+
+  leadsBody.addEventListener('click', (event) => {
+    const row = event.target.closest('[data-lead-id]');
+    if (row) openDetail(leads.find((lead) => lead.id === row.dataset.leadId));
+  });
+
+  ['crm-search', 'crm-type', 'crm-status'].forEach((id) => document.getElementById(id).addEventListener('input', renderLeads));
+  document.getElementById('crm-detail-close').addEventListener('click', () => detail.classList.add('hidden'));
+
+  accountToggle.addEventListener('click', () => accountPanel.classList.toggle('hidden'));
+
+  document.addEventListener('click', (event) => {
+    const button = event.target.closest('[data-password-toggle]');
+    if (!button) return;
+    const input = document.getElementById(button.dataset.passwordToggle);
+    if (!input) return;
+    input.type = input.type === 'password' ? 'text' : 'password';
+    button.textContent = input.type === 'password' ? 'Show' : 'Hide';
+  });
+
+  document.getElementById('crm-password-form').addEventListener('submit', async (event) => {
+    event.preventDefault();
+    const message = document.getElementById('crm-password-message');
+    const currentPassword = document.getElementById('crm-current-password').value;
+    const newPassword = document.getElementById('crm-new-password').value;
+    const confirmation = document.getElementById('crm-confirm-password').value;
+    message.className = 'text-sm min-h-5';
+    if (newPassword !== confirmation) {
+      message.textContent = 'The new passwords do not match.';
+      message.classList.add('text-red-600');
+      return;
+    }
+    try {
+      const form = new FormData();
+      form.set('current_password', currentPassword);
+      form.set('new_password', newPassword);
+      const result = await request('change_password', { method: 'POST', body: form });
+      message.textContent = result.message || 'Password changed.';
+      message.classList.add('text-green-600');
+      event.target.reset();
+    } catch (error) {
+      message.textContent = error.message;
+      message.classList.add('text-red-600');
+    }
+  });
+
+  document.getElementById('crm-create-user-form').addEventListener('submit', async (event) => {
+    event.preventDefault();
+    const message = document.getElementById('crm-user-message');
+    message.className = 'text-sm min-h-5';
+    const form = new FormData();
+    form.set('name', document.getElementById('crm-new-user-name').value);
+    form.set('email', document.getElementById('crm-new-user-email').value);
+    form.set('password', document.getElementById('crm-new-user-password').value);
+    document.querySelectorAll('[data-create-feature]:checked').forEach((checkbox) => form.append('features[]', checkbox.value));
+    try {
+      await request('create_user', { method: 'POST', body: form });
+      message.textContent = 'User added successfully.';
+      message.classList.add('text-green-600');
+      event.target.reset();
+      await loadUsers();
+    } catch (error) {
+      message.textContent = error.message;
+      message.classList.add('text-red-600');
+    }
+  });
+
+  usersList.addEventListener('click', async (event) => {
+    const card = event.target.closest('[data-crm-user-id]');
+    if (!card) return;
+    const userId = card.dataset.crmUserId;
+    const message = document.getElementById('crm-user-message');
+    message.className = 'text-sm min-h-5';
+    if (event.target.closest('[data-user-save]')) {
+      const form = new FormData();
+      form.set('user_id', userId);
+      form.set('name', card.querySelector('[data-user-name]').value);
+      form.set('email', card.querySelector('[data-user-email]').value);
+      form.set('active', card.querySelector('[data-user-active]').checked ? '1' : '0');
+      const newPassword = card.querySelector('[data-user-password]').value;
+      if (newPassword) form.set('password', newPassword);
+      card.querySelectorAll('[data-user-feature]:checked').forEach((checkbox) => form.append('features[]', checkbox.dataset.userFeature));
+      try {
+        await request('update_user', { method: 'POST', body: form });
+        message.textContent = 'User access updated.';
+        message.classList.add('text-green-600');
+        await loadUsers();
+      } catch (error) {
+        message.textContent = error.message;
+        message.classList.add('text-red-600');
+      }
+    }
+    if (event.target.closest('[data-user-delete]')) {
+      if (!window.confirm('Remove this CRM user?')) return;
+      const form = new FormData();
+      form.set('user_id', userId);
+      try {
+        await request('delete_user', { method: 'POST', body: form });
+        message.textContent = 'User removed.';
+        message.classList.add('text-green-600');
+        await loadUsers();
+      } catch (error) {
+        message.textContent = error.message;
+        message.classList.add('text-red-600');
+      }
+    }
+  });
+
+  document.getElementById('crm-update-form').addEventListener('submit', async (event) => {
+    event.preventDefault();
+    if (!selectedLead) return;
+    const selectedId = selectedLead.id;
+    const form = new FormData();
+    form.set('id', selectedId);
+    form.set('name', document.getElementById('crm-detail-name-input').value);
+    form.set('email', document.getElementById('crm-detail-email').value);
+    form.set('phone', document.getElementById('crm-detail-phone').value);
+    form.set('postcode', document.getElementById('crm-detail-postcode').value);
+    form.set('subject', document.getElementById('crm-detail-subject').value);
+    form.set('cleaning_type', document.getElementById('crm-detail-cleaning-type').value);
+    form.set('property_type', document.getElementById('crm-detail-property-type').value);
+    form.set('size', document.getElementById('crm-detail-size').value);
+    form.set('preferred_date', document.getElementById('crm-detail-preferred-date').value);
+    form.set('message', document.getElementById('crm-detail-message-input').value);
+    form.set('status', document.getElementById('crm-detail-status').value);
+    form.set('notes', document.getElementById('crm-detail-notes').value);
+    try {
+      await request('update', { method: 'POST', body: form });
+      await loadLeads();
+      selectedLead = leads.find((lead) => lead.id === selectedId);
+      if (selectedLead) openDetail(selectedLead);
+    } catch (error) { showError(error.message); }
+  });
+
+  document.getElementById('crm-logout').addEventListener('click', async () => {
+    await request('logout', { method: 'POST' });
+    currentUser = null;
+    accountPanel.classList.add('hidden');
+    dashboard.classList.add('hidden');
+    loginPanel.classList.remove('hidden');
+    const loggedInBadge = document.getElementById('crm-logged-in-badge');
+    loggedInBadge.classList.add('hidden');
+    loggedInBadge.classList.remove('flex');
+  });
+
+  document.getElementById('crm-export').addEventListener('click', async () => {
+    try {
+      const response = await fetch(`${api}?action=export`);
+      if (!response.ok) throw new Error('Could not export leads.');
+      const blob = await response.blob();
+      const link = document.createElement('a');
+      link.href = URL.createObjectURL(blob);
+      link.download = 'sanctuary-shine-crm.csv';
+      link.click();
+      URL.revokeObjectURL(link.href);
+    } catch (error) { showError(error.message); }
+  });
+
+  document.getElementById('crm-forgot-link').addEventListener('click', () => {
+    loginPanel.classList.add('hidden');
+    forgotPanel.classList.remove('hidden');
+  });
+
+  document.getElementById('crm-forgot-back').addEventListener('click', () => {
+    forgotPanel.classList.add('hidden');
+    loginPanel.classList.remove('hidden');
+  });
+
+  forgotForm.addEventListener('submit', async (event) => {
+    event.preventDefault();
+    const message = document.getElementById('crm-forgot-message');
+    message.className = 'text-sm min-h-5';
+    const button = forgotForm.querySelector('button');
+    button.disabled = true;
+    try {
+      const form = new FormData();
+      form.set('email', document.getElementById('crm-forgot-email').value);
+      const result = await request('request_password_reset', { method: 'POST', body: form });
+      message.textContent = result.message || 'If that email has a CRM account, a reset link has been sent.';
+      message.classList.add('text-green-600');
+      forgotForm.reset();
+    } catch (error) {
+      message.textContent = error.message;
+      message.classList.add('text-red-600');
+    } finally { button.disabled = false; }
+  });
+
+  resetForm.addEventListener('submit', async (event) => {
+    event.preventDefault();
+    const message = document.getElementById('crm-reset-message');
+    message.className = 'text-sm min-h-5';
+    const newPassword = document.getElementById('crm-reset-new-password').value;
+    const confirmation = document.getElementById('crm-reset-confirm-password').value;
+    if (newPassword !== confirmation) {
+      message.textContent = 'The new passwords do not match.';
+      message.classList.add('text-red-600');
+      return;
+    }
+    const button = resetForm.querySelector('button');
+    button.disabled = true;
+    try {
+      const form = new FormData();
+      form.set('token', new URLSearchParams(window.location.search).get('reset_token') || '');
+      form.set('new_password', newPassword);
+      const result = await request('reset_password', { method: 'POST', body: form });
+      message.textContent = result.message || 'Your password has been reset.';
+      message.classList.add('text-green-600');
+      resetForm.reset();
+      window.history.replaceState({}, '', window.location.pathname);
+      setTimeout(() => {
+        resetPanel.classList.add('hidden');
+        loginPanel.classList.remove('hidden');
+      }, 1500);
+    } catch (error) {
+      message.textContent = error.message;
+      message.classList.add('text-red-600');
+    } finally { button.disabled = false; }
+  });
+
+  const resetToken = new URLSearchParams(window.location.search).get('reset_token');
+  if (resetToken) {
+    loginPanel.classList.add('hidden');
+    resetPanel.classList.remove('hidden');
+  } else {
+    request('session').then((result) => { if (result.authenticated) { currentUser = result.user; showDashboard(); } }).catch(() => {});
+  }
+
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('/crm-sw.js', { scope: '/crm/' }).catch(() => {});
+  }
+
+  let installPrompt = null;
+  const installButton = document.getElementById('crm-install-button');
+  window.addEventListener('beforeinstallprompt', (event) => {
+    event.preventDefault();
+    installPrompt = event;
+    installButton.classList.remove('hidden');
+    installButton.classList.add('flex');
+  });
+  installButton.addEventListener('click', async () => {
+    if (!installPrompt) return;
+    installPrompt.prompt();
+    await installPrompt.userChoice;
+    installPrompt = null;
+    installButton.classList.add('hidden');
+    installButton.classList.remove('flex');
+  });
+  window.addEventListener('appinstalled', () => {
+    installButton.classList.add('hidden');
+    installButton.classList.remove('flex');
+  });
+</script>

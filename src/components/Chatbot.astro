@@ -1,16 +1,16 @@
 ---
-// AI Chatbot component using OpenRouter
+// AI Chatbot with DeepSeek + local FAQ fallback
 ---
 
 <!-- Chatbot Widget -->
-<div id="chatbot-widget" class="fixed bottom-20 right-4 lg:bottom-4 lg:right-4 z-50 hidden">
+<div id="chatbot-widget" class="fixed bottom-20 right-4 lg:bottom-4 lg:right-4 z-50">
   <!-- Chat Window -->
   <div id="chatbot-window" class="bg-white rounded-2xl shadow-2xl border border-gray-100 w-[calc(100vw-2rem)] max-w-sm h-[500px] max-h-[70vh] flex flex-col overflow-hidden hidden">
     <!-- Header -->
     <div class="bg-gradient-to-r from-[#00C2D1] to-[#008C99] p-4 flex items-center justify-between">
       <div class="flex items-center gap-3">
         <div class="w-10 h-10 rounded-full bg-white/20 flex items-center justify-center">
-          <img src="/images/logo/logo.png" alt="Sanctuary Shine" class="w-7 h-7 rounded-full" />
+          <img src="/images/logo/logo.png" alt="Sanctuary Shine" class="w-7 h-7 rounded-full" onerror="this.style.display='none'" />
         </div>
         <div>
           <p class="text-white font-semibold text-sm">Shine Assistant</p>
@@ -35,6 +35,21 @@
       <!-- Quick replies will be inserted here -->
     </div>
 
+    <!-- Direct WhatsApp contact -->
+    <div class="px-4 pb-3 bg-white">
+      <a
+        id="chatbot-whatsapp-link"
+        href="#"
+        target="_blank"
+        rel="noopener noreferrer"
+        class="flex items-center justify-center gap-2 w-full rounded-lg bg-[#25D366] px-3 py-2 text-sm font-semibold text-white hover:bg-[#1ebe5d] transition-colors"
+        aria-label="Message Sanctuary Shine on WhatsApp"
+      >
+        <svg class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M20.52 3.48A11.82 11.82 0 0 0 12.1 0C5.55 0 .22 5.33.22 11.9c0 2.1.55 4.15 1.6 5.96L.12 24l6.3-1.65a11.86 11.86 0 0 0 5.68 1.45h.01c6.55 0 11.88-5.33 11.88-11.9 0-3.18-1.23-6.16-3.47-8.42Zm-8.42 18.3h-.01a9.86 9.86 0 0 1-5.03-1.38l-.36-.21-3.74.98 1-3.65-.23-.38a9.87 9.87 0 0 1-1.52-5.24C2.21 6.45 6.65 2 12.11 2c2.64 0 5.12 1.03 6.98 2.9a9.84 9.84 0 0 1 2.9 7c0 5.46-4.44 9.9-9.89 9.9Zm5.43-7.42c-.3-.15-1.77-.87-2.04-.97-.27-.1-.47-.15-.67.15-.2.3-.77.97-.94 1.17-.17.2-.35.22-.65.07-.3-.15-1.25-.46-2.38-1.47-.88-.79-1.47-1.76-1.64-2.06-.17-.3-.02-.46.13-.61.14-.14.3-.35.45-.52.15-.17.2-.3.3-.5.1-.2.05-.37-.02-.52-.07-.15-.67-1.62-.92-2.22-.24-.58-.49-.5-.67-.51h-.57c-.2 0-.52.07-.8.37-.27.3-1.04 1.02-1.04 2.49s1.07 2.89 1.22 3.09c.15.2 2.1 3.21 5.09 4.5.71.31 1.26.5 1.69.64.71.23 1.36.2 1.87.12.57-.09 1.77-.72 2.02-1.42.25-.7.25-1.3.17-1.42-.07-.12-.27-.2-.57-.35Z"/></svg>
+        <span>WhatsApp us: +44 7852 736886</span>
+      </a>
+    </div>
+
     <!-- Input -->
     <div class="p-3 bg-white border-t border-gray-100">
       <form id="chatbot-form" class="flex gap-2">
@@ -53,16 +68,15 @@
   </div>
 
   <!-- Chat Button -->
-  <button id="chatbot-toggle" class="bg-[#FFD200] text-[#0B0B0B] w-14 h-14 rounded-full shadow-xl hover:scale-110 transition-transform flex items-center justify-center" aria-label="Open chat">
+  <button id="chatbot-toggle" class="relative bg-[#FFD200] text-[#0B0B0B] w-14 h-14 rounded-full shadow-xl hover:scale-110 transition-transform flex items-center justify-center" aria-label="Open chat">
     <svg id="chatbot-icon-chat" class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/></svg>
     <svg id="chatbot-icon-close" class="w-6 h-6 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
-    <!-- Notification badge -->
     <span id="chatbot-badge" class="absolute -top-1 -right-1 w-5 h-5 bg-red-500 text-white text-xs font-bold rounded-full flex items-center justify-center">1</span>
   </button>
 </div>
 
 <script src="/chatbot-config.js" is:inline></script>
-<script>
+<script is:inline>
   (function() {
     const config = window.CHATBOT_CONFIG || {};
     const widget = document.getElementById('chatbot-widget');
@@ -73,207 +87,412 @@
     const input = document.getElementById('chatbot-input');
     const messages = document.getElementById('chatbot-messages');
     const quickReplies = document.getElementById('chatbot-quick-replies');
+    const whatsappLink = document.getElementById('chatbot-whatsapp-link');
     const iconChat = document.getElementById('chatbot-icon-chat');
     const iconClose = document.getElementById('chatbot-icon-close');
     const badge = document.getElementById('chatbot-badge');
-    
+
+    if (whatsappLink && config.whatsappNumber) {
+      const number = String(config.whatsappNumber).replace(/\D/g, '');
+      const message = config.whatsappMessage || 'Hello Sanctuary Shine, I would like to ask about your cleaning services.';
+      whatsappLink.href = 'https://wa.me/' + number + '?text=' + encodeURIComponent(message);
+    }
+
     let conversationHistory = [];
     let isOpen = false;
     let hasGreeted = false;
-    let collectingEnquiry = false;
-    let enquiryData = {};
+    let bookingDetails = null;
+    let bookingStep = 0;
+    const CHAT_CLOSE_STORAGE_KEY = 'sanctuary_shine_chat_closed_until';
+    const CHAT_CLOSE_DURATION = 3 * 60 * 1000;
+    let chatCooldownTimer = null;
 
-    // Show widget
-    setTimeout(() => {
-      widget.classList.remove('hidden');
-    }, 1000);
-
-    // Auto-activate after delay
-    setTimeout(() => {
-      if (!isOpen && !hasGreeted) {
-        openChat();
-        hasGreeted = true;
+    function readChatClosedUntil() {
+      try {
+        return Number(localStorage.getItem(CHAT_CLOSE_STORAGE_KEY)) || 0;
+      } catch (_) {
+        return 0;
       }
-    }, config.autoActivateDelay || 3000);
+    }
+
+    function clearStoredChatCooldown() {
+      try {
+        localStorage.removeItem(CHAT_CLOSE_STORAGE_KEY);
+      } catch (_) {
+        // Storage may be unavailable in private browsing; the in-memory timer still works.
+      }
+    }
+
+    function endChatCooldown() {
+      clearStoredChatCooldown();
+      if (widget) widget.classList.remove('hidden');
+      if (!isOpen) {
+        openChat();
+      }
+    }
+
+    function applyChatCooldown(until) {
+      // Keep the floating chat option available while suppressing the popup.
+      if (widget) widget.classList.remove('hidden');
+      if (window_el) window_el.classList.add('hidden');
+      if (iconChat) iconChat.classList.remove('hidden');
+      if (iconClose) iconClose.classList.add('hidden');
+      if (chatCooldownTimer) clearTimeout(chatCooldownTimer);
+      chatCooldownTimer = setTimeout(endChatCooldown, Math.max(0, until - Date.now()));
+    }
+
+    // Local FAQ fallback so chatbot remains useful if DeepSeek is unavailable
+    function localReply(text) {
+      const t = (text || '').toLowerCase();
+
+      if (/quote|price|cost|how much|pricing|book|booking/.test(t)) {
+        return "Happy to help with pricing! 💰\n\n• Domestic cleaning: from £25/hour\n• Commercial: from £15/hour\n• Deep clean: from £35/hour\n• End of tenancy: from £80 (1-bed)\n• Airbnb: from £45/clean\n• Office: from £12/hour\n\nFor an exact free quote, use our form: /get-a-quote or call 0161 123 4567.";
+      }
+      if (/area|cover|salford|manchester|bolton|bury|oldham|rochdale|stockport|tameside|trafford|wigan|where/.test(t)) {
+        return "We cover all of Greater Manchester 📍 including Salford, Manchester City Centre, Bolton, Bury, Oldham, Rochdale, Stockport, Tameside, Trafford and Wigan.\n\nOur address is 13 Moorsholme Ave, Manchester, M40 9BW. Tell me your postcode and I can confirm coverage!";
+      }
+      if (/domestic|home clean|house clean|regular clean/.test(t)) {
+        return "Our domestic cleaning is perfect for busy homes — weekly, fortnightly or one-off from £25/hour. We bring eco-friendly products and all equipment. Want a free quote?";
+      }
+      if (/commercial|office|business|workplace/.test(t)) {
+        return "We provide commercial and office cleaning from £12–£15/hour, with flexible schedules around your working hours. Fully insured and DBS-checked team. Shall I help you get a quote?";
+      }
+      if (/deep clean|spring clean|intensive/.test(t)) {
+        return "Deep cleaning is a thorough top-to-bottom service from £35/hour — ideal after renovations, before moving, or when you need a proper reset. Want to book one?";
+      }
+      if (/tenancy|deposit|move out|end of tenancy|eot/.test(t)) {
+        return "Our end-of-tenancy cleans start from £80 for a 1-bed and are deposit-back focused. Landlords and tenants both use us. Need a quote for your property size?";
+      }
+      if (/airbnb|holiday let|short.?term|turnover/.test(t)) {
+        return "Airbnb / short-let turnover cleans from £45 per clean — linen change, restock basics, and guest-ready presentation. Happy to set up a regular schedule!";
+      }
+      if (/insured|insurance|dbs|safe|vetted|trust/.test(t)) {
+        return "Yes — all cleaners are DBS checked and we carry £10m public liability insurance. We also use eco-friendly products safe for kids and pets.";
+      }
+      if (/product|eco|chemical|pet|kids|children/.test(t)) {
+        return "We bring all equipment and eco-friendly, non-toxic products — safe for pets and children. You don't need to provide anything.";
+      }
+      if (/hour|open|when|time|schedule|availability/.test(t)) {
+        return "We're open Mon–Fri 8am–6pm and Saturday 9am–4pm (closed Sunday). Same-week availability is often possible — call 0161 123 4567 or request a quote online.";
+      }
+      if (/contact|phone|email|call|speak|human/.test(t)) {
+        return "You can reach us on 📞 0161 123 4567 or ✉️ contact@sanctuaryshine.co.uk. We're at 13 Moorsholme Ave, Manchester, M40 9BW.";
+      }
+      if (/hello|hi\b|hey|good morning|good afternoon|thanks|thank you/.test(t)) {
+        return "Hi! 👋 I'm Shine from Sanctuary Shine. I can help with services, pricing, areas we cover, or getting a free quote. What do you need?";
+      }
+      if (/service|what do you|offer|help/.test(t)) {
+        return "We offer:\n1) Domestic cleaning\n2) Commercial cleaning\n3) Deep cleaning\n4) End of tenancy\n5) Airbnb cleaning\n6) Office cleaning\n\nWhich one are you interested in?";
+      }
+
+      return "Thanks for your message! I can help with cleaning services, prices, areas we cover, or booking a free quote.\n\nTry asking about pricing, areas, or a specific service — or call us on 0161 123 4567 / visit /get-a-quote.";
+    }
+
+    function escapeHtml(str) {
+      return String(str)
+        .replace(/&/g, '&' + 'amp;')
+        .replace(/</g, '&' + 'lt;')
+        .replace(/>/g, '&' + 'gt;')
+        .replace(/"/g, '&' + 'quot;')
+        .replace(/\n/g, '<br>');
+    }
+
+    const chatClosedUntil = readChatClosedUntil();
+    if (chatClosedUntil > Date.now()) {
+      applyChatCooldown(chatClosedUntil);
+    } else {
+      clearStoredChatCooldown();
+      setTimeout(function() {
+        if (widget) widget.classList.remove('hidden');
+      }, 1000);
+
+      setTimeout(function() {
+        if (!isOpen && !hasGreeted) {
+          openChat();
+        }
+      }, config.autoActivateDelay || 3000);
+    }
 
     function openChat() {
+      if (!window_el) return;
+      if (widget) widget.classList.remove('hidden');
       window_el.classList.remove('hidden');
-      iconChat.classList.add('hidden');
-      iconClose.classList.remove('hidden');
-      badge.classList.add('hidden');
+      if (iconChat) iconChat.classList.add('hidden');
+      if (iconClose) iconClose.classList.remove('hidden');
+      if (badge) badge.classList.add('hidden');
       isOpen = true;
       if (!hasGreeted) {
         addBotMessage(config.welcomeMessage || "Hi! How can I help you today?");
         showQuickReplies();
         hasGreeted = true;
       }
-      input?.focus();
+      if (input) input.focus();
     }
 
     function closeChat() {
-      window_el.classList.add('hidden');
-      iconChat.classList.remove('hidden');
-      iconClose.classList.add('hidden');
+      if (window_el) window_el.classList.add('hidden');
+      if (iconChat) iconChat.classList.remove('hidden');
+      if (iconClose) iconClose.classList.add('hidden');
       isOpen = false;
+
+      const closedUntil = Date.now() + CHAT_CLOSE_DURATION;
+      try {
+        localStorage.setItem(CHAT_CLOSE_STORAGE_KEY, String(closedUntil));
+      } catch (_) {
+        // The cooldown still applies for this page if storage is unavailable.
+      }
+      applyChatCooldown(closedUntil);
     }
 
-    toggle?.addEventListener('click', () => {
-      if (isOpen) closeChat();
-      else openChat();
-    });
-
-    closeBtn?.addEventListener('click', closeChat);
+    if (toggle) {
+      toggle.addEventListener('click', function() {
+        if (isOpen) closeChat();
+        else openChat();
+      });
+    }
+    if (closeBtn) closeBtn.addEventListener('click', closeChat);
 
     function addBotMessage(text) {
-      const div = document.createElement('div');
+      if (!messages) return;
+      var div = document.createElement('div');
       div.className = 'flex gap-2';
-      div.innerHTML = `
-        <div class="w-8 h-8 rounded-full bg-[#00C2D1] flex items-center justify-center text-white text-xs font-bold shrink-0">SS</div>
-        <div class="bg-white rounded-lg rounded-tl-none p-3 max-w-[80%] shadow-sm">
-          <p class="text-sm text-[#0B0B0B]">${text}</p>
-        </div>
-      `;
+      div.innerHTML =
+        '<div class="w-8 h-8 rounded-full bg-[#00C2D1] flex items-center justify-center text-white text-xs font-bold shrink-0">SS</div>' +
+        '<div class="bg-white rounded-lg rounded-tl-none p-3 max-w-[80%] shadow-sm">' +
+        '<p class="text-sm text-[#0B0B0B]">' + escapeHtml(text) + '</p></div>';
       messages.appendChild(div);
       messages.scrollTop = messages.scrollHeight;
     }
 
     function addUserMessage(text) {
-      const div = document.createElement('div');
+      if (!messages) return;
+      var div = document.createElement('div');
       div.className = 'flex gap-2 justify-end';
-      div.innerHTML = `
-        <div class="bg-[#00C2D1] rounded-lg rounded-tr-none p-3 max-w-[80%]">
-          <p class="text-sm text-white">${text}</p>
-        </div>
-        <div class="w-8 h-8 rounded-full bg-[#FFD200] flex items-center justify-center text-[#0B0B0B] text-xs font-bold shrink-0">You</div>
-      `;
+      div.innerHTML =
+        '<div class="bg-[#00C2D1] rounded-lg rounded-tr-none p-3 max-w-[80%]">' +
+        '<p class="text-sm text-white">' + escapeHtml(text) + '</p></div>' +
+        '<div class="w-8 h-8 rounded-full bg-[#FFD200] flex items-center justify-center text-[#0B0B0B] text-xs font-bold shrink-0">You</div>';
       messages.appendChild(div);
       messages.scrollTop = messages.scrollHeight;
     }
 
     function addTypingIndicator() {
-      const div = document.createElement('div');
+      if (!messages) return;
+      var div = document.createElement('div');
       div.id = 'typing-indicator';
       div.className = 'flex gap-2';
-      div.innerHTML = `
-        <div class="w-8 h-8 rounded-full bg-[#00C2D1] flex items-center justify-center text-white text-xs font-bold shrink-0">SS</div>
-        <div class="bg-white rounded-lg rounded-tl-none p-3 shadow-sm">
-          <div class="flex gap-1">
-            <span class="w-2 h-2 bg-gray-300 rounded-full animate-bounce"></span>
-            <span class="w-2 h-2 bg-gray-300 rounded-full animate-bounce" style="animation-delay: 0.1s"></span>
-            <span class="w-2 h-2 bg-gray-300 rounded-full animate-bounce" style="animation-delay: 0.2s"></span>
-          </div>
-        </div>
-      `;
+      div.innerHTML =
+        '<div class="w-8 h-8 rounded-full bg-[#00C2D1] flex items-center justify-center text-white text-xs font-bold shrink-0">SS</div>' +
+        '<div class="bg-white rounded-lg rounded-tl-none p-3 shadow-sm"><div class="flex gap-1">' +
+        '<span class="w-2 h-2 bg-gray-300 rounded-full animate-bounce"></span>' +
+        '<span class="w-2 h-2 bg-gray-300 rounded-full animate-bounce" style="animation-delay:0.1s"></span>' +
+        '<span class="w-2 h-2 bg-gray-300 rounded-full animate-bounce" style="animation-delay:0.2s"></span>' +
+        '</div></div>';
       messages.appendChild(div);
       messages.scrollTop = messages.scrollHeight;
     }
 
     function removeTypingIndicator() {
-      document.getElementById('typing-indicator')?.remove();
+      var el = document.getElementById('typing-indicator');
+      if (el) el.remove();
     }
 
     function showQuickReplies() {
-      if (!config.quickReplies) return;
+      if (!quickReplies || !config.quickReplies) return;
       quickReplies.innerHTML = '';
-      config.quickReplies.forEach(reply => {
-        const btn = document.createElement('button');
+      config.quickReplies.forEach(function(reply) {
+        var btn = document.createElement('button');
+        btn.type = 'button';
         btn.className = 'text-xs bg-[#D9FBFF] text-[#008C99] px-3 py-1.5 rounded-full hover:bg-[#00C2D1] hover:text-white transition-colors font-medium';
         btn.textContent = reply;
-        btn.addEventListener('click', () => {
-          handleUserMessage(reply);
-        });
+        btn.addEventListener('click', function() { handleUserMessage(reply); });
         quickReplies.appendChild(btn);
       });
     }
 
     function hideQuickReplies() {
-      quickReplies.innerHTML = '';
+      if (quickReplies) quickReplies.innerHTML = '';
+    }
+
+    const bookingFields = [
+      { key: 'name', prompt: 'What is your full name?' },
+      { key: 'email', prompt: 'What email address should we use for your confirmation?' },
+      { key: 'phone', prompt: 'What is the best phone number to reach you on?' },
+      { key: 'postcode', prompt: 'What is the postcode for the property?' },
+      { key: 'cleaningType', prompt: 'Which cleaning service would you like to book?' },
+      { key: 'propertyType', prompt: 'What type of property is it? Please include the size if useful, such as “3-bedroom house” or “2-room office”.' },
+      { key: 'preferredDate', prompt: 'What date would you prefer? You can say “as soon as possible”.' },
+      { key: 'message', prompt: 'Are there any access instructions or other details we should know?' }
+    ];
+
+    function isBookingIntent(text) {
+      return /\b(book|booking|schedule|appointment|reserve)\b/i.test(text || '');
+    }
+
+    function startBookingFlow() {
+      bookingDetails = {};
+      bookingStep = 0;
+      hideQuickReplies();
+      addBotMessage("Absolutely — I can take your booking details here. Once they're submitted, we'll get back to you within 2 hours during business hours.");
+      addBotMessage(bookingFields[0].prompt);
+    }
+
+    function bookingValidation(key, value) {
+      if (value.length < 2) return 'Please provide a little more detail so I can continue.';
+      if (key === 'email' && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) return 'Please enter a valid email address.';
+      if (key === 'phone' && value.replace(/\D/g, '').length < 7) return 'Please enter a valid phone number.';
+      if (key === 'postcode' && value.length < 3) return 'Please enter the property postcode.';
+      return '';
+    }
+
+    async function submitBookingRequest() {
+      const details = bookingDetails;
+      const requestMessage = [
+        'Booking request submitted through the website chat.',
+        'Cleaning service: ' + details.cleaningType,
+        'Property: ' + details.propertyType,
+        'Preferred date: ' + details.preferredDate,
+        'Additional details: ' + details.message
+      ].join('\n');
+      const formData = new FormData();
+      formData.set('form_type', 'contact');
+      formData.set('subject', 'booking');
+      formData.set('name', details.name);
+      formData.set('email', details.email);
+      formData.set('phone', details.phone);
+      formData.set('postcode', details.postcode);
+      formData.set('cleaningType', details.cleaningType);
+      formData.set('propertyType', details.propertyType);
+      formData.set('preferredDate', details.preferredDate);
+      formData.set('message', requestMessage);
+
+      try {
+        const response = await fetch(config.enquiryEndpoint || '/send.php', {
+          method: 'POST',
+          body: formData,
+          headers: { Accept: 'application/json' }
+        });
+        const result = await response.json();
+        if (!response.ok || result.status !== 'success') throw new Error(result.message || 'Unable to send the booking request.');
+        bookingDetails = null;
+        bookingStep = 0;
+        addBotMessage("Thank you — your booking request has been received. We'll get back to you within 2 hours during business hours.");
+        setTimeout(showQuickReplies, 1000);
+      } catch (error) {
+        bookingDetails = null;
+        bookingStep = 0;
+        addBotMessage("I couldn't submit that booking request just now. Please try again or call 0161 123 4567, and we'll get back to you.");
+        setTimeout(showQuickReplies, 1000);
+      }
+    }
+
+    async function handleBookingStep(text) {
+      if (!bookingDetails) return;
+      if (/^(cancel|stop|never mind)$/i.test(text.trim())) {
+        bookingDetails = null;
+        bookingStep = 0;
+        addBotMessage('No problem — I have stopped the booking request. Let me know if you need anything else.');
+        setTimeout(showQuickReplies, 500);
+        return;
+      }
+
+      const field = bookingFields[bookingStep];
+      const value = text.trim();
+      const validationMessage = bookingValidation(field.key, value);
+      if (validationMessage) {
+        addBotMessage(validationMessage + ' ' + field.prompt);
+        return;
+      }
+
+      bookingDetails[field.key] = value;
+      bookingStep += 1;
+      if (bookingStep < bookingFields.length) {
+        addBotMessage(bookingFields[bookingStep].prompt);
+      } else {
+        addBotMessage('Thanks — I have all the details I need. I am sending your booking request now.');
+        await submitBookingRequest();
+      }
     }
 
     async function callAI(userMessage) {
       conversationHistory.push({ role: 'user', content: userMessage });
 
       try {
-        const response = await fetch(config.apiEndpoint || '/api/chatbot-proxy', {
+        var controller = new AbortController();
+        var timeout = setTimeout(function() { controller.abort(); }, 20000);
+
+        var response = await fetch(config.apiEndpoint || '/api/chatbot-proxy.php', {
           method: 'POST',
-          headers: {
-            'Content-Type': 'application/json'
-          },
+          headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
-            model: config.model || 'meta-llama/llama-3.2-3b-instruct:free',
+            model: config.model || 'deepseek-v4-flash',
             messages: [
-              { role: 'system', content: config.systemPrompt || 'You are a helpful cleaning assistant.' },
+              { role: 'system', content: config.systemPrompt || 'You are a helpful cleaning assistant for Sanctuary Shine.' },
               ...conversationHistory.slice(-10)
             ],
             max_tokens: 300,
             temperature: 0.7
-          })
+          }),
+          signal: controller.signal
         });
+        clearTimeout(timeout);
 
-        if (!response.ok) throw new Error('API request failed');
-        const data = await response.json();
-        const aiMessage = data.choices?.[0]?.message?.content || data.reply || "I'm sorry, I couldn't process that. Please try again or call us at 0161 123 4567.";
+        if (!response.ok) {
+          // Use local FAQ when DeepSeek is unavailable or out of credits
+          var fallback = localReply(userMessage);
+          conversationHistory.push({ role: 'assistant', content: fallback });
+          return fallback;
+        }
+
+        var data = await response.json();
+        var aiMessage = (data.choices && data.choices[0] && data.choices[0].message && data.choices[0].message.content)
+          || data.reply
+          || null;
+
+        if (!aiMessage) {
+          aiMessage = localReply(userMessage);
+        }
+
         conversationHistory.push({ role: 'assistant', content: aiMessage });
         return aiMessage;
       } catch (error) {
-        return "I'm having trouble connecting right now. Please call us at 0161 123 4567 or email contact@sanctuaryshine.co.uk and we'll be happy to help!";
+        var fb = localReply(userMessage);
+        conversationHistory.push({ role: 'assistant', content: fb });
+        return fb;
       }
     }
 
     async function handleUserMessage(text) {
+      if (!text) return;
       addUserMessage(text);
+      if (input) input.value = '';
+
+      if (bookingDetails) {
+        await handleBookingStep(text);
+        return;
+      }
+
+      if (isBookingIntent(text)) {
+        startBookingFlow();
+        return;
+      }
+
       hideQuickReplies();
-      input.value = '';
       addTypingIndicator();
 
-      // Check for enquiry collection
-      const lowerText = text.toLowerCase();
-      if (lowerText.includes('quote') || lowerText.includes('book') || lowerText.includes('enquiry') || lowerText.includes('inquiry')) {
-        const aiResponse = await callAI(text);
-        removeTypingIndicator();
-        addBotMessage(aiResponse);
-        
-        // Check if AI is collecting enquiry info
-        if (aiResponse.toLowerCase().includes('name') || aiResponse.toLowerCase().includes('email') || aiResponse.toLowerCase().includes('phone')) {
-          collectingEnquiry = true;
-        }
-      } else {
-        const aiResponse = await callAI(text);
-        removeTypingIndicator();
-        addBotMessage(aiResponse);
-      }
-
-      // Show quick replies again after a delay
-      setTimeout(showQuickReplies, 2000);
+      var aiResponse = await callAI(text);
+      removeTypingIndicator();
+      addBotMessage(aiResponse);
+      setTimeout(showQuickReplies, 1200);
     }
 
-    form?.addEventListener('submit', (e) => {
-      e.preventDefault();
-      const text = input.value.trim();
-      if (!text) return;
-      handleUserMessage(text);
-    });
-
-    // Send enquiry to owner
-    window.sendChatbotEnquiry = async function(data) {
-      try {
-        const formData = new FormData();
-        formData.append('form_type', 'chatbot');
-        formData.append('name', data.name || '');
-        formData.append('email', data.email || '');
-        formData.append('phone', data.phone || '');
-        formData.append('postcode', data.postcode || '');
-        formData.append('message', data.message || `Chatbot enquiry: ${JSON.stringify(data)}`);
-        
-        await fetch(config.enquiryEndpoint || '/send.php', {
-          method: 'POST',
-          body: formData
-        });
-        return true;
-      } catch (error) {
-        console.error('Failed to send enquiry:', error);
-        return false;
-      }
-    };
+    if (form) {
+      form.addEventListener('submit', function(e) {
+        e.preventDefault();
+        var text = (input && input.value ? input.value : '').trim();
+        if (!text) return;
+        handleUserMessage(text);
+      });
+    }
   })();
 </script>
