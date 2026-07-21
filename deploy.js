@@ -178,8 +178,7 @@ async function deploy() {
     console.log("\n📋 Step 5: Uploading additional files...");
     const additionalFiles = [
       { local: "public/send.php", remote: "send.php" },
-      { local: "public/chatbot-config.js", remote: "chatbot-config.js" },
-      { local: ".env", remote: ".env" }
+      { local: "public/chatbot-config.js", remote: "chatbot-config.js" }
     ];
     for (const file of additionalFiles) {
       const localPath = resolve(process.cwd(), file.local);
