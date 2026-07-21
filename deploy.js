@@ -1,5 +1,5 @@
 import * as ftp from "basic-ftp";
-import { readFileSync, existsSync, readdirSync, statSync } from "fs";
+import { readFileSync, existsSync, readdirSync, statSync, mkdirSync } from "fs";
 import { join, resolve, relative, dirname } from "path";
 import { execSync } from "child_process";
 
@@ -106,6 +106,23 @@ async function deploy() {
       secure: false
     });
     console.log("✅ Connected to FTP server!\n");
+
+    // Step 2b: Back up live CRM data (leads/users) before touching anything else.
+    // This data only ever exists on the server — it is never in dist/ or git — so
+    // it must be pulled down before any upload that might disturb the remote state.
+    console.log("💾 Backing up live CRM data...");
+    const backupDir = resolve(process.cwd(), "backups", `crm-data-${new Date().toISOString().replace(/[:.]/g, "-")}`);
+    let backedUp = 0;
+    for (const remoteFile of ["crm-data/leads.json", "crm-data/users.json"]) {
+      try {
+        mkdirSync(backupDir, { recursive: true });
+        await client.downloadTo(join(backupDir, remoteFile.split("/")[1]), `${config.remotePath}/${remoteFile}`);
+        backedUp++;
+      } catch {
+        // File may not exist yet (e.g. no leads recorded so far) — nothing to back up.
+      }
+    }
+    console.log(backedUp > 0 ? `✅ Backed up ${backedUp} file(s) to ${relative(process.cwd(), backupDir)}\n` : "ℹ️  No existing CRM data found to back up.\n");
 
     const localDistPath = resolve(process.cwd(), "dist");
     if (!existsSync(localDistPath)) {

@@ -21,6 +21,9 @@ pnpm-debug.log*
 public/crm-config.php
 public/crm-data/
 
+# Local backups of live CRM data (contains real customer PII, never commit)
+backups/
+
 # macOS-specific files
 .DS_Store
 
