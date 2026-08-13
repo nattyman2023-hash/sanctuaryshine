@@ -107,13 +107,13 @@ async function deploy() {
     });
     console.log("✅ Connected to FTP server!\n");
 
-    // Step 2b: Back up live CRM data (leads/users) before touching anything else.
+    // Step 2b: Back up live CRM data before touching anything else.
     // This data only ever exists on the server — it is never in dist/ or git — so
     // it must be pulled down before any upload that might disturb the remote state.
     console.log("💾 Backing up live CRM data...");
     const backupDir = resolve(process.cwd(), "backups", `crm-data-${new Date().toISOString().replace(/[:.]/g, "-")}`);
     let backedUp = 0;
-    for (const remoteFile of ["crm-data/leads.json", "crm-data/users.json"]) {
+    for (const remoteFile of ["crm-data/leads.json", "crm-data/leads.json.bak", "crm-data/leads.json.lock", "crm-data/users.json", "crm-data/invoices.json", "crm-data/invoices.json.bak", "crm-data/.htaccess"]) {
       try {
         mkdirSync(backupDir, { recursive: true });
         await client.downloadTo(join(backupDir, remoteFile.split("/")[1]), `${config.remotePath}/${remoteFile}`);

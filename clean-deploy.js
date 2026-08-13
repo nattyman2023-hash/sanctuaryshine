@@ -1,5 +1,5 @@
 import * as ftp from "basic-ftp";
-import { readFileSync, existsSync, readdirSync, statSync, writeFileSync } from "fs";
+import { readFileSync, existsSync, readdirSync, statSync, writeFileSync, mkdirSync, copyFileSync } from "fs";
 import { join, resolve, relative, dirname } from "path";
 import { execSync } from "child_process";
 
@@ -32,10 +32,10 @@ const config = {
 };
 
 // Stale items that should NOT be in the web root
-const STALE = new Set([
-  ".git", ".vscode", "src", "public", "node_modules", "dist",
+  const STALE = new Set([
+  ".git", ".vscode", "src", "public", "node_modules", "dist", "backups", "tools",
   "package.json", "package-lock.json", "tsconfig.json", "astro.config.mjs",
-  "deploy.js", "ftp-check.js", "generate-logo.js", "clean-deploy.js",
+  "deploy.js", "deploy-blog.js", "nuclear-deploy.js", "ftp-explore.js", "ftp-check.js", "generate-logo.js", "clean-deploy.js",
   "README.md", "AGENTS.md", "CLAUDE.md", ".gitignore", ".env"
 ]);
 
@@ -97,6 +97,41 @@ Options -Indexes
 
   const current = await client.pwd();
   console.log("Working in:", current);
+
+  // CRM data lives outside dist/ and must survive cleanup and uploads.
+  const crmBackupDir = resolve(process.cwd(), "backups", `crm-data-clean-${new Date().toISOString().replace(/[:.]/g, "-")}`);
+  const crmFiles = ["leads.json", "leads.json.bak", "leads.json.lock", "users.json", "invoices.json", "invoices.json.bak", ".htaccess"];
+  const preservedCrmFiles = [];
+  for (const file of crmFiles) {
+    try {
+      mkdirSync(crmBackupDir, { recursive: true });
+      await client.downloadTo(join(crmBackupDir, file), `crm-data/${file}`);
+      preservedCrmFiles.push(file);
+    } catch {}
+  }
+
+  // If the hosting root has been replaced by source files and the live CRM
+  // directory is missing, restore the newest local CRM snapshot rather than
+  // publishing an empty dashboard. This keeps a bad deploy from looking like
+  // the leads have disappeared.
+  const backupsRoot = resolve(process.cwd(), "backups");
+  const fallbackBackup = readdirSync(backupsRoot, { withFileTypes: true })
+    .filter((entry) => entry.isDirectory() && entry.name.startsWith("crm-data-clean-"))
+    .map((entry) => entry.name)
+    .sort()
+    .reverse()
+    .map((name) => join(backupsRoot, name))
+    .find((directory) => existsSync(join(directory, "leads.json")));
+  if (fallbackBackup) {
+    for (const file of crmFiles) {
+      if (!preservedCrmFiles.includes(file) && existsSync(join(fallbackBackup, file))) {
+        mkdirSync(crmBackupDir, { recursive: true });
+        copyFileSync(join(fallbackBackup, file), join(crmBackupDir, file));
+        preservedCrmFiles.push(file);
+      }
+    }
+    if (preservedCrmFiles.length) console.log(`Using local CRM snapshot: ${relative(process.cwd(), fallbackBackup)}`);
+  }
 
   // Remove stale junk
   console.log("\n🧹 Cleaning stale files...");
@@ -169,6 +204,15 @@ Options -Indexes
         console.log(`  ❌ ${rel} still failed: ${e2.message}`);
       }
     }
+  }
+
+  if (preservedCrmFiles.length) {
+    await client.ensureDir("crm-data");
+    await client.cd(current);
+    for (const file of preservedCrmFiles) {
+      await client.uploadFrom(join(crmBackupDir, file), `crm-data/${file}`);
+    }
+    console.log(`Restored ${preservedCrmFiles.length} CRM data file(s).`);
   }
 
   // Verify

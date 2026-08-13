@@ -96,7 +96,7 @@ The public forms post to `/send.php`. Each request is saved to the private CRM d
 4. To use Emailit, add a current API key to `emailit_api_key`. The handler uses Emailit's v2 endpoint. If no key is configured, it falls back to Hostinger's PHP mail transport.
 5. Upload the built files, including `send.php`, `crm-api.php`, `crm-config.php`, and the generated `/crm/` page.
 
-Open `/crm` to manage bookings, quotes, and enquiries. The dashboard supports search, filters, status updates, internal notes, and CSV export.
+Open `/crm` to manage bookings, quotes, and enquiries. The dashboard supports search, filters, status updates, internal notes, CSV export, branded invoice generation, print/save-to-PDF, payment-link sharing, and customer email delivery. Invoice data is stored in the private `crm-data/invoices.json` file alongside leads and users.
 
 Emailit API keys and CRM passwords must stay in `crm-config.php` or server environment variables; do not commit them to source control.
 

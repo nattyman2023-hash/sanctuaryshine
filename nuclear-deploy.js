@@ -1,5 +1,5 @@
 import * as ftp from "basic-ftp";
-import { readFileSync, existsSync, readdirSync, statSync, writeFileSync } from "fs";
+import { readFileSync, existsSync, readdirSync, statSync, writeFileSync, mkdirSync } from "fs";
 import { join, resolve, relative, dirname } from "path";
 import { execSync } from "child_process";
 
@@ -110,6 +110,22 @@ Options -Indexes
   const rootPwd = await client.pwd();
   console.log("Web root:", rootPwd);
 
+  // Preserve CRM data before the destructive clear. The data directory is not
+  // part of dist/, so it must be restored after the site files are uploaded.
+  const crmBackupDir = resolve(process.cwd(), "backups", `crm-data-nuclear-${new Date().toISOString().replace(/[:.]/g, "-")}`);
+  const crmFiles = ["leads.json", "leads.json.bak", "leads.json.lock", "users.json", "invoices.json", "invoices.json.bak", ".htaccess"];
+  const preservedCrmFiles = [];
+  for (const file of crmFiles) {
+    try {
+      mkdirSync(crmBackupDir, { recursive: true });
+      await client.downloadTo(join(crmBackupDir, file), `crm-data/${file}`);
+      preservedCrmFiles.push(file);
+    } catch {
+      // A file may not exist yet on a new installation.
+    }
+  }
+  console.log(preservedCrmFiles.length ? `Preserved ${preservedCrmFiles.length} CRM data file(s) in ${relative(process.cwd(), crmBackupDir)}` : "No existing CRM data found to preserve.");
+
   console.log("\n☢️  NUCLEAR CLEAR of /public_html ...");
   await clearDir(client, ".");
 
@@ -166,6 +182,16 @@ Options -Indexes
   }
 
   console.log("\n🔍 Final remote listing:");
+  if (preservedCrmFiles.length) {
+    console.log("\nRestoring preserved CRM data...");
+    await client.ensureDir("crm-data");
+    await client.cd(rootPwd);
+    for (const file of preservedCrmFiles) {
+      await uploadFile(client, join(crmBackupDir, file), `crm-data/${file}`, rootPwd);
+      console.log(`  Restored crm-data/${file}`);
+    }
+  }
+
   after = await client.list();
   for (const f of after) {
     if (f.name !== "." && f.name !== "..") {

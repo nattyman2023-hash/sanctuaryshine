@@ -1,7 +1,7 @@
 <?php
 /**
  * Small authenticated CRM API for the static Sanctuary Shine site.
- * Data is stored in crm-data/leads.json and never returned without a session.
+ * Data is stored in private crm-data JSON files and never returned without a session.
  */
 
 ini_set('session.cookie_httponly', '1');
@@ -28,7 +28,7 @@ function crm_config(): array
 
 function crm_available_features(): array
 {
-    return ['view_leads', 'edit_leads', 'export_leads', 'manage_users'];
+    return ['view_leads', 'edit_leads', 'export_leads', 'manage_users', 'manage_invoices'];
 }
 
 function crm_all_features(): array
@@ -44,6 +44,68 @@ function crm_data_directory(): string
 function crm_data_file(): string
 {
     return crm_data_directory() . '/leads.json';
+}
+
+function crm_read_json_file(string $file): array
+{
+    $lock = @fopen($file . '.lock', 'c');
+    if (!$lock || !flock($lock, LOCK_SH)) {
+        if ($lock) fclose($lock);
+        return [];
+    }
+    $result = [];
+    foreach ([$file, $file . '.bak'] as $candidate) {
+        if (!is_file($candidate)) continue;
+        $contents = @file_get_contents($candidate);
+        $decoded = json_decode($contents ?: '', true);
+        if (is_array($decoded)) {
+            $result = $decoded;
+            break;
+        }
+    }
+    flock($lock, LOCK_UN);
+    fclose($lock);
+    return $result;
+}
+
+function crm_write_json_file(string $file, array $value): bool
+{
+    if (!crm_prepare_data_directory()) return false;
+    $lock = @fopen($file . '.lock', 'c');
+    if (!$lock || !flock($lock, LOCK_EX)) {
+        if ($lock) fclose($lock);
+        return false;
+    }
+    $existingContents = is_file($file) ? @file_get_contents($file) : '';
+    if ($existingContents !== '' && is_array(json_decode($existingContents, true))) {
+        @copy($file, $file . '.bak');
+        @chmod($file . '.bak', 0600);
+    }
+    $json = json_encode(array_values($value), JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES);
+    if ($json === false) {
+        flock($lock, LOCK_UN);
+        fclose($lock);
+        return false;
+    }
+    $temporaryFile = $file . '.tmp';
+    $written = @file_put_contents($temporaryFile, $json, LOCK_EX);
+    if ($written === false || $written !== strlen($json)) {
+        @unlink($temporaryFile);
+        flock($lock, LOCK_UN);
+        fclose($lock);
+        return false;
+    }
+    @chmod($temporaryFile, 0600);
+    $renamed = @rename($temporaryFile, $file);
+    if ($renamed) @chmod($file, 0600);
+    flock($lock, LOCK_UN);
+    fclose($lock);
+    return $renamed;
+}
+
+function crm_invoices_file(): string
+{
+    return crm_data_directory() . '/invoices.json';
 }
 
 function crm_users_file(): string
@@ -62,31 +124,22 @@ function crm_prepare_data_directory(): bool
 
 function crm_read_leads(): array
 {
-    $file = crm_data_file();
-    if (!is_file($file)) return [];
-    $contents = @file_get_contents($file);
-    $leads = json_decode($contents ?: '[]', true);
-    return is_array($leads) ? $leads : [];
+    return crm_read_json_file(crm_data_file());
 }
 
 function crm_write_leads(array $leads): bool
 {
-    if (!crm_prepare_data_directory()) return false;
-    $file = crm_data_file();
-    $handle = @fopen($file, 'c+');
-    if (!$handle || !flock($handle, LOCK_EX)) {
-        if ($handle) fclose($handle);
-        return false;
-    }
-    $json = json_encode($leads, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES);
-    rewind($handle);
-    ftruncate($handle, 0);
-    $written = $json !== false && fwrite($handle, $json) !== false;
-    fflush($handle);
-    flock($handle, LOCK_UN);
-    fclose($handle);
-    @chmod($file, 0600);
-    return $written;
+    return crm_write_json_file(crm_data_file(), $leads);
+}
+
+function crm_read_invoices(): array
+{
+    return crm_read_json_file(crm_invoices_file());
+}
+
+function crm_write_invoices(array $invoices): bool
+{
+    return crm_write_json_file(crm_invoices_file(), $invoices);
 }
 
 function crm_read_users(): array
@@ -141,13 +194,16 @@ function crm_write_users(array $users): bool
 
 function crm_public_user(array $user): array
 {
+    $features = ($user['role'] ?? '') === 'admin'
+        ? crm_all_features()
+        : array_values(array_intersect((array) ($user['features'] ?? []), crm_available_features()));
     return [
         'id' => (string) ($user['id'] ?? ''),
         'name' => (string) ($user['name'] ?? ''),
         'email' => (string) ($user['email'] ?? ''),
         'role' => (string) ($user['role'] ?? 'staff'),
         'active' => (bool) ($user['active'] ?? false),
-        'features' => array_values(array_intersect((array) ($user['features'] ?? []), crm_available_features())),
+        'features' => $features,
         'created_at' => (string) ($user['created_at'] ?? ''),
         'last_login_at' => (string) ($user['last_login_at'] ?? ''),
     ];
@@ -175,7 +231,7 @@ function crm_require_auth(string $feature = ''): array
 {
     $user = crm_current_user();
     if ($user === null) crm_response(['status' => 'error', 'message' => 'Authentication required.'], 401);
-    if ($feature !== '' && !in_array($feature, (array) ($user['features'] ?? []), true)) {
+    if ($feature !== '' && ($user['role'] ?? '') !== 'admin' && !in_array($feature, (array) ($user['features'] ?? []), true)) {
         crm_response(['status' => 'error', 'message' => 'You do not have access to this feature.'], 403);
     }
     return $user;
@@ -240,6 +296,240 @@ function crm_send_reset_email(array $user, string $token, array $config): bool
         return @mail($to, $subject, $text, implode("\r\n", $headers));
     }
 
+    return false;
+}
+
+function crm_normalize_invoice(array $invoice): array
+{
+    $customerSource = is_array($invoice['customer'] ?? null) ? $invoice['customer'] : [];
+    $itemsSource = is_array($invoice['line_items'] ?? null) ? $invoice['line_items'] : [];
+    $items = [];
+    foreach ($itemsSource as $item) {
+        if (!is_array($item)) continue;
+        $description = crm_clean_value($item['description'] ?? '', 240);
+        $quantity = is_numeric($item['quantity'] ?? null) ? max(0, min(999, (float) $item['quantity'])) : 0;
+        $unitPrice = is_numeric($item['unit_price'] ?? null) ? max(0, min(1000000, (float) $item['unit_price'])) : 0;
+        if ($description === '' || $quantity <= 0) continue;
+        $items[] = [
+            'description' => $description,
+            'quantity' => round($quantity, 2),
+            'unit_price' => round($unitPrice, 2),
+            'amount' => round($quantity * $unitPrice, 2),
+        ];
+    }
+
+    $subtotal = round(array_sum(array_column($items, 'amount')), 2);
+    $paymentLink = crm_clean_value($invoice['payment_link'] ?? '', 1000);
+    if ($paymentLink !== '' && !preg_match('/^https?:\/\//i', $paymentLink)) $paymentLink = '';
+    $id = crm_clean_value($invoice['id'] ?? '', 100);
+    return [
+        'id' => $id,
+        'invoice_number' => crm_clean_value($invoice['invoice_number'] ?? '', 80),
+        'issue_date' => crm_clean_value($invoice['issue_date'] ?? '', 30),
+        'due_date' => crm_clean_value($invoice['due_date'] ?? '', 30),
+        'service_date' => crm_clean_value($invoice['service_date'] ?? '', 30),
+        'customer' => [
+            'name' => crm_clean_value($customerSource['name'] ?? '', 160),
+            'email' => strtolower(crm_clean_value($customerSource['email'] ?? '', 240)),
+            'phone' => crm_clean_value($customerSource['phone'] ?? '', 60),
+            'address' => crm_clean_value($customerSource['address'] ?? '', 300),
+            'postcode' => crm_clean_value($customerSource['postcode'] ?? '', 30),
+        ],
+        'line_items' => $items,
+        'subtotal' => $subtotal,
+        'payment_link' => $paymentLink,
+        'notes' => crm_clean_value($invoice['notes'] ?? '', 3000),
+        'status' => in_array(($invoice['status'] ?? ''), ['draft', 'sent', 'paid'], true) ? $invoice['status'] : 'draft',
+        'created_at' => crm_clean_value($invoice['created_at'] ?? '', 40),
+        'updated_at' => gmdate('c'),
+        'sent_at' => crm_clean_value($invoice['sent_at'] ?? '', 40),
+        'email_status' => crm_clean_value($invoice['email_status'] ?? '', 80),
+    ];
+}
+
+function crm_clean_value($value, int $maxLength = 500): string
+{
+    $value = is_scalar($value) ? trim((string) $value) : '';
+    return substr(strip_tags($value), 0, $maxLength);
+}
+
+function crm_invoice_is_valid(array $invoice): bool
+{
+    return $invoice['invoice_number'] !== ''
+        && $invoice['customer']['name'] !== ''
+        && filter_var($invoice['customer']['email'], FILTER_VALIDATE_EMAIL)
+        && count($invoice['line_items']) > 0;
+}
+
+function crm_pdf_escape(string $value): string
+{
+    $value = preg_replace('/[^\x20-\x7E\r\n]/', '', $value) ?? '';
+    return str_replace(['\\', '(', ')'], ['\\\\', '\\(', '\\)'], $value);
+}
+
+function crm_pdf_text(string &$stream, float $x, float $y, string $text, float $size = 10, string $color = '0.10 0.11 0.11'): void
+{
+    $stream .= sprintf("BT /F1 %.2f Tf %s rg %.2f %.2f Td (%s) Tj ET\n", $size, $color, $x, $y, crm_pdf_escape($text));
+}
+
+function crm_pdf_lines(string &$stream, float $x, float &$y, string $text, int $limit = 58, float $size = 9, string $color = '0.24 0.29 0.30', float $leading = 13): void
+{
+    $text = trim(preg_replace('/\s+/', ' ', $text) ?? '');
+    if ($text === '') return;
+    foreach (explode("\n", wordwrap($text, $limit, "\n", true)) as $line) {
+        crm_pdf_text($stream, $x, $y, $line, $size, $color);
+        $y -= $leading;
+    }
+}
+
+function crm_generate_invoice_pdf(array $invoice): string
+{
+    $stream = "q 0.00 0.76 0.82 rg 45 700 505 4 re f Q\n";
+    $logoPath = __DIR__ . '/images/logo/logo-invoice.jpg';
+    $imageData = is_file($logoPath) ? @file_get_contents($logoPath) : false;
+    $imageSize = $imageData !== false ? @getimagesize($logoPath) : false;
+    $hasLogo = is_string($imageData) && $imageData !== '' && is_array($imageSize);
+    if ($hasLogo) $stream .= "q 72 0 0 72 45 730 cm /Im1 Do Q\n";
+
+    crm_pdf_text($stream, 130, 778, 'SANCTUARY SHINE LTD', 19, '0.04 0.05 0.05');
+    crm_pdf_text($stream, 130, 760, 'Professional cleaning services', 9, '0.42 0.47 0.48');
+    crm_pdf_text($stream, 400, 778, 'INVOICE', 10, '0.00 0.55 0.60');
+    crm_pdf_text($stream, 400, 755, (string) ($invoice['invoice_number'] ?? 'Draft invoice'), 18, '0.04 0.05 0.05');
+    crm_pdf_text($stream, 400, 738, 'Issued ' . (string) ($invoice['issue_date'] ?? 'Not set'), 9, '0.42 0.47 0.48');
+    crm_pdf_text($stream, 400, 724, 'Due ' . (string) ($invoice['due_date'] ?? 'Not set'), 9, '0.42 0.47 0.48');
+
+    crm_pdf_text($stream, 45, 680, 'FROM', 8, '0.00 0.55 0.60');
+    crm_pdf_text($stream, 45, 663, 'Sanctuary Shine Ltd', 11, '0.04 0.05 0.05');
+    $fromY = 646;
+    crm_pdf_lines($stream, 45, $fromY, '13 Moorsholme Ave, Manchester, M40 9BW', 42);
+    crm_pdf_lines($stream, 45, $fromY, 'Company no. 08040169 | contact@sanctuaryshine.co.uk', 48);
+
+    crm_pdf_text($stream, 310, 680, 'BILL TO', 8, '0.00 0.55 0.60');
+    crm_pdf_text($stream, 310, 663, (string) ($invoice['customer']['name'] ?? 'Customer'), 11, '0.04 0.05 0.05');
+    $billY = 646;
+    crm_pdf_lines($stream, 310, $billY, (string) ($invoice['customer']['email'] ?? ''), 38);
+    crm_pdf_lines($stream, 310, $billY, (string) ($invoice['customer']['phone'] ?? ''), 38);
+    crm_pdf_lines($stream, 310, $billY, trim((string) ($invoice['customer']['address'] ?? '') . ' ' . (string) ($invoice['customer']['postcode'] ?? '')), 38);
+
+    $tableTop = min($fromY, $billY) - 20;
+    $stream .= "q 0.95 0.96 0.96 rg 45 " . ($tableTop - 18) . " 505 22 re f Q\n";
+    crm_pdf_text($stream, 53, $tableTop - 11, 'DESCRIPTION', 8, '0.24 0.29 0.30');
+    crm_pdf_text($stream, 380, $tableTop - 11, 'QTY', 8, '0.24 0.29 0.30');
+    crm_pdf_text($stream, 425, $tableTop - 11, 'RATE', 8, '0.24 0.29 0.30');
+    crm_pdf_text($stream, 500, $tableTop - 11, 'AMOUNT', 8, '0.24 0.29 0.30');
+    $rowY = $tableTop - 40;
+    foreach (($invoice['line_items'] ?? []) as $item) {
+        $descriptionLines = explode("\n", wordwrap((string) ($item['description'] ?? ''), 43, "\n", true));
+        foreach ($descriptionLines as $lineIndex => $line) {
+            crm_pdf_text($stream, 53, $rowY, $line, 9);
+            if ($lineIndex === 0) {
+                crm_pdf_text($stream, 380, $rowY, rtrim(rtrim(number_format((float) ($item['quantity'] ?? 0), 2, '.', ''), '0'), '.'), 9);
+                crm_pdf_text($stream, 425, $rowY, 'GBP ' . number_format((float) ($item['unit_price'] ?? 0), 2), 9);
+                crm_pdf_text($stream, 500, $rowY, 'GBP ' . number_format((float) ($item['amount'] ?? 0), 2), 9);
+            }
+            $rowY -= 13;
+        }
+        $stream .= "0.90 0.91 0.91 RG 45 " . ($rowY + 5) . " m 550 " . ($rowY + 5) . " l S\n";
+        $rowY -= 10;
+    }
+    $stream .= "0.00 0.76 0.82 RG 45 " . ($rowY + 4) . " m 550 " . ($rowY + 4) . " l S\n";
+    crm_pdf_text($stream, 405, $rowY - 18, 'TOTAL DUE', 10, '0.04 0.05 0.05');
+    crm_pdf_text($stream, 490, $rowY - 18, 'GBP ' . number_format((float) ($invoice['subtotal'] ?? 0), 2), 13, '0.00 0.55 0.60');
+
+    $paymentTop = $rowY - 64;
+    $stream .= "q 0.97 0.98 0.98 rg 45 " . ($paymentTop - 70) . " 505 70 re f Q\n";
+    crm_pdf_text($stream, 57, $paymentTop - 18, 'PAYMENT DETAILS', 8, '0.00 0.55 0.60');
+    crm_pdf_text($stream, 57, $paymentTop - 35, 'SANCTUARY SHINE LTD | Sort code 04-00-06', 9);
+    crm_pdf_text($stream, 57, $paymentTop - 50, 'IBAN GB19 MONZ 0400 0608 0401 69 | Company no. 08040169', 9);
+    if (($invoice['payment_link'] ?? '') !== '') crm_pdf_text($stream, 57, $paymentTop - 65, 'Online payment: ' . (string) $invoice['payment_link'], 8, '0.00 0.55 0.60');
+    if (($invoice['notes'] ?? '') !== '') {
+        $noteY = $paymentTop - 92;
+        crm_pdf_lines($stream, 45, $noteY, 'Note: ' . (string) $invoice['notes'], 80, 9);
+    }
+    crm_pdf_text($stream, 195, 62, 'Thank you for choosing Sanctuary Shine.', 9, '0.42 0.47 0.48');
+
+    $objects = [];
+    $objects[1] = '<< /Type /Catalog /Pages 2 0 R >>';
+    $objects[2] = '<< /Type /Pages /Kids [3 0 R] /Count 1 >>';
+    $objects[4] = '<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>';
+    $objects[5] = '<< /Length ' . strlen($stream) . " >>\nstream\n" . $stream . "endstream";
+    $xObject = '';
+    if ($hasLogo) {
+        $objects[6] = '<< /Type /XObject /Subtype /Image /Width ' . (int) $imageSize[0] . ' /Height ' . (int) $imageSize[1] . ' /ColorSpace /DeviceRGB /BitsPerComponent 8 /Filter /DCTDecode /Length ' . strlen($imageData) . " >>\nstream\n" . $imageData . "\nendstream";
+        $xObject = ' /XObject << /Im1 6 0 R >>';
+    }
+    $objects[3] = '<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595 842] /Contents 5 0 R /Resources << /Font << /F1 4 0 R >>' . $xObject . ' >> >>';
+
+    ksort($objects);
+    $pdf = "%PDF-1.4\n%\xE2\xE3\xCF\xD3\n";
+    $offsets = [0 => 0];
+    foreach ($objects as $number => $object) {
+        $offsets[$number] = strlen($pdf);
+        $pdf .= $number . " 0 obj\n" . $object . "\nendobj\n";
+    }
+    $xref = strlen($pdf);
+    $maxObject = max(array_keys($objects));
+    $pdf .= "xref\n0 " . ($maxObject + 1) . "\n0000000000 65535 f \n";
+    for ($number = 1; $number <= $maxObject; $number++) $pdf .= sprintf("%010d 00000 n \n", $offsets[$number] ?? 0);
+    $pdf .= "trailer\n<< /Size " . ($maxObject + 1) . " /Root 1 0 R >>\nstartxref\n" . $xref . "\n%%EOF";
+    return $pdf;
+}
+
+function crm_send_invoice_email(array $invoice, array $config): bool
+{
+    $customer = $invoice['customer'] ?? [];
+    $to = (string) ($customer['email'] ?? '');
+    if ($to === '' || !filter_var($to, FILTER_VALIDATE_EMAIL)) return false;
+
+    $fromEmail = (string) ($config['transactional_from_email'] ?? $config['from_email'] ?? 'contact@sanctuaryshine.co.uk');
+    $fromName = (string) ($config['from_name'] ?? 'Sanctuary Shine');
+    $lines = [];
+    foreach (($invoice['line_items'] ?? []) as $item) {
+        $lines[] = sprintf('%s x %s - £%s', $item['quantity'], $item['description'], number_format((float) $item['amount'], 2));
+    }
+    $text = "Hi " . (string) ($customer['name'] ?? 'there') . ",\n\n"
+        . "Please find your Sanctuary Shine invoice " . (string) ($invoice['invoice_number'] ?? '') . ".\n\n"
+        . implode("\n", $lines) . "\n\n"
+        . "Total due: £" . number_format((float) ($invoice['subtotal'] ?? 0), 2) . "\n"
+        . "Due date: " . (string) ($invoice['due_date'] ?? '') . "\n\n"
+        . "Payment details:\n"
+        . "Account name: SANCTUARY SHINE LTD\n"
+        . "Company number: 08040169\n"
+        . "Sort code: 04-00-06\n"
+        . "IBAN: GB19 MONZ 0400 0608 0401 69\n";
+    if (($invoice['payment_link'] ?? '') !== '') $text .= "\nPay online: " . $invoice['payment_link'] . "\n";
+    if (($invoice['notes'] ?? '') !== '') $text .= "\nNotes: " . $invoice['notes'] . "\n";
+    $text .= "\nThank you,\nSanctuary Shine\n";
+    $subject = 'Invoice ' . (string) ($invoice['invoice_number'] ?? '') . ' from Sanctuary Shine';
+
+    $pdf = crm_generate_invoice_pdf($invoice);
+    $filename = 'sanctuary-shine-' . preg_replace('/[^a-zA-Z0-9_-]+/', '-', (string) ($invoice['invoice_number'] ?? 'invoice')) . '.pdf';
+    $attachment = ['filename' => $filename, 'content' => base64_encode($pdf), 'content_type' => 'application/pdf'];
+    $apiKey = trim((string) ($config['emailit_api_key'] ?? ''));
+    if ($apiKey === '') $apiKey = trim((string) (getenv('EMAILIT_API_KEY') ?: ''));
+    if ($apiKey !== '' && function_exists('curl_init')) {
+        $curl = curl_init('https://api.emailit.com/v2/emails');
+        curl_setopt_array($curl, [
+            CURLOPT_POST => true,
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_HTTPHEADER => ['Accept: application/json', 'Content-Type: application/json', 'Authorization: Bearer ' . $apiKey, 'Idempotency-Key: invoice-' . hash('sha256', ($invoice['id'] ?? '') . $to)],
+            CURLOPT_POSTFIELDS => json_encode(['from' => $fromName . ' <' . $fromEmail . '>', 'to' => [$to], 'subject' => $subject, 'text' => $text, 'attachments' => [$attachment]]),
+            CURLOPT_CONNECTTIMEOUT => 10,
+            CURLOPT_TIMEOUT => 30,
+        ]);
+        $response = curl_exec($curl);
+        $httpCode = (int) curl_getinfo($curl, CURLINFO_HTTP_CODE);
+        curl_close($curl);
+        if ($response !== false && $httpCode >= 200 && $httpCode < 300) return true;
+    }
+
+    if (function_exists('mail')) {
+        $boundary = '=_SanctuaryShine_' . bin2hex(random_bytes(12));
+        $headers = ['From: ' . $fromName . ' <' . $fromEmail . '>', 'MIME-Version: 1.0', 'Content-Type: multipart/mixed; boundary="' . $boundary . '"'];
+        $body = '--' . $boundary . "\r\nContent-Type: text/plain; charset=UTF-8\r\nContent-Transfer-Encoding: 8bit\r\n\r\n" . $text . "\r\n\r\n";
+        $body .= '--' . $boundary . "\r\nContent-Type: application/pdf; name=\"" . $filename . "\"\r\nContent-Transfer-Encoding: base64\r\nContent-Disposition: attachment; filename=\"" . $filename . "\"\r\n\r\n" . chunk_split(base64_encode($pdf)) . "\r\n--" . $boundary . "--\r\n";
+        return @mail($to, $subject, $body, implode("\r\n", $headers));
+    }
     return false;
 }
 
@@ -446,9 +736,77 @@ if ($action === 'delete_user' && $_SERVER['REQUEST_METHOD'] === 'POST') {
     crm_response(['status' => 'success']);
 }
 
+if ($action === 'list_invoices') {
+    crm_require_auth('manage_invoices');
+    $invoices = crm_read_invoices();
+    usort($invoices, static function (array $a, array $b): int {
+        return strcmp((string) ($b['updated_at'] ?? $b['created_at'] ?? ''), (string) ($a['updated_at'] ?? $a['created_at'] ?? ''));
+    });
+    crm_response(['status' => 'success', 'invoices' => $invoices]);
+}
+
+if (($action === 'save_invoice' || $action === 'send_invoice') && $_SERVER['REQUEST_METHOD'] === 'POST') {
+    $currentUser = crm_require_auth('manage_invoices');
+    $invoiceJson = isset($_POST['invoice_json']) && is_string($_POST['invoice_json']) ? $_POST['invoice_json'] : '';
+    $decodedInvoice = json_decode($invoiceJson, true);
+    if (!is_array($decodedInvoice)) crm_response(['status' => 'error', 'message' => 'Invoice details could not be read.'], 400);
+
+    $invoice = crm_normalize_invoice($decodedInvoice);
+    if ($invoice['invoice_number'] === '' || $invoice['customer']['name'] === '' || !filter_var($invoice['customer']['email'], FILTER_VALIDATE_EMAIL) || count($invoice['line_items']) === 0) {
+        crm_response(['status' => 'error', 'message' => 'Invoice number, customer name, valid email and at least one line item are required.'], 400);
+    }
+
+    $invoices = crm_read_invoices();
+    $existingIndex = -1;
+    foreach ($invoices as $index => $savedInvoice) {
+        if (($savedInvoice['id'] ?? '') !== '' && ($savedInvoice['id'] ?? '') === $invoice['id']) {
+            $existingIndex = $index;
+            break;
+        }
+    }
+    if ($invoice['id'] === '' || $existingIndex < 0) {
+        $invoice['id'] = 'inv_' . bin2hex(random_bytes(8));
+        $invoice['created_at'] = gmdate('c');
+        $invoices[] = $invoice;
+        $existingIndex = count($invoices) - 1;
+    } else {
+        $invoice['created_at'] = (string) ($invoices[$existingIndex]['created_at'] ?? gmdate('c'));
+        $invoice['sent_at'] = (string) ($invoices[$existingIndex]['sent_at'] ?? $invoice['sent_at']);
+        $invoices[$existingIndex] = $invoice;
+    }
+
+    if ($action === 'send_invoice') {
+        if (!crm_send_invoice_email($invoice, $config)) {
+            $invoice['email_status'] = 'failed';
+            $invoice['status'] = 'draft';
+            $invoices[$existingIndex] = $invoice;
+            crm_write_invoices($invoices);
+            crm_response(['status' => 'error', 'message' => 'The invoice was saved, but email delivery is not configured or failed. Use the email button on your device as a fallback.'], 502);
+        }
+        $invoice['email_status'] = 'sent';
+        $invoice['status'] = 'sent';
+        $invoice['sent_at'] = gmdate('c');
+        $invoices[$existingIndex] = $invoice;
+    }
+
+    if (!crm_write_invoices($invoices)) crm_response(['status' => 'error', 'message' => 'Invoice could not be saved.'], 500);
+    crm_response(['status' => 'success', 'invoice' => $invoice, 'message' => $action === 'send_invoice' ? 'Invoice sent to the customer.' : 'Invoice saved.']);
+}
+
 if ($action === 'list') {
     crm_require_auth('view_leads');
     $leads = crm_read_leads();
+    if (is_file(crm_data_file() . '.bak')) {
+        $backupLeads = crm_read_json_file(crm_data_file() . '.bak');
+        $knownIds = array_fill_keys(array_map(static fn(array $lead): string => (string) ($lead['id'] ?? ''), $leads), true);
+        foreach ($backupLeads as $backupLead) {
+            $backupId = (string) ($backupLead['id'] ?? '');
+            if ($backupId !== '' && !isset($knownIds[$backupId])) {
+                $leads[] = $backupLead;
+                $knownIds[$backupId] = true;
+            }
+        }
+    }
     usort($leads, static function (array $a, array $b): int {
         return strcmp((string) ($b['created_at'] ?? ''), (string) ($a['created_at'] ?? ''));
     });

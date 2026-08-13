@@ -1,4 +1,4 @@
-const CACHE_NAME = 'sanctuary-shine-crm-v1';
+const CACHE_NAME = 'sanctuary-shine-crm-v6';
 const APP_SHELL = ['/crm/', '/icons/icon-192.png', '/icons/icon-512.png'];
 
 self.addEventListener('install', (event) => {
@@ -16,8 +16,9 @@ self.addEventListener('activate', (event) => {
 self.addEventListener('fetch', (event) => {
   const url = new URL(event.request.url);
 
-  // Never cache the API — login state, leads and account data must always be live.
-  if (url.pathname.startsWith('/crm-api.php')) return;
+  // The CRM page, its scripts and API must always be live. Caching any of
+  // these can leave an installed phone app showing an old login or empty list.
+  if (url.pathname === '/crm/' || url.pathname === '/crm/index.html' || url.pathname.startsWith('/crm-api.php') || url.pathname.startsWith('/_astro/')) return;
   if (event.request.method !== 'GET') return;
 
   event.respondWith(

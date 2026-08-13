@@ -1,5 +1,6 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
+import Header from '../components/Header.astro';
 import { SITE } from '../data/site';
 ---
 
@@ -7,21 +8,19 @@ import { SITE } from '../data/site';
   title="CRM"
   description="Private Sanctuary Shine customer relationship dashboard."
   noIndex={true}
-  manifest="/crm-manifest.webmanifest"
+  manifest="/crm-manifest.webmanifest?v=2"
   themeColor="#00C2D1"
   hideChrome={true}
 >
-  <section class="min-h-[calc(100vh-5rem)] bg-[#F3F7F8] py-10 md:py-14">
-    <div class="max-w-[1200px] mx-auto px-4 md:px-6">
+  <Header />
+  <section class="crm-shell w-full max-w-full min-h-[calc(100vh-5rem)] bg-[#F3F7F8] py-6 md:py-14">
+    <div class="w-full min-w-0 max-w-[1200px] mx-auto px-3 sm:px-4 md:px-6">
       <button id="crm-install-button" type="button" class="hidden max-w-md mx-auto mb-4 items-center justify-center gap-2 w-full bg-[#0B0B0B] text-white py-3 rounded-lg font-bold hover:bg-[#3C494C] transition-colors">
-        <span class="material-symbols-outlined text-lg">install_mobile</span>
         Install app on this phone
       </button>
 
-      <div id="crm-login-panel" class="max-w-md mx-auto bg-white rounded-2xl border border-gray-100 shadow-sm p-8">
-        <div class="w-12 h-12 rounded-xl bg-[#D9FBFF] text-[#008C99] flex items-center justify-center mb-5">
-          <span class="material-symbols-outlined">business_center</span>
-        </div>
+      <div id="crm-login-panel" class="max-w-md mx-auto bg-white rounded-2xl border border-gray-100 shadow-sm p-5 sm:p-8">
+        <img src="/images/logo/logo.png" alt="Sanctuary Shine" class="w-24 h-24 object-contain mb-3" />
         <p class="text-xs uppercase tracking-[0.2em] font-semibold text-[#008C99] mb-2">Sanctuary Shine</p>
         <h1 class="font-heading text-3xl font-bold text-[#0B0B0B] mb-3">CRM dashboard</h1>
         <p class="text-sm text-[#3C494C] mb-6">Sign in to view bookings, quote requests and website enquiries.</p>
@@ -29,14 +28,14 @@ import { SITE } from '../data/site';
           <label class="block text-sm font-medium text-[#0B0B0B]" for="crm-email">Business email</label>
           <input id="crm-email" name="email" type="email" value={SITE.email} autocomplete="username" required class="w-full px-4 py-3 rounded-lg border border-gray-200 focus:border-[#00C2D1] focus:ring-2 focus:ring-[#00C2D1]/20 outline-none" />
           <label class="block text-sm font-medium text-[#0B0B0B]" for="crm-password">CRM password</label>
-          <input id="crm-password" name="password" type="password" autocomplete="current-password" required class="w-full px-4 py-3 rounded-lg border border-gray-200 focus:border-[#00C2D1] focus:ring-2 focus:ring-[#00C2D1]/20 outline-none" />
+          <div class="flex gap-2"><input id="crm-password" name="password" type="password" autocomplete="current-password" required class="min-w-0 flex-1 px-4 py-3 rounded-lg border border-gray-200 focus:border-[#00C2D1] focus:ring-2 focus:ring-[#00C2D1]/20 outline-none" /><button type="button" data-password-toggle="crm-password" class="px-3 rounded-lg border border-gray-200 text-xs font-semibold">Show</button></div>
           <button type="submit" class="w-full bg-[#FFD200] text-[#0B0B0B] py-3 rounded-lg font-bold hover:bg-[#D6A900] transition-colors">Sign in</button>
           <p id="crm-login-message" class="text-sm text-red-600 min-h-5" role="alert"></p>
         </form>
         <p class="text-sm text-center mt-2"><button type="button" id="crm-forgot-link" class="text-[#008C99] font-semibold hover:underline">Forgot password?</button></p>
       </div>
 
-      <div id="crm-forgot-panel" class="hidden max-w-md mx-auto bg-white rounded-2xl border border-gray-100 shadow-sm p-8">
+      <div id="crm-forgot-panel" class="hidden max-w-md mx-auto bg-white rounded-2xl border border-gray-100 shadow-sm p-5 sm:p-8">
         <h1 class="font-heading text-2xl font-bold text-[#0B0B0B] mb-3">Reset your password</h1>
         <p class="text-sm text-[#3C494C] mb-6">Enter your CRM email address and we'll send you a link to set a new password.</p>
         <form id="crm-forgot-form" class="space-y-4">
@@ -48,7 +47,7 @@ import { SITE } from '../data/site';
         <p class="text-sm text-center mt-2"><button type="button" id="crm-forgot-back" class="text-[#008C99] font-semibold hover:underline">Back to sign in</button></p>
       </div>
 
-      <div id="crm-reset-panel" class="hidden max-w-md mx-auto bg-white rounded-2xl border border-gray-100 shadow-sm p-8">
+      <div id="crm-reset-panel" class="hidden max-w-md mx-auto bg-white rounded-2xl border border-gray-100 shadow-sm p-5 sm:p-8">
         <h1 class="font-heading text-2xl font-bold text-[#0B0B0B] mb-3">Set a new password</h1>
         <p class="text-sm text-[#3C494C] mb-6">Choose a new password for your CRM account. It must be at least 10 characters.</p>
         <form id="crm-reset-form" class="space-y-4">
@@ -60,35 +59,36 @@ import { SITE } from '../data/site';
       </div>
 
       <div id="crm-dashboard" class="hidden">
-        <div class="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-8">
-          <div>
+        <div class="crm-dashboard-heading flex flex-col md:flex-row md:items-end justify-between gap-4 mb-6 md:mb-8">
+          <div class="min-w-0">
             <p class="text-xs uppercase tracking-[0.2em] font-semibold text-[#008C99] mb-2">Private workspace</p>
-            <h1 class="font-heading text-3xl md:text-4xl font-bold text-[#0B0B0B]">Bookings & enquiries</h1>
-            <p class="text-[#3C494C] mt-2">Keep every request in one place and move it through your pipeline.</p>
+            <h1 class="font-heading text-2xl sm:text-3xl md:text-4xl font-bold text-[#0B0B0B]">Bookings & enquiries</h1>
+            <p class="text-sm sm:text-base text-[#3C494C] mt-2">Keep every request in one place and move it through your pipeline.</p>
             <p id="crm-logged-in-badge" class="hidden items-center gap-2 mt-3 text-sm font-semibold text-[#0B7A3C]">
               <span class="w-2 h-2 rounded-full bg-[#0B7A3C]"></span>
               <span>Logged in as <span id="crm-logged-in-name"></span></span>
             </p>
           </div>
-          <div class="flex gap-3">
-            <button id="crm-account-toggle" type="button" class="px-4 py-2.5 rounded-lg border border-gray-200 bg-white text-sm font-semibold hover:border-[#00C2D1] transition-colors">Account & access</button>
-            <button id="crm-export" type="button" class="px-4 py-2.5 rounded-lg border border-gray-200 bg-white text-sm font-semibold hover:border-[#00C2D1] transition-colors">Export CSV</button>
-            <button id="crm-logout" type="button" class="px-4 py-2.5 rounded-lg bg-[#0B0B0B] text-white text-sm font-semibold hover:bg-[#3C494C] transition-colors">Sign out</button>
+          <div class="crm-dashboard-actions grid grid-cols-2 sm:flex sm:flex-wrap gap-2 sm:gap-3 w-full md:w-auto">
+            <button id="crm-invoice-toggle" type="button" class="hidden min-h-11 px-3 sm:px-4 py-2.5 rounded-lg bg-[#00C2D1] text-white text-sm font-semibold hover:bg-[#008C99] transition-colors">Invoices</button>
+            <button id="crm-account-toggle" type="button" class="min-h-11 px-3 sm:px-4 py-2.5 rounded-lg border border-gray-200 bg-white text-sm font-semibold hover:border-[#00C2D1] transition-colors">Account & access</button>
+            <button id="crm-export" type="button" class="min-h-11 px-3 sm:px-4 py-2.5 rounded-lg border border-gray-200 bg-white text-sm font-semibold hover:border-[#00C2D1] transition-colors">Export CSV</button>
+            <button id="crm-logout" type="button" class="min-h-11 px-3 sm:px-4 py-2.5 rounded-lg bg-[#0B0B0B] text-white text-sm font-semibold hover:bg-[#3C494C] transition-colors">Sign out</button>
           </div>
         </div>
 
-        <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-          <div class="bg-white rounded-xl border border-gray-100 p-5 shadow-sm"><p class="text-xs uppercase tracking-wider text-[#6C797C]">All leads</p><p id="stat-total" class="font-heading text-3xl font-bold mt-2">0</p></div>
-          <div class="bg-white rounded-xl border border-gray-100 p-5 shadow-sm"><p class="text-xs uppercase tracking-wider text-[#6C797C]">New</p><p id="stat-new" class="font-heading text-3xl font-bold mt-2 text-[#008C99]">0</p></div>
-          <div class="bg-white rounded-xl border border-gray-100 p-5 shadow-sm"><p class="text-xs uppercase tracking-wider text-[#6C797C]">Bookings</p><p id="stat-bookings" class="font-heading text-3xl font-bold mt-2">0</p></div>
-          <div class="bg-white rounded-xl border border-gray-100 p-5 shadow-sm"><p class="text-xs uppercase tracking-wider text-[#6C797C]">Quote requests</p><p id="stat-quotes" class="font-heading text-3xl font-bold mt-2">0</p></div>
+        <div class="grid grid-cols-2 lg:grid-cols-4 gap-2 sm:gap-4 mb-5 md:mb-6">
+          <div class="bg-white rounded-xl border border-gray-100 p-3 sm:p-5 shadow-sm"><p class="text-[10px] sm:text-xs uppercase tracking-wider text-[#6C797C]">All leads</p><p id="stat-total" class="font-heading text-2xl sm:text-3xl font-bold mt-1 sm:mt-2">0</p></div>
+          <div class="bg-white rounded-xl border border-gray-100 p-3 sm:p-5 shadow-sm"><p class="text-[10px] sm:text-xs uppercase tracking-wider text-[#6C797C]">New</p><p id="stat-new" class="font-heading text-2xl sm:text-3xl font-bold mt-1 sm:mt-2 text-[#008C99]">0</p></div>
+          <div class="bg-white rounded-xl border border-gray-100 p-3 sm:p-5 shadow-sm"><p class="text-[10px] sm:text-xs uppercase tracking-wider text-[#6C797C]">Bookings</p><p id="stat-bookings" class="font-heading text-2xl sm:text-3xl font-bold mt-1 sm:mt-2">0</p></div>
+          <div class="bg-white rounded-xl border border-gray-100 p-3 sm:p-5 shadow-sm"><p class="text-[10px] sm:text-xs uppercase tracking-wider text-[#6C797C]">Quote requests</p><p id="stat-quotes" class="font-heading text-2xl sm:text-3xl font-bold mt-1 sm:mt-2">0</p></div>
         </div>
 
-        <div id="crm-account-panel" class="hidden mt-6 grid grid-cols-1 lg:grid-cols-2 gap-6">
-          <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
+        <div id="crm-account-panel" class="hidden mt-5 md:mt-6 grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-6">
+          <div class="bg-white rounded-xl sm:rounded-2xl border border-gray-100 shadow-sm p-4 sm:p-6">
             <p class="text-xs uppercase tracking-wider text-[#008C99] font-semibold">My account</p>
             <h2 id="crm-current-user" class="font-heading text-2xl font-bold mt-2"></h2>
-            <p class="text-sm text-[#6C797C] mt-1">Stored passwords are never displayed. You can change yours here.</p>
+            <p class="text-sm text-[#6C797C] mt-1">Stored passwords are never displayed. Use Show to reveal a password while you are typing or set a new one for a team member.</p>
             <form id="crm-password-form" class="space-y-3 mt-5">
               <div><label for="crm-current-password" class="block text-xs uppercase tracking-wider text-[#6C797C] mb-1">Current password</label><div class="flex gap-2"><input id="crm-current-password" type="password" required class="min-w-0 flex-1 px-3 py-2.5 rounded-lg border border-gray-200 text-sm" /><button type="button" data-password-toggle="crm-current-password" class="px-3 rounded-lg border border-gray-200 text-xs font-semibold">Show</button></div></div>
               <div><label for="crm-new-password" class="block text-xs uppercase tracking-wider text-[#6C797C] mb-1">New password</label><div class="flex gap-2"><input id="crm-new-password" type="password" minlength="10" required class="min-w-0 flex-1 px-3 py-2.5 rounded-lg border border-gray-200 text-sm" /><button type="button" data-password-toggle="crm-new-password" class="px-3 rounded-lg border border-gray-200 text-xs font-semibold">Show</button></div></div>
@@ -98,7 +98,7 @@ import { SITE } from '../data/site';
             </form>
           </div>
 
-          <div id="crm-user-management" class="hidden bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
+          <div id="crm-user-management" class="hidden bg-white rounded-xl sm:rounded-2xl border border-gray-100 shadow-sm p-4 sm:p-6">
             <p class="text-xs uppercase tracking-wider text-[#008C99] font-semibold">Administrator access</p>
             <h2 class="font-heading text-2xl font-bold mt-2">CRM users</h2>
             <p class="text-sm text-[#6C797C] mt-1">Add team members and choose exactly what each account can access.</p>
@@ -110,6 +110,7 @@ import { SITE } from '../data/site';
                 <label class="flex items-center gap-2"><input type="checkbox" data-create-feature="edit_leads" /> Edit leads</label>
                 <label class="flex items-center gap-2"><input type="checkbox" data-create-feature="export_leads" /> Export CSV</label>
                 <label class="flex items-center gap-2"><input type="checkbox" data-create-feature="manage_users" /> Manage users</label>
+                <label class="flex items-center gap-2"><input type="checkbox" data-create-feature="manage_invoices" /> Manage invoices</label>
               </div>
               <button type="submit" class="px-4 py-2.5 rounded-lg bg-[#FFD200] text-[#0B0B0B] text-sm font-bold hover:bg-[#D6A900]">Add user</button>
               <p id="crm-user-message" class="text-sm min-h-5" role="alert"></p>
@@ -118,18 +119,68 @@ import { SITE } from '../data/site';
           </div>
         </div>
 
-        <div class="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
-          <div class="p-5 border-b border-gray-100 flex flex-col lg:flex-row gap-3 lg:items-center lg:justify-between">
-            <h2 class="font-heading text-xl font-bold">Lead pipeline</h2>
-            <div class="flex flex-col sm:flex-row gap-3">
-              <input id="crm-search" type="search" placeholder="Search name, email or postcode" class="px-3 py-2 rounded-lg border border-gray-200 text-sm focus:border-[#00C2D1] outline-none" />
-              <select id="crm-type" class="px-3 py-2 rounded-lg border border-gray-200 text-sm focus:border-[#00C2D1] outline-none bg-white">
+        <section id="crm-invoice-panel" class="hidden mt-5 md:mt-6 space-y-4 sm:space-y-6">
+          <div class="flex flex-col md:flex-row md:items-end justify-between gap-4">
+            <div>
+              <p class="text-xs uppercase tracking-[0.2em] font-semibold text-[#008C99] mb-2">Billing workspace</p>
+              <h2 class="font-heading text-2xl sm:text-3xl font-bold text-[#0B0B0B]">Invoices</h2>
+              <p class="text-sm sm:text-base text-[#3C494C] mt-2">Create branded invoices, save them to the CRM and send the customer a payment-ready summary.</p>
+            </div>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 w-full md:w-auto"><button id="crm-invoice-saved" type="button" class="min-h-11 px-4 py-2.5 rounded-lg border border-gray-200 bg-white text-sm font-semibold hover:border-[#00C2D1] transition-colors">Saved invoices</button><button id="crm-invoice-new" type="button" class="min-h-11 px-4 py-2.5 rounded-lg border border-gray-200 bg-white text-sm font-semibold hover:border-[#00C2D1] transition-colors">New invoice</button></div>
+          </div>
+
+          <div class="grid grid-cols-1 2xl:grid-cols-2 gap-4 sm:gap-6 items-start min-w-0">
+            <div class="min-w-0 bg-white rounded-xl sm:rounded-2xl border border-gray-100 shadow-sm p-4 sm:p-6">
+              <form id="crm-invoice-form" class="space-y-5">
+                <input id="crm-invoice-id" type="hidden" />
+                <div class="flex items-start justify-between gap-3"><div class="min-w-0"><p class="text-xs uppercase tracking-wider text-[#6C797C]">Invoice details</p><h3 class="font-heading text-lg sm:text-xl font-bold mt-1">Customer and payment</h3></div><span id="crm-invoice-status" class="shrink-0 text-xs font-semibold px-2.5 py-1 rounded-full bg-[#F2F4F5] text-[#6C797C]">Draft</span></div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                  <div><label for="crm-invoice-lead" class="block text-xs uppercase tracking-wider text-[#6C797C] mb-1">Fill from lead</label><select id="crm-invoice-lead" class="w-full px-3 py-2.5 rounded-lg border border-gray-200 bg-white text-sm"><option value="">Choose a CRM lead...</option></select></div>
+                  <div><label for="crm-invoice-number" class="block text-xs uppercase tracking-wider text-[#6C797C] mb-1">Invoice number</label><input id="crm-invoice-number" type="text" required class="w-full px-3 py-2.5 rounded-lg border border-gray-200 text-sm" /></div>
+                  <div><label for="crm-invoice-issue-date" class="block text-xs uppercase tracking-wider text-[#6C797C] mb-1">Issue date</label><input id="crm-invoice-issue-date" type="date" required class="w-full px-3 py-2.5 rounded-lg border border-gray-200 text-sm" /></div>
+                  <div><label for="crm-invoice-due-date" class="block text-xs uppercase tracking-wider text-[#6C797C] mb-1">Due date</label><input id="crm-invoice-due-date" type="date" required class="w-full px-3 py-2.5 rounded-lg border border-gray-200 text-sm" /></div>
+                  <div><label for="crm-invoice-service-date" class="block text-xs uppercase tracking-wider text-[#6C797C] mb-1">Service date</label><input id="crm-invoice-service-date" type="date" class="w-full px-3 py-2.5 rounded-lg border border-gray-200 text-sm" /></div>
+                  <div><label for="crm-invoice-payment-link" class="block text-xs uppercase tracking-wider text-[#6C797C] mb-1">Payment link <span class="normal-case tracking-normal font-normal">(Stripe/PayPal)</span></label><input id="crm-invoice-payment-link" type="url" placeholder="https://..." class="w-full px-3 py-2.5 rounded-lg border border-gray-200 text-sm" /></div>
+                </div>
+
+                <div class="border-t border-gray-100 pt-5"><p class="text-xs uppercase tracking-wider text-[#6C797C] mb-3">Bill to</p><div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                  <input id="crm-invoice-customer-name" type="text" placeholder="Customer name" required class="px-3 py-2.5 rounded-lg border border-gray-200 text-sm" />
+                  <input id="crm-invoice-customer-email" type="email" placeholder="Customer email" required class="px-3 py-2.5 rounded-lg border border-gray-200 text-sm" />
+                  <input id="crm-invoice-customer-phone" type="tel" placeholder="Phone" class="px-3 py-2.5 rounded-lg border border-gray-200 text-sm" />
+                  <input id="crm-invoice-customer-postcode" type="text" placeholder="Postcode" class="px-3 py-2.5 rounded-lg border border-gray-200 text-sm" />
+                  <textarea id="crm-invoice-customer-address" rows="2" placeholder="Billing address" class="md:col-span-2 px-3 py-2.5 rounded-lg border border-gray-200 text-sm"></textarea>
+                </div></div>
+
+                <div class="border-t border-gray-100 pt-5"><div class="flex items-center justify-between gap-3 mb-3"><p class="text-xs uppercase tracking-wider text-[#6C797C]">Services</p><button id="crm-invoice-add-item" type="button" class="text-xs font-bold text-[#008C99] hover:underline">+ Add line</button></div><div id="crm-invoice-items" class="space-y-2"></div></div>
+                <div><label for="crm-invoice-notes" class="block text-xs uppercase tracking-wider text-[#6C797C] mb-1">Customer note</label><textarea id="crm-invoice-notes" rows="3" placeholder="Thank you for choosing Sanctuary Shine..." class="w-full px-3 py-2.5 rounded-lg border border-gray-200 text-sm"></textarea></div>
+                <div class="rounded-xl bg-[#F8FAFB] border border-gray-100 p-4 text-xs text-[#3C494C]"><p class="font-semibold text-[#0B0B0B] mb-1">Bank transfer details included automatically</p><p>SANCTUARY SHINE LTD · Sort code 04-00-06 · IBAN GB19 MONZ 0400 0608 0401 69 · Company no. 08040169</p></div>
+                <div class="grid grid-cols-1 sm:grid-cols-2 xl:flex gap-2 pt-1"><button id="crm-invoice-save" type="submit" class="min-h-11 px-4 py-2.5 rounded-lg bg-[#FFD200] text-[#0B0B0B] text-sm font-bold hover:bg-[#D6A900]">Save invoice</button><button id="crm-invoice-pdf" type="button" class="min-h-11 px-4 py-2.5 rounded-lg bg-[#0B0B0B] text-white text-sm font-bold hover:bg-[#3C494C]">Print / save PDF</button><button id="crm-invoice-send" type="button" class="min-h-11 px-4 py-2.5 rounded-lg border border-[#00C2D1] text-[#008C99] text-sm font-bold hover:bg-[#D9FBFF]">Send to customer</button><button id="crm-invoice-share" type="button" class="min-h-11 px-4 py-2.5 rounded-lg border border-gray-200 text-[#3C494C] text-sm font-semibold hover:border-[#00C2D1]">Share payment link</button></div>
+                <p id="crm-invoice-message" class="text-sm min-h-5" role="alert"></p>
+              </form>
+            </div>
+
+            <div class="min-w-0 space-y-6 2xl:sticky 2xl:top-6">
+              <div class="min-w-0 max-w-full bg-[#EAF7F8] rounded-xl sm:rounded-2xl border border-[#CFECEF] p-2 sm:p-3 md:p-5"><div id="crm-invoice-preview" class="min-w-0 max-w-full bg-white rounded-xl shadow-sm overflow-hidden"></div></div>
+              <div id="crm-saved-invoices" class="bg-white rounded-xl sm:rounded-2xl border border-gray-100 shadow-sm p-4 sm:p-6"><div class="flex items-start justify-between gap-3 mb-4"><div><p class="text-xs uppercase tracking-wider text-[#6C797C]">Saved invoices</p><h3 class="font-heading text-lg sm:text-xl font-bold mt-1">Recent billing</h3><p class="text-xs text-[#6C797C] mt-1">Tap any saved invoice to reopen and edit it later.</p></div><span id="crm-invoice-count" class="shrink-0 text-xs text-[#6C797C]"></span></div><div id="crm-invoice-list" class="space-y-3"><p class="text-sm text-[#6C797C]">Invoices you save will appear here.</p></div></div>
+            </div>
+          </div>
+        </section>
+
+        <div class="bg-white rounded-xl sm:rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
+          <div class="p-4 sm:p-5 border-b border-gray-100 flex flex-col gap-3">
+            <div class="flex items-center justify-between gap-3">
+              <div class="min-w-0"><h2 class="font-heading text-lg sm:text-xl font-bold">Lead pipeline</h2><p id="crm-lead-load-status" class="text-xs text-[#6C797C] mt-1" aria-live="polite">Loading leads...</p></div>
+              <button id="crm-refresh-leads" type="button" class="shrink-0 min-h-10 px-3 rounded-lg border border-[#00C2D1] text-[#008C99] text-xs sm:text-sm font-semibold hover:bg-[#D9FBFF]">Refresh leads</button>
+            </div>
+            <div class="grid grid-cols-1 sm:grid-cols-[minmax(0,1fr)_auto_auto_auto] gap-2 sm:gap-3">
+              <input id="crm-search" type="search" autocomplete="off" placeholder="Search name, email or postcode" class="min-h-11 w-full min-w-0 px-3 py-2 rounded-lg border border-gray-200 text-sm focus:border-[#00C2D1] outline-none" />
+              <select id="crm-type" autocomplete="off" class="min-h-11 w-full px-3 py-2 rounded-lg border border-gray-200 text-sm focus:border-[#00C2D1] outline-none bg-white">
                 <option value="all">All types</option>
                 <option value="booking">Bookings</option>
                 <option value="quote">Quotes</option>
                 <option value="inquiry">Enquiries</option>
               </select>
-              <select id="crm-status" class="px-3 py-2 rounded-lg border border-gray-200 text-sm focus:border-[#00C2D1] outline-none bg-white">
+              <select id="crm-status" autocomplete="off" class="min-h-11 w-full px-3 py-2 rounded-lg border border-gray-200 text-sm focus:border-[#00C2D1] outline-none bg-white">
                 <option value="all">All statuses</option>
                 <option value="new">New</option>
                 <option value="contacted">Contacted</option>
@@ -138,11 +189,12 @@ import { SITE } from '../data/site';
                 <option value="completed">Completed</option>
                 <option value="closed">Closed</option>
               </select>
+              <button id="crm-reset-lead-filters" type="button" class="min-h-11 px-3 rounded-lg border border-gray-200 text-[#3C494C] text-sm font-semibold hover:border-[#00C2D1]">Reset</button>
             </div>
           </div>
 
-          <div id="crm-error" class="hidden m-5 p-4 rounded-lg bg-red-50 text-red-700 text-sm" role="alert"></div>
-          <div class="overflow-x-auto">
+          <div id="crm-error" class="hidden m-4 sm:m-5 p-4 rounded-lg bg-red-50 text-red-700 text-sm" role="alert"></div>
+          <div class="hidden md:block overflow-x-auto">
             <table class="w-full text-left text-sm">
               <thead class="bg-[#F8FAFB] text-xs uppercase tracking-wider text-[#6C797C]">
                 <tr><th class="px-5 py-4">Customer</th><th class="px-5 py-4">Type</th><th class="px-5 py-4">Preferred date</th><th class="px-5 py-4">Status</th><th class="px-5 py-4">Received</th><th class="px-5 py-4"><span class="sr-only">Open</span></th></tr>
@@ -150,16 +202,17 @@ import { SITE } from '../data/site';
               <tbody id="crm-leads-body" class="divide-y divide-gray-100"></tbody>
             </table>
           </div>
-          <div id="crm-empty" class="hidden p-12 text-center text-[#6C797C]">No leads match these filters.</div>
+          <div id="crm-leads-cards" class="md:hidden p-3 space-y-3"></div>
+          <div id="crm-empty" class="hidden p-8 sm:p-12 text-center text-[#6C797C]">No leads match these filters.</div>
         </div>
 
-        <div id="crm-detail" class="hidden mt-6 bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
-          <div class="flex items-start justify-between gap-4 mb-5">
-            <div><p class="text-xs uppercase tracking-wider text-[#6C797C]">Lead details</p><h2 id="crm-detail-name" class="font-heading text-2xl font-bold mt-1"></h2><p id="crm-detail-contact" class="text-sm text-[#3C494C] mt-1"></p></div>
-            <button id="crm-detail-close" type="button" class="text-sm text-[#6C797C] hover:text-[#0B0B0B]">Close</button>
+        <div id="crm-detail" class="hidden mt-5 md:mt-6 bg-white rounded-xl sm:rounded-2xl border border-gray-100 shadow-sm p-4 sm:p-6">
+          <div class="flex flex-col sm:flex-row sm:items-start justify-between gap-3 sm:gap-4 mb-5">
+            <div class="min-w-0"><p class="text-xs uppercase tracking-wider text-[#6C797C]">Lead details</p><h2 id="crm-detail-name" class="font-heading text-xl sm:text-2xl font-bold mt-1 break-words"></h2><p id="crm-detail-contact" class="text-sm text-[#3C494C] mt-1 break-words"></p></div>
+            <div class="flex items-center gap-3 w-full sm:w-auto"><button id="crm-detail-invoice" type="button" class="hidden min-h-11 flex-1 sm:flex-none text-sm font-semibold text-[#008C99] hover:text-[#0B0B0B]">Create invoice</button><button id="crm-detail-close" type="button" class="min-h-11 px-3 sm:px-0 text-sm text-[#6C797C] hover:text-[#0B0B0B]">Close</button></div>
           </div>
-          <div id="crm-detail-summary" class="grid grid-cols-1 md:grid-cols-3 gap-3 text-sm mb-5"></div>
-          <form id="crm-update-form" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div id="crm-detail-summary" class="grid grid-cols-2 md:grid-cols-3 gap-2 sm:gap-3 text-sm mb-5"></div>
+          <form id="crm-update-form" class="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4">
             <input id="crm-detail-id" type="hidden" />
             <div><label for="crm-detail-name-input" class="block text-xs uppercase tracking-wider text-[#6C797C] mb-1">Full name</label><input id="crm-detail-name-input" type="text" required class="w-full px-3 py-2.5 rounded-lg border border-gray-200 text-sm" /></div>
             <div><label for="crm-detail-email" class="block text-xs uppercase tracking-wider text-[#6C797C] mb-1">Email</label><input id="crm-detail-email" type="email" required class="w-full px-3 py-2.5 rounded-lg border border-gray-200 text-sm" /></div>
@@ -173,13 +226,263 @@ import { SITE } from '../data/site';
             <div><label for="crm-detail-status" class="block text-xs uppercase tracking-wider text-[#6C797C] mb-1">Status</label><select id="crm-detail-status" class="w-full px-3 py-2.5 rounded-lg border border-gray-200 bg-white text-sm"><option value="new">New</option><option value="contacted">Contacted</option><option value="quoted">Quoted</option><option value="booked">Booked</option><option value="completed">Completed</option><option value="closed">Closed</option></select></div>
             <div><label for="crm-detail-notes" class="block text-xs uppercase tracking-wider text-[#6C797C] mb-1">Internal notes</label><input id="crm-detail-notes" type="text" class="w-full px-3 py-2.5 rounded-lg border border-gray-200 text-sm" placeholder="Follow-up, price, cleaner assigned..." /></div>
             <div class="md:col-span-2"><label for="crm-detail-message-input" class="block text-xs uppercase tracking-wider text-[#6C797C] mb-1">Customer message</label><textarea id="crm-detail-message-input" rows="4" class="w-full px-3 py-2.5 rounded-lg border border-gray-200 text-sm"></textarea></div>
-            <button type="submit" class="md:col-span-2 px-5 py-2.5 rounded-lg bg-[#00C2D1] text-white text-sm font-bold hover:bg-[#008C99] transition-colors">Save changes</button>
+            <button type="submit" class="md:col-span-2 min-h-11 px-5 py-2.5 rounded-lg bg-[#00C2D1] text-white text-sm font-bold hover:bg-[#008C99] transition-colors">Save changes</button>
           </form>
         </div>
       </div>
     </div>
   </section>
 </BaseLayout>
+
+<style is:global>
+  .crm-shell {
+    width: 100%;
+    max-width: 100vw;
+    overflow-x: hidden;
+  }
+
+  html:has(.crm-shell),
+  body:has(.crm-shell) {
+    width: 100%;
+    max-width: 100vw;
+    overflow-x: hidden;
+  }
+
+  .crm-shell input,
+  .crm-shell select,
+  .crm-shell textarea {
+    min-width: 0;
+  }
+
+  .crm-shell .invoice-sheet {
+    width: 100%;
+    min-width: 0;
+    max-width: 780px;
+    margin: 0 auto;
+    padding: 24px;
+    color: #191c1d;
+    background: #fff;
+    font-family: Arial, sans-serif;
+    font-size: 12px;
+    line-height: 1.45;
+    overflow: hidden;
+  }
+
+  .crm-shell .invoice-header,
+  .crm-shell .invoice-parties,
+  .crm-shell .invoice-payment {
+    display: flex;
+    justify-content: space-between;
+    gap: 28px;
+  }
+
+  .crm-shell .invoice-header {
+    align-items: flex-start;
+  }
+
+  .crm-shell .invoice-header > div,
+  .crm-shell .invoice-parties > div,
+  .crm-shell .invoice-payment > div {
+    min-width: 0;
+    flex: 1;
+  }
+
+  .crm-shell .invoice-logo {
+    width: 150px;
+    height: 96px;
+    object-fit: contain;
+    object-position: left center;
+  }
+
+  .crm-shell .invoice-company,
+  .crm-shell .muted {
+    color: #6c797c;
+  }
+
+  .crm-shell .invoice-company {
+    line-height: 1.55;
+    margin-top: 2px;
+  }
+
+  .crm-shell .invoice-title {
+    text-align: right;
+  }
+
+  .crm-shell .invoice-title h1 {
+    color: #0b0b0b;
+    font-size: 28px;
+    line-height: 1.1;
+    margin: 5px 0 10px;
+  }
+
+  .crm-shell .eyebrow {
+    color: #008c99;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: .16em;
+    line-height: 1.2;
+    margin: 0 0 7px;
+    text-transform: uppercase;
+  }
+
+  .crm-shell .invoice-rule {
+    border-top: 4px solid #00c2d1;
+    margin: 22px 0;
+  }
+
+  .crm-shell .invoice-parties {
+    margin: 0 0 24px;
+  }
+
+  .crm-shell .invoice-parties p,
+  .crm-shell .invoice-payment p {
+    margin: 3px 0;
+  }
+
+  .crm-shell .party-name {
+    font-size: 15px;
+    font-weight: 700;
+    margin: 0 0 4px;
+  }
+
+  .crm-shell .invoice-table {
+    border-collapse: collapse;
+    margin-top: 6px;
+    table-layout: fixed;
+    width: 100%;
+  }
+
+  .crm-shell .invoice-table th {
+    background: #f2f4f5;
+    color: #3c494c;
+    font-size: 10px;
+    letter-spacing: .08em;
+    text-align: left;
+    text-transform: uppercase;
+  }
+
+  .crm-shell .invoice-table th,
+  .crm-shell .invoice-table td {
+    border-bottom: 1px solid #e6e8e9;
+    overflow-wrap: anywhere;
+    padding: 10px 8px;
+    vertical-align: top;
+  }
+
+  .crm-shell .invoice-table th:nth-child(n+2),
+  .crm-shell .invoice-table td:nth-child(n+2) {
+    width: 18%;
+  }
+
+  .crm-shell .invoice-table .text-right {
+    text-align: right;
+  }
+
+  .crm-shell .invoice-total {
+    align-items: center;
+    display: flex;
+    gap: 24px;
+    justify-content: flex-end;
+    padding: 18px 8px;
+  }
+
+  .crm-shell .invoice-total strong {
+    color: #008c99;
+    font-size: 24px;
+  }
+
+  .crm-shell .invoice-payment {
+    background: #f8fafb;
+    border: 1px solid #e6e8e9;
+    border-radius: 10px;
+    margin-top: 5px;
+    padding: 15px 17px;
+  }
+
+  .crm-shell .invoice-payment-link {
+    color: #008c99;
+    font-weight: 700;
+    overflow-wrap: anywhere;
+    text-decoration: none;
+  }
+
+  .crm-shell .invoice-note {
+    border-left: 3px solid #ffd200;
+    line-height: 1.5;
+    margin: 20px 0 0;
+    overflow-wrap: anywhere;
+    padding-left: 10px;
+  }
+
+  .crm-shell .invoice-footer {
+    border-top: 1px solid #e6e8e9;
+    color: #6c797c;
+    margin-top: 30px;
+    padding-top: 13px;
+    text-align: center;
+  }
+
+  @media (max-width: 639px) {
+    .crm-shell input,
+    .crm-shell select,
+    .crm-shell textarea {
+      font-size: 16px;
+    }
+
+    .crm-shell .invoice-sheet {
+      font-size: 11px;
+      padding: 16px 12px;
+    }
+
+    .crm-shell .invoice-header,
+    .crm-shell .invoice-parties,
+    .crm-shell .invoice-payment {
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .crm-shell .invoice-logo {
+      height: 72px;
+      width: 110px;
+    }
+
+    .crm-shell .invoice-title {
+      text-align: left;
+    }
+
+    .crm-shell .invoice-title h1 {
+      font-size: 22px;
+    }
+
+    .crm-shell .invoice-rule {
+      margin: 16px 0;
+    }
+
+    .crm-shell .invoice-table th,
+    .crm-shell .invoice-table td {
+      padding: 7px 4px;
+    }
+
+    .crm-shell .invoice-table th {
+      font-size: 9px;
+      letter-spacing: .04em;
+    }
+
+    .crm-shell .invoice-table th:nth-child(n+2),
+    .crm-shell .invoice-table td:nth-child(n+2) {
+      width: 17%;
+    }
+
+    .crm-shell .invoice-total {
+      justify-content: space-between;
+      padding: 14px 4px;
+    }
+
+    .crm-shell .invoice-total strong {
+      font-size: 20px;
+    }
+  }
+</style>
 
 <script>
   const api = '/crm-api.php';
@@ -192,26 +495,73 @@ import { SITE } from '../data/site';
   const resetPanel = document.getElementById('crm-reset-panel');
   const resetForm = document.getElementById('crm-reset-form');
   const leadsBody = document.getElementById('crm-leads-body');
+  const leadsCards = document.getElementById('crm-leads-cards');
   const emptyState = document.getElementById('crm-empty');
   const errorBox = document.getElementById('crm-error');
+  const leadLoadStatus = document.getElementById('crm-lead-load-status');
+  const refreshLeadsButton = document.getElementById('crm-refresh-leads');
   const detail = document.getElementById('crm-detail');
   const accountToggle = document.getElementById('crm-account-toggle');
   const accountPanel = document.getElementById('crm-account-panel');
   const userManagement = document.getElementById('crm-user-management');
   const usersList = document.getElementById('crm-users-list');
+  const invoiceToggle = document.getElementById('crm-invoice-toggle');
+  const invoicePanel = document.getElementById('crm-invoice-panel');
+  const savedInvoicesPanel = document.getElementById('crm-saved-invoices');
+  const invoiceForm = document.getElementById('crm-invoice-form');
+  const invoicePreview = document.getElementById('crm-invoice-preview');
+  const invoiceItems = document.getElementById('crm-invoice-items');
+  const invoiceList = document.getElementById('crm-invoice-list');
   let leads = [];
+  let invoices = [];
   let selectedLead = null;
   let currentUser = null;
+  let dashboardLoadPromise = null;
+  let dashboardReady = false;
+  let leadsLoaded = false;
 
   const escapeHtml = (value) => String(value ?? '').replace(/[&<>'"]/g, (character) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' }[character]));
   const label = (value) => String(value || '').replace(/(^|_)([a-z])/g, (_, prefix, character) => `${prefix ? ' ' : ''}${character.toUpperCase()}`);
-  const formatDate = (value) => value ? new Intl.DateTimeFormat('en-GB', { dateStyle: 'medium' }).format(new Date(value)) : '—';
-  const formatDateTime = (value) => value ? new Intl.DateTimeFormat('en-GB', { dateStyle: 'medium', timeStyle: 'short' }).format(new Date(value)) : '—';
+  const validDate = (value) => {
+    if (!value) return null;
+    const date = new Date(String(value).trim());
+    return Number.isNaN(date.getTime()) ? null : date;
+  };
+  const formatDate = (value) => {
+    const date = validDate(value);
+    return date ? new Intl.DateTimeFormat('en-GB', { dateStyle: 'medium' }).format(date) : 'Not provided';
+  };
+  const formatDateTime = (value) => {
+    const date = validDate(value);
+    return date ? new Intl.DateTimeFormat('en-GB', { dateStyle: 'medium', timeStyle: 'short' }).format(date) : 'Not provided';
+  };
 
-  const featureLabels = { view_leads: 'View leads', edit_leads: 'Edit leads', export_leads: 'Export CSV', manage_users: 'Manage users' };
+  const formatMoney = (value) => `£${Number(value || 0).toFixed(2)}`;
+  const formatInvoiceDate = (value) => {
+    const date = validDate(value ? `${value}T00:00:00` : '');
+    return date ? new Intl.DateTimeFormat('en-GB', { dateStyle: 'medium' }).format(date) : 'Not set';
+  };
+  const safePaymentLink = (value) => /^https?:\/\//i.test(String(value || '')) ? String(value) : '';
+  const today = () => new Date().toISOString().slice(0, 10);
+  const addDays = (date, days) => { const next = validDate(date ? `${date}T00:00:00` : '') || validDate(today()); next.setDate(next.getDate() + days); return next.toISOString().slice(0, 10); };
+
+  const featureLabels = { view_leads: 'View leads', edit_leads: 'Edit leads', export_leads: 'Export CSV', manage_users: 'Manage users', manage_invoices: 'Manage invoices' };
+  const invoiceCompany = {
+    name: 'Sanctuary Shine Ltd',
+    companyNumber: '08040169',
+    email: 'contact@sanctuaryshine.co.uk',
+    phone: '0161 123 4567',
+    address: '13 Moorsholme Ave, Manchester, M40 9BW',
+    accountName: 'SANCTUARY SHINE LTD',
+    sortCode: '04-00-06',
+    iban: 'GB19 MONZ 0400 0608 0401 69',
+  };
 
   async function request(action, options = {}) {
-    const response = await fetch(`${api}?action=${encodeURIComponent(action)}`, options);
+    const requestUrl = new URL(api, window.location.origin);
+    requestUrl.searchParams.set('action', action);
+    requestUrl.searchParams.set('_', String(Date.now()));
+    const response = await fetch(requestUrl.toString(), { ...options, cache: 'no-store' });
     const contentType = response.headers.get('content-type') || '';
     const result = contentType.includes('application/json') ? await response.json() : await response.text();
     if (!response.ok) throw new Error(result?.message || 'The CRM request failed.');
@@ -236,8 +586,152 @@ import { SITE } from '../data/site';
         </div>
         <div class="flex items-center gap-3 mt-3 text-sm"><label class="flex items-center gap-2"><input data-user-active type="checkbox" ${user.active ? 'checked' : ''} ${currentUser && currentUser.id === user.id ? 'disabled' : ''} /> Active</label><span class="text-[#6C797C]">${escapeHtml(label(user.role))}</span></div>
         <div class="grid grid-cols-2 gap-2 mt-3 text-sm">${Object.entries(featureLabels).map(([feature, featureLabel]) => `<label class="flex items-center gap-2"><input type="checkbox" data-user-feature="${feature}" ${user.features.includes(feature) ? 'checked' : ''} /> ${featureLabel}</label>`).join('')}</div>
-        <div class="flex flex-col sm:flex-row gap-2 mt-3"><input data-user-password type="password" placeholder="New password (leave blank to keep)" class="min-w-0 flex-1 px-3 py-2 rounded-lg border border-gray-200 text-sm" /><button type="button" data-user-save class="px-4 py-2 rounded-lg bg-[#00C2D1] text-white text-sm font-bold hover:bg-[#008C99]">Save user</button><button type="button" data-user-delete class="px-4 py-2 rounded-lg border border-red-200 text-red-600 text-sm font-semibold hover:bg-red-50">Remove</button></div>
+        <div class="flex flex-col sm:flex-row gap-2 mt-3"><div class="flex min-w-0 flex-1 gap-2"><input id="crm-user-password-${escapeHtml(user.id)}" data-user-password type="password" placeholder="New password (leave blank to keep)" class="min-w-0 flex-1 px-3 py-2 rounded-lg border border-gray-200 text-sm" /><button type="button" data-password-toggle="crm-user-password-${escapeHtml(user.id)}" class="px-3 rounded-lg border border-gray-200 text-xs font-semibold">Show</button></div><button type="button" data-user-save class="px-4 py-2 rounded-lg bg-[#00C2D1] text-white text-sm font-bold hover:bg-[#008C99]">Save user</button><button type="button" data-user-delete class="px-4 py-2 rounded-lg border border-red-200 text-red-600 text-sm font-semibold hover:bg-red-50">Remove</button></div>
       </div>`).join('');
+  }
+
+  function addInvoiceItemRow(item = {}) {
+    const row = document.createElement('div');
+    row.className = 'grid grid-cols-2 sm:grid-cols-[minmax(0,1fr)_72px_100px_32px] gap-2 items-center';
+    row.dataset.invoiceItem = 'true';
+    row.innerHTML = `<input data-item-description type="text" value="${escapeHtml(item.description || '')}" placeholder="Service description" required class="min-w-0 px-3 py-2.5 rounded-lg border border-gray-200 text-sm" /><input data-item-quantity type="number" min="0.01" step="0.01" value="${item.quantity || 1}" aria-label="Quantity" class="w-full px-2 py-2.5 rounded-lg border border-gray-200 text-sm" /><input data-item-price type="number" min="0" step="0.01" value="${item.unit_price ?? ''}" placeholder="£0.00" aria-label="Unit price" class="w-full px-2 py-2.5 rounded-lg border border-gray-200 text-sm" /><button type="button" data-remove-invoice-item aria-label="Remove line" class="w-8 h-8 rounded-lg text-[#6C797C] hover:bg-red-50 hover:text-red-600">×</button>`;
+    invoiceItems.appendChild(row);
+    row.querySelector('[data-item-description]').classList.add('col-span-2', 'sm:col-span-1', 'w-full');
+    row.querySelector('[data-remove-invoice-item]').classList.add('col-span-2', 'sm:col-span-1', 'justify-self-end');
+    row.querySelectorAll('input').forEach((input) => input.addEventListener('input', renderInvoicePreview));
+  }
+
+  function invoiceItemsFromForm() {
+    return Array.from(invoiceItems.querySelectorAll('[data-invoice-item]')).map((row) => ({
+      description: row.querySelector('[data-item-description]')?.value.trim() || '',
+      quantity: Number(row.querySelector('[data-item-quantity]')?.value || 0),
+      unit_price: Number(row.querySelector('[data-item-price]')?.value || 0),
+    })).filter((item) => item.description && item.quantity > 0);
+  }
+
+  function getInvoiceFromForm() {
+    const status = document.getElementById('crm-invoice-status').textContent.trim().toLowerCase();
+    return {
+      id: document.getElementById('crm-invoice-id').value,
+      invoice_number: document.getElementById('crm-invoice-number').value.trim(),
+      issue_date: document.getElementById('crm-invoice-issue-date').value,
+      due_date: document.getElementById('crm-invoice-due-date').value,
+      service_date: document.getElementById('crm-invoice-service-date').value,
+      customer: {
+        name: document.getElementById('crm-invoice-customer-name').value.trim(),
+        email: document.getElementById('crm-invoice-customer-email').value.trim(),
+        phone: document.getElementById('crm-invoice-customer-phone').value.trim(),
+        address: document.getElementById('crm-invoice-customer-address').value.trim(),
+        postcode: document.getElementById('crm-invoice-customer-postcode').value.trim(),
+      },
+      line_items: invoiceItemsFromForm(),
+      payment_link: document.getElementById('crm-invoice-payment-link').value.trim(),
+      notes: document.getElementById('crm-invoice-notes').value.trim(),
+      status: ['draft', 'sent', 'paid'].includes(status) ? status : 'draft',
+    };
+  }
+
+  function invoiceTotal(invoice) {
+    return (invoice.line_items || []).reduce((total, item) => total + (Number(item.quantity || 0) * Number(item.unit_price || 0)), 0);
+  }
+
+  function setInvoiceStatus(status) {
+    const badge = document.getElementById('crm-invoice-status');
+    const normalized = status || 'draft';
+    badge.textContent = label(normalized);
+    badge.className = `text-xs font-semibold px-2.5 py-1 rounded-full ${normalized === 'paid' ? 'bg-green-100 text-green-700' : normalized === 'sent' ? 'bg-[#D9FBFF] text-[#008C99]' : 'bg-[#F2F4F5] text-[#6C797C]'}`;
+  }
+
+  function invoiceMarkup(invoice) {
+    const customer = invoice.customer || {};
+    const rows = (invoice.line_items || []).map((item) => `<tr><td>${escapeHtml(item.description)}</td><td class="align-top text-right">${Number(item.quantity || 0).toFixed(2).replace('.00', '')}</td><td class="align-top text-right">${formatMoney(item.unit_price)}</td><td class="align-top text-right font-semibold">${formatMoney(Number(item.quantity || 0) * Number(item.unit_price || 0))}</td></tr>`).join('');
+    const paymentUrl = safePaymentLink(invoice.payment_link);
+    const paymentLink = paymentUrl ? `<a class="invoice-payment-link" href="${escapeHtml(paymentUrl)}">Pay securely online</a>` : '<span class="muted">Payment link not added</span>';
+    return `<article class="invoice-sheet"><header class="invoice-header"><div><img src="/images/logo/logo.png" alt="Sanctuary Shine" class="invoice-logo" /><p class="invoice-company">${escapeHtml(invoiceCompany.address)}<br />${escapeHtml(invoiceCompany.phone)} - ${escapeHtml(invoiceCompany.email)}</p></div><div class="invoice-title"><p class="eyebrow">Invoice</p><h1>${escapeHtml(invoice.invoice_number || 'Draft invoice')}</h1><p class="muted">Issued ${escapeHtml(formatInvoiceDate(invoice.issue_date))}</p><p class="muted">Due ${escapeHtml(formatInvoiceDate(invoice.due_date))}</p></div></header><div class="invoice-rule"></div><section class="invoice-parties"><div><p class="eyebrow">From</p><p class="party-name">${escapeHtml(invoiceCompany.name)}</p><p>${escapeHtml(invoiceCompany.address)}</p><p>Company no. ${escapeHtml(invoiceCompany.companyNumber)}</p></div><div><p class="eyebrow">Bill to</p><p class="party-name">${escapeHtml(customer.name || 'Customer name')}</p><p>${escapeHtml(customer.email || '')}</p><p>${escapeHtml(customer.phone || '')}</p><p>${escapeHtml(customer.address || '')}${customer.postcode ? `<br />${escapeHtml(customer.postcode)}` : ''}</p></div></section><table class="invoice-table"><thead><tr><th>Description</th><th class="text-right">Qty</th><th class="text-right">Rate</th><th class="text-right">Amount</th></tr></thead><tbody>${rows || '<tr><td colspan="4" class="muted">Add a service line to preview the invoice.</td></tr>'}</tbody></table><div class="invoice-total"><span>Total due</span><strong>${formatMoney(invoiceTotal(invoice))}</strong></div><section class="invoice-payment"><div><p class="eyebrow">Payment details</p><p><strong>${escapeHtml(invoiceCompany.accountName)}</strong><br />Sort code ${escapeHtml(invoiceCompany.sortCode)}<br />IBAN ${escapeHtml(invoiceCompany.iban)}<br />Company no. ${escapeHtml(invoiceCompany.companyNumber)}</p></div><div><p class="eyebrow">Online payment</p><p>${paymentLink}</p></div></section>${invoice.service_date ? `<p class="invoice-note"><strong>Service date:</strong> ${escapeHtml(formatInvoiceDate(invoice.service_date))}</p>` : ''}${invoice.notes ? `<p class="invoice-note">${escapeHtml(invoice.notes)}</p>` : ''}<footer class="invoice-footer">Thank you for choosing Sanctuary Shine.</footer></article>`;
+  }
+
+  function renderInvoicePreview() {
+    invoicePreview.innerHTML = invoiceMarkup(getInvoiceFromForm());
+  }
+
+  const invoicePrintStyles = `<style>@page{size:A4;margin:14mm}*{box-sizing:border-box}body{margin:0;background:#fff;color:#191c1d;font-family:Arial,sans-serif;font-size:12px}.invoice-sheet{max-width:780px;margin:0 auto;padding:16px}.invoice-header,.invoice-parties,.invoice-payment{display:flex;justify-content:space-between;gap:36px}.invoice-header{align-items:flex-start}.invoice-logo{width:175px;height:120px;object-fit:contain;object-position:left center}.invoice-company{color:#6c797c;line-height:1.55;margin-top:2px}.invoice-title{text-align:right}.invoice-title h1{font-size:28px;margin:5px 0 10px;color:#0b0b0b}.eyebrow{color:#008c99;font-size:10px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;margin:0 0 7px}.muted{color:#6c797c}.invoice-rule{border-top:4px solid #00c2d1;margin:22px 0}.invoice-parties{margin:0 0 28px}.invoice-parties>div,.invoice-payment>div{flex:1}.party-name{font-weight:700;font-size:15px;margin:0 0 4px}.invoice-parties p,.invoice-payment p{margin:3px 0;line-height:1.45}.invoice-table{width:100%;border-collapse:collapse;margin-top:6px}.invoice-table th{background:#f2f4f5;color:#3c494c;text-align:left;font-size:10px;text-transform:uppercase;letter-spacing:.12em}.invoice-table th,.invoice-table td{padding:11px 10px;border-bottom:1px solid #e6e8e9}.text-right{text-align:right}.invoice-total{display:flex;justify-content:flex-end;align-items:center;gap:35px;padding:18px 10px;font-size:14px}.invoice-total strong{font-size:24px;color:#008c99}.invoice-payment{background:#f8fafb;border:1px solid #e6e8e9;border-radius:10px;padding:15px 17px;margin-top:5px}.invoice-payment-link{color:#008c99;font-weight:700;text-decoration:none}.invoice-note{border-left:3px solid #ffd200;padding-left:10px;line-height:1.5;margin:20px 0 0}.invoice-footer{border-top:1px solid #e6e8e9;color:#6c797c;margin-top:34px;padding-top:13px;text-align:center}@media print{.invoice-sheet{padding:0}}</style>`;
+
+  function renderLeadOptions() {
+    const select = document.getElementById('crm-invoice-lead');
+    const selected = select.value;
+    select.innerHTML = `<option value="">Choose a CRM lead...</option>${leads.map((lead) => `<option value="${escapeHtml(lead.id)}">${escapeHtml(lead.name || 'Unnamed lead')} · ${escapeHtml(lead.email || '')}</option>`).join('')}`;
+    if (leads.some((lead) => lead.id === selected)) select.value = selected;
+  }
+
+  function renderSavedInvoices() {
+    document.getElementById('crm-invoice-count').textContent = invoices.length ? `${invoices.length} saved` : '';
+    invoiceList.innerHTML = invoices.length ? invoices.map((invoice) => `<button type="button" data-saved-invoice="${escapeHtml(invoice.id)}" class="w-full text-left rounded-xl border border-gray-100 bg-[#F8FAFB] p-4 hover:border-[#00C2D1] transition-colors"><span class="flex items-center justify-between gap-2"><span class="font-semibold text-[#0B0B0B]">${escapeHtml(invoice.invoice_number)}</span><span class="text-xs font-semibold ${invoice.status === 'sent' ? 'text-[#008C99]' : 'text-[#6C797C]'}">${escapeHtml(label(invoice.status || 'draft'))}</span></span><span class="block text-sm text-[#3C494C] mt-1">${escapeHtml(invoice.customer?.name || '')}</span><span class="block text-xs text-[#6C797C] mt-2">${escapeHtml(formatDate(invoice.issue_date))} · ${formatMoney(invoice.subtotal ?? invoiceTotal(invoice))}</span></button>`).join('') : '<p class="text-sm text-[#6C797C]">Invoices you save will appear here.</p>';
+  }
+
+  async function loadInvoices() {
+    const result = await request('list_invoices');
+    invoices = Array.isArray(result.invoices) ? result.invoices : [];
+    renderSavedInvoices();
+  }
+
+  function newInvoice(prefill = {}) {
+    const issueDate = prefill.issue_date || today();
+    invoiceForm.reset();
+    document.getElementById('crm-invoice-id').value = prefill.id || '';
+    document.getElementById('crm-invoice-number').value = prefill.invoice_number || `SS-${new Date().getFullYear()}-${String(invoices.length + 1).padStart(3, '0')}`;
+    document.getElementById('crm-invoice-issue-date').value = issueDate;
+    document.getElementById('crm-invoice-due-date').value = prefill.due_date || addDays(issueDate, 7);
+    document.getElementById('crm-invoice-service-date').value = prefill.service_date || '';
+    document.getElementById('crm-invoice-payment-link').value = prefill.payment_link || '';
+    document.getElementById('crm-invoice-customer-name').value = prefill.customer?.name || '';
+    document.getElementById('crm-invoice-customer-email').value = prefill.customer?.email || '';
+    document.getElementById('crm-invoice-customer-phone').value = prefill.customer?.phone || '';
+    document.getElementById('crm-invoice-customer-postcode').value = prefill.customer?.postcode || '';
+    document.getElementById('crm-invoice-customer-address').value = prefill.customer?.address || '';
+    document.getElementById('crm-invoice-notes').value = prefill.notes || '';
+    invoiceItems.innerHTML = '';
+    (prefill.line_items?.length ? prefill.line_items : [{ description: prefill.service || 'Cleaning services', quantity: 1, unit_price: '' }]).forEach(addInvoiceItemRow);
+    setInvoiceStatus(prefill.status || 'draft');
+    document.getElementById('crm-invoice-message').textContent = '';
+    renderInvoicePreview();
+  }
+
+  function openSavedInvoice(invoice) {
+    newInvoice(invoice);
+    invoicePanel.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+
+  function openInvoicePrint(invoice = getInvoiceFromForm()) {
+    const printWindow = window.open('', '_blank');
+    if (!printWindow) {
+      document.getElementById('crm-invoice-message').textContent = 'Please allow pop-ups to generate the PDF preview.';
+      return;
+    }
+    printWindow.document.write(`<!doctype html><html lang="en-GB"><head><meta charset="utf-8"><title>${escapeHtml(invoice.invoice_number || 'Sanctuary Shine invoice')}</title>${invoicePrintStyles}</head><body>${invoiceMarkup(invoice)}</body></html>`);
+    printWindow.document.close();
+    printWindow.focus();
+    setTimeout(() => printWindow.print(), 350);
+  }
+
+  function invoiceMailto(invoice) {
+    const lines = (invoice.line_items || []).map((item) => `${item.quantity} x ${item.description} - ${formatMoney(Number(item.quantity || 0) * Number(item.unit_price || 0))}`).join('\n');
+    const body = `Hi ${invoice.customer.name},\n\nPlease find your Sanctuary Shine invoice ${invoice.invoice_number}.\n\n${lines}\n\nTotal due: ${formatMoney(invoiceTotal(invoice))}\nDue date: ${formatDate(invoice.due_date)}\n\nBank transfer details:\n${invoiceCompany.accountName}\nSort code: ${invoiceCompany.sortCode}\nIBAN: ${invoiceCompany.iban}\nCompany no.: ${invoiceCompany.companyNumber}${invoice.payment_link ? `\n\nPay online: ${invoice.payment_link}` : ''}\n\nThank you,\nSanctuary Shine`;
+    window.location.href = `mailto:${encodeURIComponent(invoice.customer.email)}?subject=${encodeURIComponent(`Invoice ${invoice.invoice_number} from Sanctuary Shine`)}&body=${encodeURIComponent(body)}`;
+  }
+
+  async function persistInvoice(action = 'save_invoice') {
+    const invoice = getInvoiceFromForm();
+    const form = new FormData();
+    form.set('invoice_json', JSON.stringify(invoice));
+    const result = await request(action, { method: 'POST', body: form });
+    if (result.invoice) {
+      const index = invoices.findIndex((saved) => saved.id === result.invoice.id);
+      if (index >= 0) invoices[index] = result.invoice; else invoices.unshift(result.invoice);
+      document.getElementById('crm-invoice-id').value = result.invoice.id;
+      setInvoiceStatus(result.invoice.status || 'draft');
+      renderSavedInvoices();
+    }
+    return result.invoice || invoice;
   }
 
   async function loadUsers() {
@@ -254,9 +748,15 @@ import { SITE } from '../data/site';
     loggedInBadge.classList.remove('hidden');
     loggedInBadge.classList.add('flex');
     document.getElementById('crm-export').classList.toggle('hidden', !hasFeature('export_leads'));
+    invoiceToggle.classList.toggle('hidden', !hasFeature('manage_invoices'));
+    document.getElementById('crm-detail-invoice').classList.toggle('hidden', !hasFeature('manage_invoices'));
     userManagement.classList.toggle('hidden', !hasFeature('manage_users'));
     document.getElementById('crm-update-form').classList.toggle('hidden', !hasFeature('edit_leads'));
     if (hasFeature('manage_users')) await loadUsers();
+    if (hasFeature('manage_invoices')) {
+      renderLeadOptions();
+      try { await loadInvoices(); } catch (error) { showError(error.message); }
+    }
   }
 
   function renderStats() {
@@ -287,6 +787,18 @@ import { SITE } from '../data/site';
         <td class="px-5 py-4 text-[#6C797C] whitespace-nowrap">${escapeHtml(formatDate(lead.created_at))}</td>
         <td class="px-5 py-4 text-right text-[#008C99]">View</td>
       </tr>`).join('');
+    leadsCards.innerHTML = visibleLeads.map((lead) => `
+      <button type="button" data-lead-id="${escapeHtml(lead.id)}" class="w-full text-left rounded-xl border border-gray-100 bg-[#F8FAFB] p-4 active:bg-[#EAF7F8] transition-colors">
+        <span class="flex items-start justify-between gap-3">
+          <span class="min-w-0"><span class="block truncate font-semibold text-[#0B0B0B]">${escapeHtml(lead.name || 'Unnamed lead')}</span><span class="block truncate text-xs text-[#6C797C] mt-1">${escapeHtml(lead.email || '')}</span></span>
+          <span class="shrink-0 inline-flex px-2.5 py-1 rounded-full bg-[#D9FBFF] text-[#008C99] text-xs font-semibold">${escapeHtml(label(lead.type))}</span>
+        </span>
+        <span class="grid grid-cols-2 gap-3 mt-4 pt-3 border-t border-gray-200">
+          <span><span class="block text-[10px] uppercase tracking-wider text-[#6C797C]">Preferred date</span><span class="block text-sm text-[#3C494C] mt-1">${escapeHtml(formatDate(lead.preferred_date))}</span></span>
+          <span><span class="block text-[10px] uppercase tracking-wider text-[#6C797C]">Status</span><span class="block text-sm font-semibold text-[#0B0B0B] mt-1">${escapeHtml(label(lead.status))}</span></span>
+        </span>
+        <span class="flex items-center justify-between gap-3 mt-3 text-xs"><span class="text-[#6C797C]">Received ${escapeHtml(formatDate(lead.created_at))}</span><span class="shrink-0 font-semibold text-[#008C99]">View details</span></span>
+      </button>`).join('');
     emptyState.classList.toggle('hidden', visibleLeads.length !== 0);
   }
 
@@ -297,7 +809,7 @@ import { SITE } from '../data/site';
     document.getElementById('crm-detail-summary').innerHTML = [
       ['Type', label(lead.type)], ['Postcode', lead.postcode || '—'], ['Preferred date', formatDate(lead.preferred_date)],
       ['Cleaning type', label(lead.cleaning_type) || '—'], ['Property', label(lead.property_type) || '—'], ['Email delivery', label(lead.email_status) || '—']
-    ].map(([heading, value]) => `<div class="border border-gray-100 rounded-lg p-3"><p class="text-xs text-[#6C797C]">${escapeHtml(heading)}</p><p class="font-semibold mt-1">${escapeHtml(value)}</p></div>`).join('');
+    ].map(([heading, value]) => `<div class="min-w-0 border border-gray-100 rounded-lg p-3"><p class="text-xs text-[#6C797C]">${escapeHtml(heading)}</p><p class="font-semibold mt-1 break-words">${escapeHtml(value)}</p></div>`).join('');
     document.getElementById('crm-detail-id').value = lead.id;
     document.getElementById('crm-detail-name-input').value = lead.name || '';
     document.getElementById('crm-detail-email').value = lead.email || '';
@@ -316,18 +828,52 @@ import { SITE } from '../data/site';
   }
 
   async function loadLeads() {
-    const result = await request('list');
-    leads = Array.isArray(result.leads) ? result.leads : [];
-    errorBox.classList.add('hidden');
-    renderStats();
-    renderLeads();
+    leadLoadStatus.textContent = 'Loading leads...';
+    refreshLeadsButton.disabled = true;
+    try {
+      const result = await request('list');
+      if (!Array.isArray(result.leads)) throw new Error('The CRM returned an invalid leads response. Please refresh and try again.');
+      // A transient empty response must not wipe a list that is already on screen.
+      // The API is the source of truth, but an empty result after a successful
+      // load is treated as a failed refresh and the current list is retained.
+      if (result.leads.length === 0 && leads.length > 0) {
+        leadLoadStatus.textContent = `${leads.length} lead${leads.length === 1 ? '' : 's'} available (refresh retained)`;
+        return;
+      }
+      leads = result.leads;
+      leadsLoaded = true;
+      errorBox.classList.add('hidden');
+      renderStats();
+      renderLeads();
+      renderLeadOptions();
+      leadLoadStatus.textContent = `${leads.length} lead${leads.length === 1 ? '' : 's'} available`;
+    } catch (error) {
+      leadLoadStatus.textContent = 'Unable to load leads';
+      throw error;
+    } finally {
+      refreshLeadsButton.disabled = false;
+    }
   }
 
   async function showDashboard() {
+    if (dashboardReady) return;
+    if (dashboardLoadPromise) return dashboardLoadPromise;
     loginPanel.classList.add('hidden');
-    dashboard.classList.remove('hidden');
-    try { await loadLeads(); } catch (error) { showError(error.message); }
-    try { await loadAccount(); } catch (error) { showError(error.message); }
+    dashboard.classList.add('hidden');
+    dashboardLoadPromise = (async () => {
+      try {
+        await loadLeads();
+        if (!leadsLoaded) throw new Error('The CRM could not confirm the lead list. Please sign in again.');
+        dashboard.classList.remove('hidden');
+        try { await loadAccount(); } catch (error) { showError(error.message); }
+        dashboardReady = true;
+      } catch (error) {
+        dashboard.classList.add('hidden');
+        loginPanel.classList.remove('hidden');
+        loginMessage.textContent = error.message || 'The CRM could not load your leads. Please sign in again.';
+      }
+    })();
+    try { await dashboardLoadPromise; } finally { dashboardLoadPromise = null; }
   }
 
   loginForm.addEventListener('submit', async (event) => {
@@ -349,11 +895,115 @@ import { SITE } from '../data/site';
     const row = event.target.closest('[data-lead-id]');
     if (row) openDetail(leads.find((lead) => lead.id === row.dataset.leadId));
   });
+  leadsCards.addEventListener('click', (event) => {
+    const card = event.target.closest('[data-lead-id]');
+    if (card) openDetail(leads.find((lead) => lead.id === card.dataset.leadId));
+  });
 
   ['crm-search', 'crm-type', 'crm-status'].forEach((id) => document.getElementById(id).addEventListener('input', renderLeads));
+  refreshLeadsButton.addEventListener('click', async () => {
+    try { await loadLeads(); } catch (error) { refreshLeadsButton.disabled = false; leadLoadStatus.textContent = 'Unable to load leads'; showError(error.message); }
+  });
+  document.getElementById('crm-reset-lead-filters').addEventListener('click', () => {
+    document.getElementById('crm-search').value = '';
+    document.getElementById('crm-type').value = 'all';
+    document.getElementById('crm-status').value = 'all';
+    renderLeads();
+  });
   document.getElementById('crm-detail-close').addEventListener('click', () => detail.classList.add('hidden'));
 
   accountToggle.addEventListener('click', () => accountPanel.classList.toggle('hidden'));
+
+  invoiceToggle.addEventListener('click', () => {
+    invoicePanel.classList.toggle('hidden');
+    if (!invoicePanel.classList.contains('hidden') && !document.getElementById('crm-invoice-number').value) newInvoice();
+    if (!invoicePanel.classList.contains('hidden')) invoicePanel.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  });
+
+  document.getElementById('crm-invoice-new').addEventListener('click', () => newInvoice());
+  document.getElementById('crm-invoice-saved').addEventListener('click', () => savedInvoicesPanel.scrollIntoView({ behavior: 'smooth', block: 'start' }));
+  document.getElementById('crm-invoice-add-item').addEventListener('click', () => { addInvoiceItemRow(); renderInvoicePreview(); });
+  document.getElementById('crm-invoice-lead').addEventListener('change', (event) => {
+    const lead = leads.find((candidate) => candidate.id === event.target.value);
+    if (!lead) return;
+    document.getElementById('crm-invoice-customer-name').value = lead.name || '';
+    document.getElementById('crm-invoice-customer-email').value = lead.email || '';
+    document.getElementById('crm-invoice-customer-phone').value = lead.phone || '';
+    document.getElementById('crm-invoice-customer-postcode').value = lead.postcode || '';
+    document.getElementById('crm-invoice-service-date').value = lead.preferred_date || '';
+    const firstItem = invoiceItems.querySelector('[data-item-description]');
+    if (firstItem && !firstItem.value) firstItem.value = lead.cleaning_type ? label(lead.cleaning_type) : 'Cleaning services';
+    renderInvoicePreview();
+  });
+  invoiceItems.addEventListener('click', (event) => {
+    if (!event.target.closest('[data-remove-invoice-item]')) return;
+    const rows = invoiceItems.querySelectorAll('[data-invoice-item]');
+    if (rows.length > 1) event.target.closest('[data-invoice-item]').remove();
+    renderInvoicePreview();
+  });
+  invoiceForm.addEventListener('input', renderInvoicePreview);
+  invoiceForm.addEventListener('submit', async (event) => {
+    event.preventDefault();
+    const message = document.getElementById('crm-invoice-message');
+    message.className = 'text-sm min-h-5';
+    if (!invoiceForm.reportValidity()) return;
+    try {
+      const saved = await persistInvoice('save_invoice');
+      message.textContent = `Invoice ${saved.invoice_number} saved to the CRM.`;
+      message.classList.add('text-green-600');
+    } catch (error) {
+      message.textContent = error.message;
+      message.classList.add('text-red-600');
+    }
+  });
+  document.getElementById('crm-invoice-pdf').addEventListener('click', () => {
+    if (!invoiceForm.reportValidity()) return;
+    openInvoicePrint();
+  });
+  document.getElementById('crm-invoice-send').addEventListener('click', async () => {
+    const message = document.getElementById('crm-invoice-message');
+    message.className = 'text-sm min-h-5';
+    if (!invoiceForm.reportValidity()) return;
+    try {
+      const sent = await persistInvoice('send_invoice');
+      message.textContent = sent.email_status === 'sent' ? `Invoice sent to ${sent.customer.email}.` : 'Invoice saved.';
+      message.classList.add('text-green-600');
+    } catch (error) {
+      message.textContent = 'Server email delivery is unavailable. You can send it from your email app instead.';
+      message.classList.add('text-red-600');
+      if (window.confirm('Open your email app with this invoice prepared?')) invoiceMailto(getInvoiceFromForm());
+    }
+  });
+  document.getElementById('crm-invoice-share').addEventListener('click', async () => {
+    const invoice = getInvoiceFromForm();
+    const message = document.getElementById('crm-invoice-message');
+    if (!invoice.payment_link) {
+      message.textContent = 'Add a payment link first, then share it with the customer.';
+      message.className = 'text-sm min-h-5 text-red-600';
+      return;
+    }
+    try {
+      if (navigator.share) await navigator.share({ title: `Payment for ${invoiceCompany.name}`, text: `Payment link for invoice ${invoice.invoice_number}`, url: invoice.payment_link });
+      else if (navigator.clipboard) await navigator.clipboard.writeText(invoice.payment_link);
+      else window.prompt('Copy this payment link', invoice.payment_link);
+      message.textContent = navigator.share ? 'Payment link shared.' : 'Payment link copied to your clipboard.';
+      message.className = 'text-sm min-h-5 text-green-600';
+    } catch (error) {
+      if (error.name !== 'AbortError') { message.textContent = 'Payment link could not be shared.'; message.className = 'text-sm min-h-5 text-red-600'; }
+    }
+  });
+  invoiceList.addEventListener('click', (event) => {
+    const button = event.target.closest('[data-saved-invoice]');
+    if (!button) return;
+    const invoice = invoices.find((saved) => saved.id === button.dataset.savedInvoice);
+    if (invoice) openSavedInvoice(invoice);
+  });
+  document.getElementById('crm-detail-invoice').addEventListener('click', () => {
+    if (!selectedLead) return;
+    newInvoice({ customer: { name: selectedLead.name, email: selectedLead.email, phone: selectedLead.phone, postcode: selectedLead.postcode }, service_date: selectedLead.preferred_date, service: selectedLead.cleaning_type ? label(selectedLead.cleaning_type) : 'Cleaning services' });
+    invoicePanel.classList.remove('hidden');
+    invoicePanel.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  });
 
   document.addEventListener('click', (event) => {
     const button = event.target.closest('[data-password-toggle]');
@@ -481,6 +1131,8 @@ import { SITE } from '../data/site';
   document.getElementById('crm-logout').addEventListener('click', async () => {
     await request('logout', { method: 'POST' });
     currentUser = null;
+    leadsLoaded = false;
+    dashboardReady = false;
     accountPanel.classList.add('hidden');
     dashboard.classList.add('hidden');
     loginPanel.classList.remove('hidden');
@@ -563,7 +1215,23 @@ import { SITE } from '../data/site';
     } finally { button.disabled = false; }
   });
 
+  // Some browsers restore the last-used value of unnamed search/select fields on a
+  // plain reload, sometimes after this script has already run. That silently
+  // re-applies an old filter once the leads have rendered, making a full list
+  // flash briefly before appearing to "hide" down to a filtered subset. Force
+  // these back to their neutral defaults on every load so a stale restored
+  // filter can never mask freshly loaded leads.
+  const resetLeadFilters = () => {
+    document.getElementById('crm-search').value = '';
+    document.getElementById('crm-type').value = 'all';
+    document.getElementById('crm-status').value = 'all';
+    renderLeads();
+  };
+  resetLeadFilters();
+  window.addEventListener('pageshow', resetLeadFilters);
+
   const resetToken = new URLSearchParams(window.location.search).get('reset_token');
+  newInvoice();
   if (resetToken) {
     loginPanel.classList.add('hidden');
     resetPanel.classList.remove('hidden');
@@ -572,7 +1240,8 @@ import { SITE } from '../data/site';
   }
 
   if ('serviceWorker' in navigator) {
-    navigator.serviceWorker.register('/crm-sw.js', { scope: '/crm/' }).catch(() => {});
+    navigator.serviceWorker.register('/crm-sw.js?v=6', { scope: '/crm/' }).catch(() => {});
+    navigator.serviceWorker.addEventListener('controllerchange', () => window.location.reload());
   }
 
   let installPrompt = null;

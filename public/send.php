@@ -53,28 +53,48 @@ function save_lead(array $lead): bool
     }
 
     $dataFile = $dataDirectory . '/leads.json';
-    $handle = @fopen($dataFile, 'c+');
-    if (!$handle || !flock($handle, LOCK_EX)) {
-        if ($handle) fclose($handle);
-        return false;
+    $contents = is_file($dataFile) ? @file_get_contents($dataFile) : '';
+    $leads = json_decode($contents ?: '', true);
+    if (!is_array($leads) && is_file($dataFile . '.bak')) {
+        $backupContents = @file_get_contents($dataFile . '.bak');
+        $leads = json_decode($backupContents ?: '', true);
     }
-
-    rewind($handle);
-    $contents = stream_get_contents($handle);
-    $leads = json_decode($contents ?: '[]', true);
     if (!is_array($leads)) $leads = [];
 
     $leads[] = $lead;
-    $json = json_encode($leads, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES);
-    rewind($handle);
-    ftruncate($handle, 0);
-    $written = $json !== false && fwrite($handle, $json) !== false;
-    fflush($handle);
-    flock($handle, LOCK_UN);
-    fclose($handle);
-    @chmod($dataFile, 0600);
+    return write_json_safely($dataFile, $leads);
+}
 
-    return $written;
+function write_json_safely(string $dataFile, array $leads): bool
+{
+    $lock = @fopen($dataFile . '.lock', 'c');
+    if (!$lock || !flock($lock, LOCK_EX)) {
+        if ($lock) fclose($lock);
+        return false;
+    }
+    $json = json_encode(array_values($leads), JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES);
+    if ($json === false) {
+        flock($lock, LOCK_UN);
+        fclose($lock);
+        return false;
+    }
+    $temporaryFile = $dataFile . '.tmp';
+    $written = @file_put_contents($temporaryFile, $json, LOCK_EX);
+    if ($written === false || $written !== strlen($json)) {
+        @unlink($temporaryFile);
+        flock($lock, LOCK_UN);
+        fclose($lock);
+        return false;
+    }
+    @chmod($temporaryFile, 0600);
+    if (is_file($dataFile)) {
+        @copy($dataFile, $dataFile . '.bak');
+        @chmod($dataFile . '.bak', 0600);
+    }
+    $renamed = @rename($temporaryFile, $dataFile);
+    flock($lock, LOCK_UN);
+    fclose($lock);
+    return $renamed;
 }
 
 function send_emailit_email(string $apiKey, string $apiUrl, array $emailData, string $idempotencyKey): bool
@@ -327,26 +347,18 @@ if ($adminTransport === 'failed') {
 // Update the stored record with the actual delivery transport.
 $dataFile = __DIR__ . '/crm-data/leads.json';
 if (is_file($dataFile)) {
-    $handle = @fopen($dataFile, 'c+');
-    if ($handle && flock($handle, LOCK_EX)) {
-        rewind($handle);
-        $leads = json_decode(stream_get_contents($handle) ?: '[]', true);
-        if (is_array($leads)) {
-            foreach ($leads as &$storedLead) {
-                if (($storedLead['id'] ?? '') === $leadId) {
-                    $storedLead['email_status'] = $adminTransport;
-                    $storedLead['updated_at'] = gmdate('c');
-                    break;
-                }
+    $contents = @file_get_contents($dataFile);
+    $leads = json_decode($contents ?: '', true);
+    if (is_array($leads)) {
+        foreach ($leads as &$storedLead) {
+            if (($storedLead['id'] ?? '') === $leadId) {
+                $storedLead['email_status'] = $adminTransport;
+                $storedLead['updated_at'] = gmdate('c');
+                break;
             }
-            unset($storedLead);
-            $json = json_encode($leads, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES);
-            rewind($handle);
-            ftruncate($handle, 0);
-            if ($json !== false) fwrite($handle, $json);
         }
-        flock($handle, LOCK_UN);
-        fclose($handle);
+        unset($storedLead);
+        write_json_safely($dataFile, $leads);
     }
 }
 
