@@ -18,9 +18,20 @@ function crm_response(array $payload, int $status = 200): void
     exit;
 }
 
+function crm_persistent_root(): string
+{
+    // Auto-deploy (e.g. Hostinger's git-based deploy) replaces __DIR__'s contents from the
+    // git repo on every push. crm-config.php and crm-data/ are gitignored and must never
+    // live inside that deployed tree, or every push silently wipes secrets and customer data.
+    // Store them in a sibling directory the deploy pipeline never touches, falling back to
+    // __DIR__ for local/other environments where that sibling doesn't exist.
+    $external = dirname(__DIR__) . '/crm-secure';
+    return is_dir($external) ? $external : __DIR__;
+}
+
 function crm_config(): array
 {
-    $configPath = __DIR__ . '/crm-config.php';
+    $configPath = crm_persistent_root() . '/crm-config.php';
     if (!is_file($configPath)) return [];
     $config = include $configPath;
     return is_array($config) ? $config : [];
@@ -38,7 +49,7 @@ function crm_all_features(): array
 
 function crm_data_directory(): string
 {
-    return __DIR__ . '/crm-data';
+    return crm_persistent_root() . '/crm-data';
 }
 
 function crm_data_file(): string
@@ -256,7 +267,7 @@ function crm_log_email_event(string $emailType, string $provider, array $fields 
         $safeValue = str_replace(["\r", "\n"], ' ', (string) $value);
         $parts[] = $key . '=' . $safeValue;
     }
-    @file_put_contents(__DIR__ . '/crm-data/email.log', implode(' ', $parts) . "\n", FILE_APPEND);
+    @file_put_contents(crm_data_directory() . '/email.log', implode(' ', $parts) . "\n", FILE_APPEND);
 }
 
 function crm_send_reset_email(array $user, string $token, array $config): bool

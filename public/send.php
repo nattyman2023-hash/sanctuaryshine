@@ -32,9 +32,20 @@ function clean_field(string $key, int $maxLength = 500): string
     return substr($value, 0, $maxLength);
 }
 
+function crm_persistent_root(): string
+{
+    // Auto-deploy (e.g. Hostinger's git-based deploy) replaces __DIR__'s contents from the
+    // git repo on every push. crm-config.php and crm-data/ are gitignored and must never
+    // live inside that deployed tree, or every push silently wipes secrets and customer data.
+    // Store them in a sibling directory the deploy pipeline never touches, falling back to
+    // __DIR__ for local/other environments where that sibling doesn't exist.
+    $external = dirname(__DIR__) . '/crm-secure';
+    return is_dir($external) ? $external : __DIR__;
+}
+
 function load_site_config(): array
 {
-    $configPath = __DIR__ . '/crm-config.php';
+    $configPath = crm_persistent_root() . '/crm-config.php';
     if (!is_file($configPath)) return [];
 
     $config = include $configPath;
@@ -43,7 +54,7 @@ function load_site_config(): array
 
 function save_lead(array $lead): bool
 {
-    $dataDirectory = __DIR__ . '/crm-data';
+    $dataDirectory = crm_persistent_root() . '/crm-data';
     if (!is_dir($dataDirectory) && !mkdir($dataDirectory, 0750, true)) return false;
 
     // Prevent direct web access if Apache is used.
@@ -345,7 +356,7 @@ if ($adminTransport === 'failed') {
 }
 
 // Update the stored record with the actual delivery transport.
-$dataFile = __DIR__ . '/crm-data/leads.json';
+$dataFile = crm_persistent_root() . '/crm-data/leads.json';
 if (is_file($dataFile)) {
     $contents = @file_get_contents($dataFile);
     $leads = json_decode($contents ?: '', true);

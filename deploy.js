@@ -215,20 +215,25 @@ async function deploy() {
     }
     console.log("✅ index.html confirmed on server");
 
-    // crm-config.php holds the EmailIt API key and CRM credentials. It is gitignored and
-    // lives only in public/ -> dist/ -> the server, so nothing restores it automatically if
-    // it goes missing. A prior incident (a stray public/ dir in the web root getting swept up
-    // by clean-deploy.js's stale-file cleanup) silently deleted it and broke password-reset
-    // email delivery for weeks before anyone noticed. Fail loudly instead of silently.
-    const hasConfig = list.some(f => f.name === "crm-config.php");
+    // crm-config.php and crm-data/ now live in /crm-secure, a sibling of the web root that
+    // Hostinger's git auto-deploy never touches (see crm_persistent_root() in crm-api.php /
+    // send.php). They used to live inside public_html and got silently wiped by every
+    // auto-deploy triggered from a git push, since both are gitignored and can never exist
+    // in a fresh checkout. Verify the persistent copy is still there instead of silently
+    // trusting it.
+    let hasConfig = false;
+    try {
+      const secureList = await client.list("/crm-secure");
+      hasConfig = secureList.some(f => f.name === "crm-config.php");
+    } catch {}
     if (!hasConfig) {
-      console.error("\n❌ crm-config.php is MISSING on the server after this deploy!");
+      console.error("\n❌ /crm-secure/crm-config.php is MISSING!");
       console.error("   EmailIt sending (password resets, contact form emails) and admin");
-      console.error("   account provisioning will silently fail without it.");
-      console.error("   Confirm public/crm-config.php exists locally before deploying, then");
-      console.error("   re-run this deploy or upload it directly via FTP.");
+      console.error("   account provisioning will silently fail without it. This file must be");
+      console.error("   restored directly via FTP to /crm-secure/crm-config.php — it is NOT");
+      console.error("   part of this deploy and never will be (it's gitignored on purpose).");
     } else {
-      console.log("✅ crm-config.php confirmed on server");
+      console.log("✅ /crm-secure/crm-config.php confirmed present");
     }
 
     if (failed.length > 0) {
