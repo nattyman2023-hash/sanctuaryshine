@@ -110,6 +110,20 @@ Options -Indexes
     } catch {}
   }
 
+  // crm-config.php (EmailIt API key, CRM credentials) lives at the web root, is gitignored,
+  // and is only ever produced by copying public/crm-config.php into dist/. A past incident
+  // where a stray public/ directory in the web root got swept up by the STALE cleanup below
+  // deleted this file and silently broke EmailIt sending for weeks. Back up whatever is live
+  // before cleanup, and fall back to the local authoritative copy if the remote has none.
+  let remoteConfigBackupPath = null;
+  try {
+    mkdirSync(crmBackupDir, { recursive: true });
+    remoteConfigBackupPath = join(crmBackupDir, "crm-config.php");
+    await client.downloadTo(remoteConfigBackupPath, "crm-config.php");
+  } catch {
+    remoteConfigBackupPath = null;
+  }
+
   // If the hosting root has been replaced by source files and the live CRM
   // directory is missing, restore the newest local CRM snapshot rather than
   // publishing an empty dashboard. This keeps a bad deploy from looking like
@@ -217,7 +231,7 @@ Options -Indexes
 
   // Verify
   console.log("\n🔍 Remote listing after upload:");
-  const after = await client.list();
+  let after = await client.list();
   for (const f of after) {
     if (f.name !== "." && f.name !== "..") {
       console.log(`  ${f.isDirectory ? "[D]" : "[F]"} ${f.name}`);
@@ -227,6 +241,33 @@ Options -Indexes
   console.log(hasIndex ? "\n✅ index.html present" : "\n❌ index.html MISSING");
   console.log(`Uploaded ${ok}/${files.length}, failed: ${fail.length}`);
   if (fail.length) console.log("Failed:", fail.join(", "));
+
+  // crm-config.php should have come along with the dist upload above (it's copied from
+  // public/ at build time). If it's still missing, restore from whatever we backed up, or
+  // as a last resort the local authoritative copy, rather than leaving EmailIt sending broken.
+  let hasConfig = after.some(f => f.name === "crm-config.php");
+  if (!hasConfig) {
+    console.log("\n⚠️  crm-config.php missing after upload — attempting restore...");
+    const localConfigPath = resolve(process.cwd(), "public", "crm-config.php");
+    const restoreSource = remoteConfigBackupPath && existsSync(remoteConfigBackupPath)
+      ? remoteConfigBackupPath
+      : (existsSync(localConfigPath) ? localConfigPath : null);
+    if (restoreSource) {
+      try {
+        await client.uploadFrom(restoreSource, "crm-config.php");
+        after = await client.list();
+        hasConfig = after.some(f => f.name === "crm-config.php");
+        console.log(hasConfig ? "✅ crm-config.php restored" : "❌ crm-config.php restore failed");
+      } catch (e) {
+        console.log(`❌ crm-config.php restore failed: ${e.message}`);
+      }
+    } else {
+      console.log("❌ No backup or local copy of crm-config.php available to restore from.");
+    }
+  }
+  console.log(hasConfig
+    ? "✅ crm-config.php confirmed on server (EmailIt sending will work)"
+    : "❌ crm-config.php is MISSING — EmailIt sending (password resets, contact form emails) will silently fail until this is fixed.");
 
   client.close();
   console.log("\nDone. Check https://sanctuaryshine.co.uk");

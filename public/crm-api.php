@@ -249,6 +249,16 @@ function crm_password_is_valid(string $password): bool
     return strlen($password) >= 10 && strlen($password) <= 200;
 }
 
+function crm_log_email_event(string $emailType, string $provider, array $fields = []): void
+{
+    $parts = ['time=' . gmdate('c'), 'type=' . $emailType, 'provider=' . $provider];
+    foreach ($fields as $key => $value) {
+        $safeValue = str_replace(["\r", "\n"], ' ', (string) $value);
+        $parts[] = $key . '=' . $safeValue;
+    }
+    @file_put_contents(__DIR__ . '/crm-data/email.log', implode(' ', $parts) . "\n", FILE_APPEND);
+}
+
 function crm_send_reset_email(array $user, string $token, array $config): bool
 {
     $to = (string) ($user['email'] ?? '');
@@ -265,7 +275,11 @@ function crm_send_reset_email(array $user, string $token, array $config): bool
         . "Sanctuary Shine\n";
 
     $apiKey = trim((string) ($config['emailit_api_key'] ?? ''));
-    if ($apiKey !== '' && function_exists('curl_init')) {
+    if ($apiKey === '') {
+        crm_log_email_event('password_reset', 'emailit', ['to' => $to, 'status' => 'skipped', 'error' => 'api_key_not_configured']);
+    } elseif (!function_exists('curl_init')) {
+        crm_log_email_event('password_reset', 'emailit', ['to' => $to, 'status' => 'skipped', 'error' => 'curl_unavailable']);
+    } else {
         $curl = curl_init('https://api.emailit.com/v2/emails');
         curl_setopt_array($curl, [
             CURLOPT_POST => true,
@@ -287,15 +301,41 @@ function crm_send_reset_email(array $user, string $token, array $config): bool
         ]);
         $response = curl_exec($curl);
         $httpCode = (int) curl_getinfo($curl, CURLINFO_HTTP_CODE);
+        $curlError = curl_error($curl);
         curl_close($curl);
-        if ($response !== false && $httpCode >= 200 && $httpCode < 300) return true;
+
+        $decoded = $response !== false ? json_decode($response, true) : null;
+        $messageId = is_array($decoded) ? (string) ($decoded['id'] ?? '') : '';
+        $providerStatus = is_array($decoded) ? (string) ($decoded['status'] ?? '') : '';
+
+        if ($response !== false && $httpCode >= 200 && $httpCode < 300) {
+            crm_log_email_event('password_reset', 'emailit', [
+                'to' => $to,
+                'status' => 'sent',
+                'http_code' => $httpCode,
+                'message_id' => $messageId !== '' ? $messageId : 'unknown',
+                'provider_status' => $providerStatus !== '' ? $providerStatus : 'unknown',
+            ]);
+            return true;
+        }
+
+        $safeError = $curlError !== '' ? $curlError : (is_array($decoded) ? (string) ($decoded['message'] ?? $decoded['error'] ?? 'unrecognized_response') : 'unrecognized_response');
+        crm_log_email_event('password_reset', 'emailit', [
+            'to' => $to,
+            'status' => 'failed',
+            'http_code' => $httpCode,
+            'error' => substr($safeError, 0, 200),
+        ]);
     }
 
     if (function_exists('mail')) {
         $headers = ['From: ' . $fromName . ' <' . $fromEmail . '>', 'MIME-Version: 1.0', 'Content-Type: text/plain; charset=UTF-8'];
-        return @mail($to, $subject, $text, implode("\r\n", $headers));
+        $sent = @mail($to, $subject, $text, implode("\r\n", $headers));
+        crm_log_email_event('password_reset', 'php_mail', ['to' => $to, 'status' => $sent ? 'sent' : 'failed']);
+        return $sent;
     }
 
+    crm_log_email_event('password_reset', 'none', ['to' => $to, 'status' => 'failed', 'error' => 'no_transport_available']);
     return false;
 }
 
@@ -600,7 +640,9 @@ if ($action === 'request_password_reset' && $_SERVER['REQUEST_METHOD'] === 'POST
                 $token = bin2hex(random_bytes(32));
                 $user['reset_token_hash'] = hash('sha256', $token);
                 $user['reset_token_expires_at'] = gmdate('c', time() + 3600);
-                crm_write_users($users);
+                if (!crm_write_users($users)) {
+                    crm_response(['status' => 'error', 'message' => 'The reset request could not be saved. Please try again shortly.'], 500);
+                }
                 crm_send_reset_email($user, $token, $config);
                 break;
             }

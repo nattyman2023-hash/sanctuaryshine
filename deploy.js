@@ -215,6 +215,22 @@ async function deploy() {
     }
     console.log("✅ index.html confirmed on server");
 
+    // crm-config.php holds the EmailIt API key and CRM credentials. It is gitignored and
+    // lives only in public/ -> dist/ -> the server, so nothing restores it automatically if
+    // it goes missing. A prior incident (a stray public/ dir in the web root getting swept up
+    // by clean-deploy.js's stale-file cleanup) silently deleted it and broke password-reset
+    // email delivery for weeks before anyone noticed. Fail loudly instead of silently.
+    const hasConfig = list.some(f => f.name === "crm-config.php");
+    if (!hasConfig) {
+      console.error("\n❌ crm-config.php is MISSING on the server after this deploy!");
+      console.error("   EmailIt sending (password resets, contact form emails) and admin");
+      console.error("   account provisioning will silently fail without it.");
+      console.error("   Confirm public/crm-config.php exists locally before deploying, then");
+      console.error("   re-run this deploy or upload it directly via FTP.");
+    } else {
+      console.log("✅ crm-config.php confirmed on server");
+    }
+
     if (failed.length > 0) {
       console.log(`\n⚠️  Deployment finished with ${failed.length} failed non-critical files:`);
       failed.forEach(f => console.log(`   - ${f}`));
