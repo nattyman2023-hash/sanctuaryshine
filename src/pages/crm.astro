@@ -145,7 +145,7 @@ import { SITE } from '../data/site';
 
                 <div class="border-t border-gray-100 pt-5"><p class="text-xs uppercase tracking-wider text-[#6C797C] mb-3">Bill to</p><div class="grid grid-cols-1 md:grid-cols-2 gap-3">
                   <input id="crm-invoice-customer-name" type="text" placeholder="Customer name" required class="px-3 py-2.5 rounded-lg border border-gray-200 text-sm" />
-                  <input id="crm-invoice-customer-email" type="email" placeholder="Customer email" required class="px-3 py-2.5 rounded-lg border border-gray-200 text-sm" />
+                  <input id="crm-invoice-customer-email" type="email" placeholder="Customer email" class="px-3 py-2.5 rounded-lg border border-gray-200 text-sm" />
                   <input id="crm-invoice-customer-phone" type="tel" placeholder="Phone" class="px-3 py-2.5 rounded-lg border border-gray-200 text-sm" />
                   <input id="crm-invoice-customer-postcode" type="text" placeholder="Postcode" class="px-3 py-2.5 rounded-lg border border-gray-200 text-sm" />
                   <textarea id="crm-invoice-customer-address" rows="2" placeholder="Billing address" class="md:col-span-2 px-3 py-2.5 rounded-lg border border-gray-200 text-sm"></textarea>
@@ -173,7 +173,7 @@ import { SITE } from '../data/site';
               <button id="crm-refresh-leads" type="button" class="shrink-0 min-h-10 px-3 rounded-lg border border-[#00C2D1] text-[#008C99] text-xs sm:text-sm font-semibold hover:bg-[#D9FBFF]">Refresh leads</button>
             </div>
             <div class="grid grid-cols-1 sm:grid-cols-[minmax(0,1fr)_auto_auto_auto] gap-2 sm:gap-3">
-              <input id="crm-search" type="search" autocomplete="off" placeholder="Search name, email or postcode" class="min-h-11 w-full min-w-0 px-3 py-2 rounded-lg border border-gray-200 text-sm focus:border-[#00C2D1] outline-none" />
+              <input id="crm-search" type="search" name="lead-search" autocomplete="off" data-lpignore="true" data-1p-ignore data-form-type="other" placeholder="Search name, email or postcode" class="min-h-11 w-full min-w-0 px-3 py-2 rounded-lg border border-gray-200 text-sm focus:border-[#00C2D1] outline-none" />
               <select id="crm-type" autocomplete="off" class="min-h-11 w-full px-3 py-2 rounded-lg border border-gray-200 text-sm focus:border-[#00C2D1] outline-none bg-white">
                 <option value="all">All types</option>
                 <option value="booking">Bookings</option>
@@ -226,7 +226,7 @@ import { SITE } from '../data/site';
             <div><label for="crm-detail-status" class="block text-xs uppercase tracking-wider text-[#6C797C] mb-1">Status</label><select id="crm-detail-status" class="w-full px-3 py-2.5 rounded-lg border border-gray-200 bg-white text-sm"><option value="new">New</option><option value="contacted">Contacted</option><option value="quoted">Quoted</option><option value="booked">Booked</option><option value="completed">Completed</option><option value="closed">Closed</option></select></div>
             <div><label for="crm-detail-notes" class="block text-xs uppercase tracking-wider text-[#6C797C] mb-1">Internal notes</label><input id="crm-detail-notes" type="text" class="w-full px-3 py-2.5 rounded-lg border border-gray-200 text-sm" placeholder="Follow-up, price, cleaner assigned..." /></div>
             <div class="md:col-span-2"><label for="crm-detail-message-input" class="block text-xs uppercase tracking-wider text-[#6C797C] mb-1">Customer message</label><textarea id="crm-detail-message-input" rows="4" class="w-full px-3 py-2.5 rounded-lg border border-gray-200 text-sm"></textarea></div>
-            <button type="submit" class="md:col-span-2 min-h-11 px-5 py-2.5 rounded-lg bg-[#00C2D1] text-white text-sm font-bold hover:bg-[#008C99] transition-colors">Save changes</button>
+            <div class="md:col-span-2 flex flex-col sm:flex-row gap-2"><button type="submit" class="min-h-11 px-5 py-2.5 rounded-lg bg-[#00C2D1] text-white text-sm font-bold hover:bg-[#008C99] transition-colors">Save changes</button><button id="crm-detail-delete" type="button" class="min-h-11 px-5 py-2.5 rounded-lg border border-red-200 text-red-600 text-sm font-semibold hover:bg-red-50 transition-colors">Delete lead</button></div>
           </form>
         </div>
       </div>
@@ -900,6 +900,8 @@ import { SITE } from '../data/site';
     if (card) openDetail(leads.find((lead) => lead.id === card.dataset.leadId));
   });
 
+  document.getElementById('crm-search').value = '';
+  window.addEventListener('pageshow', () => { document.getElementById('crm-search').value = ''; renderLeads(); });
   ['crm-search', 'crm-type', 'crm-status'].forEach((id) => document.getElementById(id).addEventListener('input', renderLeads));
   refreshLeadsButton.addEventListener('click', async () => {
     try { await loadLeads(); } catch (error) { refreshLeadsButton.disabled = false; leadLoadStatus.textContent = 'Unable to load leads'; showError(error.message); }
@@ -964,6 +966,11 @@ import { SITE } from '../data/site';
     const message = document.getElementById('crm-invoice-message');
     message.className = 'text-sm min-h-5';
     if (!invoiceForm.reportValidity()) return;
+    if (!document.getElementById('crm-invoice-customer-email').value.trim()) {
+      message.textContent = 'Add a customer email address to send the invoice.';
+      message.classList.add('text-red-600');
+      return;
+    }
     try {
       const sent = await persistInvoice('send_invoice');
       message.textContent = sent.email_status === 'sent' ? `Invoice sent to ${sent.customer.email}.` : 'Invoice saved.';
@@ -1128,6 +1135,20 @@ import { SITE } from '../data/site';
     } catch (error) { showError(error.message); }
   });
 
+  document.getElementById('crm-detail-delete').addEventListener('click', async () => {
+    if (!selectedLead) return;
+    if (!window.confirm(`Delete the lead for ${selectedLead.name || 'this customer'}? This can't be undone.`)) return;
+    const selectedId = selectedLead.id;
+    const form = new FormData();
+    form.set('id', selectedId);
+    try {
+      await request('delete', { method: 'POST', body: form });
+      selectedLead = null;
+      detail.classList.add('hidden');
+      await loadLeads();
+    } catch (error) { showError(error.message); }
+  });
+
   document.getElementById('crm-logout').addEventListener('click', async () => {
     await request('logout', { method: 'POST' });
     currentUser = null;
@@ -1241,7 +1262,15 @@ import { SITE } from '../data/site';
 
   if ('serviceWorker' in navigator) {
     navigator.serviceWorker.register('/crm-sw.js?v=6', { scope: '/crm/' }).catch(() => {});
-    navigator.serviceWorker.addEventListener('controllerchange', () => window.location.reload());
+    // controllerchange can fire more than once as a new service worker takes over; without
+    // this guard each firing calls reload() again before the previous reload finishes,
+    // which is what shows up as the page (and this banner) flashing on and off.
+    let reloadingForNewWorker = false;
+    navigator.serviceWorker.addEventListener('controllerchange', () => {
+      if (reloadingForNewWorker) return;
+      reloadingForNewWorker = true;
+      window.location.reload();
+    });
   }
 
   let installPrompt = null;

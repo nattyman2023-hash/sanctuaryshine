@@ -406,9 +406,10 @@ function crm_clean_value($value, int $maxLength = 500): string
 
 function crm_invoice_is_valid(array $invoice): bool
 {
+    $email = $invoice['customer']['email'];
     return $invoice['invoice_number'] !== ''
         && $invoice['customer']['name'] !== ''
-        && filter_var($invoice['customer']['email'], FILTER_VALIDATE_EMAIL)
+        && ($email === '' || filter_var($email, FILTER_VALIDATE_EMAIL))
         && count($invoice['line_items']) > 0;
 }
 
@@ -805,8 +806,13 @@ if (($action === 'save_invoice' || $action === 'send_invoice') && $_SERVER['REQU
     if (!is_array($decodedInvoice)) crm_response(['status' => 'error', 'message' => 'Invoice details could not be read.'], 400);
 
     $invoice = crm_normalize_invoice($decodedInvoice);
-    if ($invoice['invoice_number'] === '' || $invoice['customer']['name'] === '' || !filter_var($invoice['customer']['email'], FILTER_VALIDATE_EMAIL) || count($invoice['line_items']) === 0) {
-        crm_response(['status' => 'error', 'message' => 'Invoice number, customer name, valid email and at least one line item are required.'], 400);
+    $customerEmail = $invoice['customer']['email'];
+    if ($invoice['invoice_number'] === '' || $invoice['customer']['name'] === '' || count($invoice['line_items']) === 0
+        || ($customerEmail !== '' && !filter_var($customerEmail, FILTER_VALIDATE_EMAIL))) {
+        crm_response(['status' => 'error', 'message' => 'Invoice number, customer name and at least one line item are required.'], 400);
+    }
+    if ($action === 'send_invoice' && !filter_var($customerEmail, FILTER_VALIDATE_EMAIL)) {
+        crm_response(['status' => 'error', 'message' => 'A valid customer email is required to send the invoice.'], 400);
     }
 
     $invoices = crm_read_invoices();
@@ -912,6 +918,25 @@ if ($action === 'update' && $_SERVER['REQUEST_METHOD'] === 'POST') {
     }
     unset($lead);
     if (!$found || !crm_write_leads($leads)) crm_response(['status' => 'error', 'message' => 'Lead could not be updated.'], 404);
+    crm_response(['status' => 'success']);
+}
+
+if ($action === 'delete' && $_SERVER['REQUEST_METHOD'] === 'POST') {
+    crm_require_auth('edit_leads');
+    $id = isset($_POST['id']) ? trim((string) $_POST['id']) : '';
+    if ($id === '') crm_response(['status' => 'error', 'message' => 'Invalid lead.'], 400);
+
+    $leads = crm_read_leads();
+    $remaining = array_values(array_filter($leads, static fn(array $lead): bool => ($lead['id'] ?? '') !== $id));
+    if (count($remaining) === count($leads) || !crm_write_leads($remaining)) {
+        crm_response(['status' => 'error', 'message' => 'Lead could not be removed.'], 404);
+    }
+    // The write above backs up the pre-delete list to leads.json.bak, and `list`
+    // merges any id from that backup back in — scrub it too or the lead reappears.
+    $backupFile = crm_data_file() . '.bak';
+    if (is_file($backupFile)) {
+        @file_put_contents($backupFile, json_encode($remaining, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES));
+    }
     crm_response(['status' => 'success']);
 }
 
